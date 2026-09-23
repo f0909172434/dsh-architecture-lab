@@ -1,3 +1,4 @@
+import { dailyState, dailyAction } from './daily-actions.mjs'
 import { randomBytes, timingSafeEqual } from 'node:crypto'
 import { readFile, open, realpath, access } from 'node:fs/promises'
 import { constants } from 'node:fs'
@@ -17,7 +18,7 @@ import { authoritativeBudgetRoot } from './broker/location.mjs'
 import { auditRunEvidence } from './run-evidence.mjs'
 
 const prefix='/api/architecture-lab'
-const staticFiles=new Map([['/architecture-lab','index.html'],['/architecture-lab/app.mjs','app.mjs'],['/architecture-lab/research.mjs','research.mjs'],['/architecture-lab/style.css','style.css']])
+const staticFiles=new Map([['/architecture-lab','index.html'],['/architecture-lab/app.mjs','app.mjs'],['/architecture-lab/research.mjs','research.mjs'],['/architecture-lab/daily.mjs','daily.mjs'],['/architecture-lab/style.css','style.css']])
 const types={html:'text/html; charset=utf-8',mjs:'text/javascript; charset=utf-8',css:'text/css; charset=utf-8'}
 const json=(res,status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(value))}
 
@@ -32,11 +33,11 @@ function authorize(req,token,origin){
   if(supplied.length!==expected.length||!timingSafeEqual(supplied,expected))throw new Error('invalid page capability')
   if(req.method==='POST' && req.headers.origin!==origin)throw new Error('same-origin request required')
 }
-async function body(req){
+async function body(req,limit=4096){
   if(req.headers['content-type']?.split(';')[0].trim()!=='application/json')throw new Error('JSON required')
-  let text=''
-  for await(const chunk of req){text+=chunk;if(Buffer.byteLength(text)>4096)throw new Error('request too large')}
-  const value=JSON.parse(text)
+  let size=0;const chunks=[]
+  for await(const chunk of req){size+=chunk.length;if(size>limit)throw new Error('request too large');chunks.push(chunk)}
+  const value=JSON.parse(Buffer.concat(chunks).toString('utf8'))
   if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('invalid action')
   return value
 }
@@ -125,6 +126,8 @@ export function createLabWebHandler({root,budgetRoot=root,port,launch,token=rand
       }
       if(req.method==='GET'&&url.pathname===prefix+'/report')return json(res,200,await managedReport(root))
       if(req.method==='GET'&&url.pathname===prefix+'/evidence')return json(res,200,await evidence(root,url.searchParams.get('runId'),url.searchParams.get('kind')))
+      if(req.method==='GET'&&url.pathname===prefix+'/daily')return json(res,200,await dailyState(root))
+      if(req.method==='POST'&&url.pathname===prefix+'/daily-action')return json(res,200,await dailyAction(root,await body(req,65536),launch))
       if(req.method==='POST'&&url.pathname===prefix+'/action')return json(res,200,await labAction(root,await body(req),launch))
       return json(res,404,{error:'not found'})
     }catch(error){return json(res,400,{error:error.code==='ENOENT'?'證據尚未產生。':error.message})}

@@ -41,7 +41,19 @@ export function apply(ctx){
     assert.equal(report.value.protocolReview.status,'not-prepared');
     const evidence=await api('evidence?runId='+row.runId+'&kind=record');assert.equal(evidence.value.runId,row.runId);
     const audit=await api('evidence?runId='+row.runId+'&kind=audit');assert.equal(audit.value.integrityVerified,true);assert.equal(audit.value.eligible,false);
-    process.stdout.write('ARCHITECTURE_WEB_PROBE='+JSON.stringify({nativeWebServer:true,clientModuleServed:true,controls:['select','paid-start-held','check','report','evidence'],realIsolatedTools:true,paidRequests:0,graphicalAcceptance:false})+'\\n');
+    assert.equal((await fetch(origin+'/architecture-lab/daily.mjs')).status,200);
+    const imported=await api('daily-action',{action:'import',source:'',label:'Native HTTP daily draft'});assert.equal(imported.status,200);
+    const draft=await api('daily-action',{action:'task',projectId:imported.value.id,recipe:'D',prompt:'整理測試筆記'});assert.equal(draft.status,200);
+    assert.equal((await api('daily-action',{action:'start',jobId:draft.value.id})).status,400);
+    const demo=await api('daily-action',{action:'check',recipe:'A'});assert.equal(demo.status,200);
+    let daily;
+    for(let i=0;i<400;i++){daily=(await api('daily')).value.runs.find(r=>r.jobId===demo.value.jobId);if(daily&&daily.status!=='running')break;await new Promise(resolve=>setTimeout(resolve,50));}
+    assert.equal(daily?.status,'completed',JSON.stringify(daily));assert.equal(daily.cleanupVerified,true);assert.equal(daily.paidRequests,0);
+    const preview=await api('daily-action',{action:'preview',runId:daily.runId});assert.ok(preview.value.changes.length>0);
+    assert.equal((await api('daily-action',{action:'adopt',runId:daily.runId})).status,200);
+    assert.equal((await api('daily-action',{action:'export',runId:daily.runId,destination:${JSON.stringify(join(root,'daily-http-export'))}})).status,200);
+    assert.equal((await api('report')).value.runs.length,1);
+    process.stdout.write('ARCHITECTURE_WEB_PROBE='+JSON.stringify({nativeWebServer:true,clientModuleServed:true,controls:['select','paid-start-held','check','report','evidence'],realIsolatedTools:true,dailyImportDraftDemoPreviewAdoptExport:true,dailyPaidHeld:true,dailyExcludedFromResearch:true,paidRequests:0,graphicalAcceptance:false})+'\\n');
     ctx.get('appExit')(0);
   };run().catch(error=>{console.error(error);ctx.get('appExit')(1)});
 }
@@ -55,7 +67,7 @@ await writeFile(join(profile,'cordis.patch.yml'),[
 ].join('\n')+'\n')
 const child=spawn(process.execPath,[runtime.bin,'--profile','probe','--port','0','--no-open'],{cwd:workspace,env:{PATH:process.env.PATH,HOME:home,DSH_HOME:home,DSH_ARCH_LAB_ROOT:root},stdio:['ignore','pipe','pipe']})
 let stdout='',stderr='';child.stdout.on('data',x=>stdout+=x);child.stderr.on('data',x=>stderr+=x)
-const timer=setTimeout(()=>child.kill('SIGTERM'),45000)
+const timer=setTimeout(()=>child.kill('SIGTERM'),60000)
 const status=await new Promise(resolve=>child.once('close',resolve));clearTimeout(timer)
 await writeFile(join(root,'process.json'),JSON.stringify({status,stdout,stderr},null,2)+'\n')
 assert.equal(status,0,stderr)

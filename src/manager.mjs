@@ -124,6 +124,8 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
   try{
     record=updateRegistry(root,state=>{
       if(state.active)throw new Error('已有進行中的實驗，請查看狀態或先停止')
+      const daily=readRegistry(join(root,'daily'))
+      if(daily.active||daily.runs.some(row=>row.cleanupVerified===false))throw new Error('請先完成日常任務與程序清理')
       if(state.runs.some(run=>run.cleanupVerified===false))throw new Error('異常停止後的子程序清理尚未確認，不能重啟或開始其他試驗')
       const prior=state.runs.filter(run=>run.trialId===trialId)
       if(!resume&&prior.length)throw new Error('此試驗已有紀錄；中斷試驗請明確使用 resume，不會覆蓋')

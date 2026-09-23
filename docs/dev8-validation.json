@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0-dev.8",
+  "date": "2026-09-24",
+  "kind": "offline-daily-workflow-validation",
+  "paidRequests": 0,
+  "researchEligible": false,
+  "graphicalAcceptance": false,
+  "sourceTests": {
+    "passed": 88,
+    "skipped": 1,
+    "failed": 0
+  },
+  "runtime": {
+    "imageId": "sha256:8655806d29491325731f0d3236cc48408d31d117e266001cc13555bacb3e6c41",
+    "baseImage": "node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+    "architecture": "arm64",
+    "dependencyLocksSha256": "b717138ada37b5d505f9332e8d8b3b662d4a7a81d81fb530405ff5400bb3d298"
+  },
+  "records": {
+    "daily": {
+      "createdAt": "2026-09-23T20:07:55.378Z",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "records": [
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "B",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "C",
+          "requests": 8,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "D",
+          "requests": 8,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "B",
+          "requests": 7,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "D",
+          "requests": 10,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "B",
+          "requests": 6,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        }
+      ],
+      "nativeTools": true,
+      "purposeForwarded": true,
+      "explicitAdoption": true,
+      "exclusiveExport": true,
+      "originalSourceUnchanged": true,
+      "projectMemoryPersistence": true,
+      "crossProjectMemoryIsolation": true,
+      "researchSnapshotUnchanged": true,
+      "cancellationAndResume": true,
+      "controllerSigkillRecovery": true,
+      "partialFilesRecovered": true,
+      "cumulativeRequestLimit": true,
+      "cumulativeDeadlineIdentity": true,
+      "graphicalAcceptance": false,
+      "limitation": "Scripted offline integration only; GUI and paid daily use remain held.",
+      "evidenceSha256": "c48004153df2c4f6ea0a7351f46fe5c1ed02f08adbe2e5ec756200e2293d7a0c"
+    },
+    "dsh": {
+      "createdAt": "2026-09-23T20:03:22.998Z",
+      "passed": true,
+      "paidRequests": 0,
+      "results": [
+        {
+          "recipe": "A",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 4,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:8655806d29491325731f0d3236cc48408d31d117e266001cc13555bacb3e6c41",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "B",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 4,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:8655806d29491325731f0d3236cc48408d31d117e266001cc13555bacb3e6c41",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "C",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 8,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:8655806d29491325731f0d3236cc48408d31d117e266001cc13555bacb3e6c41",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "D",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 8,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:8655806d29491325731f0d3236cc48408d31d117e266001cc13555bacb3e6c41",
+          "paidRequests": 0
+        }
+      ],
+      "limitation": "Scripted integration only; no comparative model-performance result.",
+      "evidenceSha256": "7595ad349059f6f2a846f3d6137c2db5e7db30f78554ce3dca7f4ca1a53b1681"
+    },
+    "web": {
+      "nativeWebServer": true,
+      "clientModuleServed": true,
+      "controls": [
+        "select",
+        "paid-start-held",
+        "check",
+        "report",
+        "evidence"
+      ],
+      "realIsolatedTools": true,
+      "dailyImportDraftDemoPreviewAdoptExport": true,
+      "dailyPaidHeld": true,
+      "dailyExcludedFromResearch": true,
+      "paidRequests": 0,
+      "graphicalAcceptance": false,
+      "evidenceSha256": "7836f1e15d10824e0c2c24c0d1b7fc353051c138ffe6670eb61d987c5f454f96"
+    },
+    "researchRecovery": {
+      "createdAt": "2026-09-23T20:04:44.455Z",
+      "backend": "linux",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "controllerSigkillAfterDispatch": true,
+      "independentGuestCleanup": true,
+      "daemonAbsenceReadback": true,
+      "interruptedRecordPreserved": true,
+      "explicitResume": true,
+      "requestsAcrossResume": 5,
+      "uncertainReservationsUnchanged": true,
+      "evidenceSha256": "9dffce879b708a140a514d26aaf3559e0746f8a7951deb130de979a3f54c6705"
+    },
+    "dailyCli": {
+      "passed": true,
+      "paidRequests": 0,
+      "unicodeAndSpacePaths": true,
+      "emptyProject": true,
+      "draftPersistence": true,
+      "paidStartHeld": true,
+      "evidenceSha256": "07929b98b0a9c3150995fb8df98f081d99ba22224a2c16efdc35ce90e8f69b51"
+    }
+  },
+  "limits": [
+    "Scripted replies validate actual tools and lifecycle only, not model quality.",
+    "Daily paid use and research paid starts remain held pending graphical and method acceptance.",
+    "Daily copying preserves regular file contents, not executable modes or empty directories.",
+    "A failed recovery export is retained as incomplete and is not automatically retried.",
+    "General daily tasks have no independent benchmark judge; users must review the output."
+  ]
+}

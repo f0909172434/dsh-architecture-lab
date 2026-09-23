@@ -1,3 +1,5 @@
+import { createDailyTask, createDailyCheck, getDailyTask, runDailyTask, recoverDaily, stopDaily } from './daily-manager.mjs'
+import { importDailyProject, previewDailyResult, adoptDailyResult, exportDailyResult } from './daily-workspace.mjs'
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { tasks } from '../tasks/catalog.mjs'
@@ -17,7 +19,7 @@ import { verifyLinuxImage } from './isolation/linux-dsh.mjs'
 
 const root = process.env.DSH_ARCH_LAB_ROOT ?? join(project,'state')
 const statePath=join(root,'lab-state.json'), home=join(root,'dsh-home')
-const commands=['doctor','prepare','review-protocol <review.json>','review-status','status','select','check-one','resume-check','run-one','resume-one','run-batch','report','stop']
+const commands=['daily-import <project.json>','daily-task <task.json>','daily-status','daily-check A/B/C/D','daily-run <jobId>','daily-resume <jobId>','daily-resume-check <jobId>','daily-stop','daily-preview <runId>','daily-adopt <runId>','daily-export <runId> <new-directory>','doctor','prepare','review-protocol <review.json>','review-status','status','select','check-one','resume-check','run-one','resume-one','run-batch','report','stop']
 
 async function installed(profile, name) {
   try { return JSON.parse(await readFile(join(home, 'profiles', profile, 'node_modules', name, 'package.json'), 'utf8')).version } catch { return null }
@@ -64,7 +66,22 @@ const controller=new AbortController()
 const interrupt=()=>controller.abort()
 process.once('SIGINT',interrupt);process.once('SIGTERM',interrupt)
 try{
-  if(command==='doctor')await doctor()
+  if(command==='daily-import'||command==='daily-task'){
+    if(args.length!==1)throw new Error('請提供一份 JSON 設定檔')
+    const input=JSON.parse(await readFile(args[0],'utf8'))
+    console.log(JSON.stringify(command==='daily-import'?await importDailyProject(root,input):createDailyTask(root,input),null,2))
+  }
+  else if(command==='daily-status')console.log(JSON.stringify(await recoverDaily(root),null,2))
+  else if(command==='daily-stop')console.log(JSON.stringify(await stopDaily(root),null,2))
+  else if(command==='daily-preview')console.log(JSON.stringify(await previewDailyResult(root,args[0]),null,2))
+  else if(command==='daily-adopt')console.log(JSON.stringify(await adoptDailyResult(root,args[0]),null,2))
+  else if(command==='daily-export')console.log(JSON.stringify(await exportDailyResult(root,args[0],args[1]),null,2))
+  else if(['daily-check','daily-run','daily-resume','daily-resume-check','daily-run-check'].includes(command)){
+    const job=command==='daily-check'?await createDailyCheck(root,args[0]??'A'):getDailyTask(root,args[0])
+    const row=await runDailyTask({root,jobId:job.id,mode:command.includes('check')?'offline':'live',resume:command.includes('resume'),signal:controller.signal})
+    console.log(JSON.stringify(row,null,2));if(row.status!=='completed')process.exitCode=1
+  }
+  else if(command==='doctor')await doctor()
   else if(command==='prepare')console.log(JSON.stringify(await prepareProtocol(root),null,2))
   else if(command==='review-protocol'){
     if(args.length!==1)throw new Error('review-protocol requires one review document')

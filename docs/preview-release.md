@@ -1,4 +1,24 @@
-# 0.1.0-dev.7 development preview
+# 0.1.0-dev.8 development preview
+
+Daily mode adds separate project copies and task drafts, all four recipes,
+per-project adopted memory, output review, explicit adoption and exclusive export.
+The authenticated panel and CLI share the controller. General tasks cannot use
+fake-provider answers; paid daily starts remain held.
+
+Actual DSH offline checks cover A/B/C/D tools, inherited files, Engram persistence
+and cross-project isolation, cancellation/resume and controller-SIGKILL recovery
+of partial writes. Request identity and the original ten-minute deadline persist
+across resumes. Research and daily launches serialize through a shared transaction.
+Both live modes use the original NT$300 allowance. Native DSH HTTP probes cover
+project import, drafting, the offline sample, preview, adoption and export.
+
+[Daily usage](daily-mode.md) · [Version validation](dev8-validation.json)
+
+No new paid calls or architecture-performance results are claimed. Graphical
+acceptance, substantive method review and real-model comparisons remain unfinished.
+This preview is not stable v0.1. Historical validation records below are unchanged.
+
+# Historical dev.7 development preview
 
 Protocol review now has a separate immutable receipt with copied, hash-verified
 evidence. It must precede live trials. Workflow-validation receipts cannot enable

@@ -3,7 +3,7 @@ import { randomBytes, timingSafeEqual } from 'node:crypto'
 import { appendFile, mkdir, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { loadPricing } from '../budget.mjs'
-import { assertLiveReady } from '../readiness.mjs'
+import { assertLiveReady, assertDailyReady } from '../readiness.mjs'
 import { reserveDispatch, settleDispatch } from './accounting.mjs'
 import { authoritativeBudgetRoot } from './location.mjs'
 
@@ -164,6 +164,12 @@ export async function startModelBroker(options) {
   assertLiveReady()
   if(resolve(options.root)!==authoritativeBudgetRoot)throw new Error('live calls must use the original shared budget ledger')
   return start({ ...options, endpoint: 'https://api.deepseek.com/chat/completions' })
+}
+
+export async function startDailyModelBroker(options){
+  assertDailyReady()
+  if(resolve(options.root)!==authoritativeBudgetRoot||!/^daily-[a-f0-9-]{36}$/.test(options.trialId))throw new Error('daily calls require the original budget and a daily task identity')
+  return start({...options,endpoint:'https://api.deepseek.com/chat/completions'})
 }
 
 /** No real key accepted and no public endpoint reachable through this helper. */

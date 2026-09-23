@@ -33,3 +33,10 @@ complete/incomplete block coverage and task-balanced memory/planning contrasts,
 and retains unknown cost/time differences. It never pools protocols or declares
 a winner. Text-tree tests verify report content only; they do not establish
 visual layout or graphical acceptance.
+
+The dev.8 daily section has independent projects/jobs/attempts, custom prompt
+forms, a clearly labelled fixed offline sample, preview/adoption and new-directory
+export. Daily action bodies are bounded to 64 KiB; other writes retain their
+4 KiB limit. Both endpoints retain the same capability, Host and origin checks.
+The native HTTP probe now covers the daily flow and confirms it does not enter
+research reports. [Daily mode](daily-mode.md) · [Current checks](dev8-validation.json).

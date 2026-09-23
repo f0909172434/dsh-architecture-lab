@@ -1,3 +1,4 @@
+import { mountDaily } from './daily.mjs'
 import { renderResearch } from './research.mjs'
 const $=id=>document.getElementById(id)
 const token=document.querySelector('meta[name="lab-token"]').content
@@ -91,6 +92,7 @@ $('filter').onchange=()=>state&&renderRuns()
 $('close-evidence').onclick=()=>$('evidence').close()
 $('evidence-kind').onchange=()=>showEvidence(evidenceRun)
 $('export').onclick=async()=>{try{const value=await api('report'),url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}));const a=node('a');a.href=url;a.download='architecture-lab-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notice('報告已匯出。')}catch(error){notice(error.message,true)}}
+mountDaily({api})
 await refresh()
 if(connected)notice(state.active?'實驗進行中；紀錄會自動更新。':'選擇配方後即可開始離線驗證；正式實驗仍受驗收與預算限制。')
 setInterval(()=>{if(!document.hidden)refresh()},2000)

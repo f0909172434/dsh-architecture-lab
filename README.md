@@ -23,7 +23,7 @@ counterbalanced across blocks. See the [candidate method](docs/research-protocol
 Historical costs have been reconciled using a conservative provider-day bound;
 original entries are preserved, per-request costs remain unknown, and all live
 experiment directories share the original NT$300 cap. Method review and graphical
-acceptance still block paid starts. [Current checks](docs/dev7-validation.json).
+acceptance still block paid starts. [Current checks](docs/dev8-validation.json).
 
 Review receipts and sealed attempt evidence now make research eligibility inspectable. Reports derive eligibility from the pre-launch review, guest execution receipt, judge artifacts and broker ledger; a registry flag cannot promote old trials. See [review workflow](docs/protocol-review.md). The substantive method review is still pending.
 
@@ -39,6 +39,16 @@ subject to NT$300 total, 12 model requests and ten minutes per trial. The model
 is DeepSeek Flash/high. Correctness, claimed completion, termination reason,
 evidence validity, time and cost are separate outcomes. These experiments do
 not establish AGI or continuous learning.
+
+## Daily task preview
+
+The panel now supports independent project copies, custom task drafts, recipe
+selection, output preview, explicit adoption and export to a new directory.
+Per-project Engram memory persists only after adoption. Fixed offline A/B/C/D
+checks exercise real tools, cancellation and recovery after controller loss;
+they do not execute arbitrary user prompts. Paid daily tasks remain held and
+share the original spending cap once enabled. See [daily usage and limits](docs/daily-mode.md)
+and [dev.8 validation](docs/dev8-validation.json).
 
 ## Offline checks
 
