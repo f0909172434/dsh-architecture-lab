@@ -58,11 +58,25 @@ Engram 修复了人类消息来源识别，并对齐本地嵌入依赖。规划�
 会话替换接口、系统消息保留与会话快照更新；构建脚本会验证固定来源与测试。
 浏览器类型检查及真实图形界面验收仍未完成，详见[修复证据](docs/isolation-progress.md)。
 
-DSH `/architecture-lab` 界面提供 `status`、`select`、`report`、`export`、`start`、
-`resume`、`batch`、`stop`。目前所有模型调用与启动试验均会被暂停机制拒绝。
-选择配方只记录偏好，实际切换需另开对应 profile。**无界面 DSH 的位置参数即使
-看起来像斜线命令，也可能被当作模型提示。** 终端中查询状态请用不经过模型的
-`npm run lab -- status` 或 `doctor`。
+DSH `/architecture-lab` 提供 `status`、`select`、`check`、`resume-check`、
+`report`、`export`、`start`、`resume`、`batch`、`stop`。离线 `check` 使用模拟回复，
+通过隔离评测器运行。配方选择应用于下一次新试验；取消、明确恢复、重新启动后
+读回与导出已通过原生命令验证，恢复前后共用 12 次请求额度。日常模型会话与
+付费启动仍暂停；专用图形结果面板尚未实现。
+
+```sh
+# 完成开发者安装与合成记忆初始化（npm run seed）后：
+npm run check:management
+npm run check:commands
+npm run check:memory
+```
+
+记忆验收已确认：通过真实 Engram 工具新增的合成标记可在本次找回，但全新的
+B／D 试验找不到，原始快照不变。辅助查询改写采用相同模型与思考强度，也计入
+请求账本。[管理入口用法与证据](docs/management.md)。
+
+**无界面 DSH 的位置参数即使看起来像斜线命令，也可能被当作模型提示。**
+终端请用不经过模型的 `npm run lab -- status` 或 `doctor` 查询状态。
 
 ## 证据与限制
 

@@ -51,9 +51,11 @@ Pin exact versions, test updates in a new directory, and freeze version/patch
 hashes into each new protocol. Never relabel historical trial versions or reuse
 an identity after changing the judge. `next` and `alpha` are not default channels.
 
-`prepare`, `pricing`, `web`, and the management v1 runner are still being migrated.
-Installation and configuration composition do not prove complete A/B/C/D trials,
-memory separation, real tool execution, cancellation or graphical acceptance.
+The management commands now use the isolated v2 evaluator. `prepare` creates an
+immutable candidate manifest with review pending; it does not enable paid runs.
+Native offline A/B/C/D, memory separation, cancellation/resume and restart
+readback have passed. Graphical acceptance and abrupt process-death cleanup
+remain incomplete. See [management usage and evidence](management.md).
 
 Keep `state/`, credentials, raw sessions and personal memory private. The broker
 retains the provider key in a trusted parent and gives the jailed DSH only a
@@ -74,6 +76,9 @@ npm run check:integration -- C
 npm run seed
 npm run check:integration -- B
 npm run check:integration -- D
+npm run check:management
+npm run check:commands
+npm run check:memory
 ```
 
 Seeding uses a fresh credential-free home, a local Engram save tool, and only

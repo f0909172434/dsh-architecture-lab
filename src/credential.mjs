@@ -1,16 +1,28 @@
-import { readFile, stat } from 'node:fs/promises'
+import { open } from 'node:fs/promises'
+import { constants } from 'node:fs'
 import { join } from 'node:path'
 
-// DSH resolves this key from its own private credential store. The lab only
-// checks availability here; it never copies the value into a child environment.
-export async function hasIsolatedCredential(home) {
+/** Read only the isolated store through one descriptor. Neither logs nor child
+ * environments receive this value. Reject links and permissive file modes. */
+export async function readIsolatedCredential(home) {
+  let handle
   try {
-    const path = join(home, '.credentials.yaml')
-    const [file, contents] = await Promise.all([stat(path), readFile(path, 'utf8')])
-    if ((file.mode & 0o077) !== 0) return false
+    handle = await open(join(home, '.credentials.yaml'), constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK)
+    const file = await handle.stat()
+    if (!file.isFile() || (file.mode & 0o077) !== 0 || file.size > 65536) throw new Error('invalid store')
+    const contents = await handle.readFile('utf8')
     const refs = contents.match(/^refs:\s*\n((?:^  [^\n]+\n?)*)/m)?.[1] ?? ''
-    return /^  DEEPSEEK_API_KEY: sk-[^\s]+\s*$/m.test(refs)
+    const key = refs.match(/^  DEEPSEEK_API_KEY: (sk-[^\s]+)\s*$/m)?.[1]
+    if (!key) throw new Error('missing key')
+    return key
   } catch {
-    return false
+    throw new Error('isolated credential unavailable or permissions are too broad')
+  } finally {
+    await handle?.close()
   }
+}
+
+export async function hasIsolatedCredential(home) {
+  try { await readIsolatedCredential(home); return true }
+  catch { return false }
 }

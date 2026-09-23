@@ -1,8 +1,14 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { validateTrialEnvironment } from '../src/trial-agent.mjs'
+import { validateTrialEnvironment, pinTrialRequest } from '../src/trial-agent.mjs'
 import { validateRequest } from '../src/broker/server.mjs'
 import { dispatchBound } from '../src/broker/accounting.mjs'
+
+test('Engram rewrite calls inherit pinned effort without allowing alternate routes or output limits',()=>{
+  const base={provider:'deepseek-official',model:'deepseek-flash',purpose:'engram-rewrite',maxTokens:200}
+  const request={...base};pinTrialRequest(request);assert.equal(request.reasoningEffort,'high')
+  for(const change of [{purpose:'unknown'},{reasoningEffort:'low'},{model:'other'},{provider:'other'},{maxTokens:4097},{maxTokens:undefined}])assert.throws(()=>pinTrialRequest({...base,...change}),/not pinned/)
+})
 
 test('the trial adapter rejects provider credentials and routes outside its local broker',()=>{
   const env={DEEPSEEK_BASE_URL:'http://127.0.0.1:12345',DEEPSEEK_API_KEY:'a'.repeat(64)}

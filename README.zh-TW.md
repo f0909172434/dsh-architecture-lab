@@ -58,11 +58,25 @@ Engram 修補了人類訊息來源辨識，並對齊本機嵌入依賴。規劃�
 會話替換介面、系統訊息保留與會話快照更新；建置腳本會驗證固定來源與測試。
 瀏覽器型別檢查及真實圖形介面驗收仍未完成，詳見[修補證據](docs/isolation-progress.md)。
 
-DSH `/architecture-lab` 介面提供 `status`、`select`、`report`、`export`、`start`、
-`resume`、`batch`、`stop`。目前所有模型呼叫與開始試驗均會被暫停機制拒絕。
-選配方只記錄偏好，實際切換需另開對應 profile。**無介面 DSH 的位置參數即使
-長得像斜線指令，也可能被當成模型提示。** 終端機查狀態請用不經模型的
-`npm run lab -- status` 或 `doctor`。
+DSH `/architecture-lab` 提供 `status`、`select`、`check`、`resume-check`、
+`report`、`export`、`start`、`resume`、`batch`、`stop`。離線 `check` 使用模擬回應，
+透過隔離評測器執行。配方選擇套用於下一次新試驗；取消、明確恢復、重新啟動後
+讀回與匯出已通過原生指令驗證，恢復前後共用 12 次請求額度。日常模型會話與
+付費開始仍暫停；專用圖形結果面板尚未實作。
+
+```sh
+# 完成開發者安裝與合成記憶初始化（npm run seed）後：
+npm run check:management
+npm run check:commands
+npm run check:memory
+```
+
+記憶驗收已確認：透過真實 Engram 工具新增的合成標記可在本次找回，但全新的
+B／D 試驗找不到，原始快照不變。輔助查詢改寫採相同模型與思考強度，也計入
+請求帳本。[管理入口用法與證據](docs/management.md)。
+
+**無介面 DSH 的位置參數即使長得像斜線指令，也可能被當成模型提示。**
+終端機請用不經模型的 `npm run lab -- status` 或 `doctor` 查狀態。
 
 ## 證據與限制
 

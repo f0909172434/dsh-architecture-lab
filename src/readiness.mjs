@@ -2,8 +2,8 @@
 // user approval gate: remove it only alongside verified isolation and judging
 // fixes. Existing evidence and reports remain readable while trials are held.
 export const liveBlockers = Object.freeze([
-  '管理入口尚未遷移到已驗證的隔離評測器，舊流程持續停用',
-  'v2 協定、取消／重開與 DSH 圖形介面尚未完成驗收',
+  'v2 研究協定尚未完成審查與凍結',
+  '異常退出後的子程序清理與 DSH 圖形介面尚未完成驗收',
   '歷史與意外呼叫費用尚待核對，NT$300 預留額度維持不變',
 ])
 

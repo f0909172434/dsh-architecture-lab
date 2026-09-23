@@ -65,12 +65,28 @@ preserves the system head and reads fresh events. Both build scripts verify
 their pinned sources and tests. Browser declaration checking and real GUI
 acceptance are incomplete; see [repair evidence](docs/isolation-progress.md).
 
-The DSH `/architecture-lab` interface exposes `status`, `select`, `report`,
-`export`, `start`, `resume`, `batch`, and `stop`. Model calls and trial starts
-currently fail closed. Selection records a preference; changing the active
-recipe requires opening the corresponding profile. **A slash-looking positional
-argument to headless DSH is a model prompt.** Use `npm run lab -- status` or
-`doctor` for model-free terminal inspection.
+The DSH `/architecture-lab` command provides `status`, `select`, `check`,
+`resume-check`, `report`, `export`, `start`, `resume`, `batch`, and `stop`.
+Offline `check` runs the contained evaluator with synthetic responses. Selection
+applies to the next fresh trial. Cancellation, explicit resume with a shared
+12-request allowance, restart readback and export have passed native command
+checks. Daily model sessions and paid starts remain held. A dedicated graphical
+results panel is not yet implemented.
+
+```sh
+# After contributor setup and synthetic memory seeding (npm run seed):
+npm run check:management
+npm run check:commands
+npm run check:memory
+```
+
+Memory acceptance writes a synthetic marker using real Engram tools: the writer
+retrieves it, fresh B/D trials do not, and the original snapshot stays unchanged.
+Auxiliary query rewriting uses the same pinned route and shares the request
+ledger. [Management evidence and usage](docs/management.md).
+
+**A slash-looking positional argument to headless DSH is a model prompt.** Use
+`npm run lab -- status` or `doctor` for model-free terminal inspection.
 
 ## Evidence and limits
 

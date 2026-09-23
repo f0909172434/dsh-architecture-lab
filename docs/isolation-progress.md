@@ -102,7 +102,8 @@ Engram 0.7.12 is pinned to its npm git revision. Its patch accepts only human
 user-source messages as the current request, and updates Transformers to 4.3.0
 to align the native image dependency with the host. Its 28 security tests pass.
 Every memory world receives its own copied database; no background ingestion is
-allowed. Dedicated cross-run mutation/leakage acceptance remains to be done.
+allowed. Dedicated cross-run mutation/retrieval acceptance subsequently passed; see
+[management evidence](management.md).
 
 Planner 0.5.0 is pinned to its npm git revision. The patch uses `startSeq/endSeq`,
 preserves the host's system head, and reads current event snapshots. A regression
@@ -112,14 +113,16 @@ an unpublished host browser primitive. The runtime client bundle and its wrapper
 check pass; browser declarations and real rendering are **not** accepted.
 
 Build records bind the host version, patch, lockfile and host bundle hashes;
-a changed dependency requires rebuilding before use. Source-only tests currently
-report 33 pass, zero fail and one platform-specific skip on macOS.
+a changed dependency requires rebuilding before use. The dev.2 source-only suite reported 33 pass and one platform-specific skip;
+subsequent management and memory changes add focused regressions.
 
 ## Remaining gates
 
-- Replace the held management runner with the new contained evaluator path and
-  verify cancellation, restart, explicit resume and all memory mutation probes.
-- Freeze protocol v2, classify claimed completion, and audit evidence provenance.
+- Validate cleanup after abrupt controller death and detached child groups.
+  Normal cancellation, explicit resume, restart readback and memory mutation
+  now pass through the contained management path.
+- Review/freeze protocol v2 and audit evidence provenance. Completion markers
+  now come from broker-owned provider streams, separately from correctness.
 - Reconcile historical and incident costs without resetting the NT$300 cap.
   Current reservations consume the full allowance; actual charges are not NT$300.
 - Validate the real DSH interface. Prior administrative browser access rejection

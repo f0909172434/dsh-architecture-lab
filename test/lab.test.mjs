@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { trialOrder } from '../src/recipes.mjs'
 import { compare } from '../src/report.mjs'
+import { readRegistry } from '../src/registry.mjs'
 import { markInterrupted, readState, writeState } from '../src/store.mjs'
 import { requestUpperBound, reserve, settle, validatePricing } from '../src/budget.mjs'
 import { tasks } from '../tasks/catalog.mjs'
@@ -84,7 +85,7 @@ test('DSH slash-command entry selects a recipe and explains the audit hold', asy
     assert.equal(command.name, 'architecture-lab')
     const selected = await command.handler({ rawInput: 'select C' })
     assert.equal(selected.kind, 'success')
-    assert.equal((await readState(join(root, 'lab-state.json'))).selectedRecipe, 'C')
+    assert.equal(readRegistry(root).selectedRecipe, 'C')
     const denied = await command.handler({ rawInput: 'start C debug-amount 1' })
     assert.equal(denied.kind, 'error')
     assert.match(denied.text, /實機試驗暫停/)

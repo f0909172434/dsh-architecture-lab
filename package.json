@@ -1,6 +1,6 @@
 {
   "name": "dsh-architecture-lab",
-  "version": "0.1.0-dev.2",
+  "version": "0.1.0-dev.3",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -30,7 +30,10 @@
     "web": "node scripts/open-selected.mjs",
     "engram": "node scripts/bootstrap-engram.mjs",
     "planner": "node scripts/bootstrap-planner.mjs",
-    "check:integration": "node scripts/check-brokered-dsh.mjs"
+    "check:integration": "node scripts/check-brokered-dsh.mjs",
+    "check:management": "node scripts/check-management.mjs",
+    "check:commands": "node scripts/check-management-commands.mjs",
+    "check:memory": "node scripts/check-memory-isolation.mjs"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",

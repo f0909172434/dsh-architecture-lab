@@ -1,0 +1,86 @@
+{
+  "kind": "scripted-offline-management-acceptance",
+  "date": "2026-09-24",
+  "researchEligible": false,
+  "paidRequests": 0,
+  "graphicalAcceptance": false,
+  "abruptControllerCleanupAccepted": false,
+  "records": {
+    "management": {
+      "offlineOnly": true,
+      "paidRequests": 0,
+      "recipes": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "cancelAfterDispatch": true,
+      "explicitResume": true,
+      "recordsPreserved": true,
+      "newProcessReadback": true,
+      "budgetAcrossResume": true,
+      "completionSource": "broker",
+      "comparisonEligible": false,
+      "evidenceSha256": "122dfc695c05eae10d78bc5782b5f5c8a1e0db41763ced913ecc67e15e891fee"
+    },
+    "commands": {
+      "commands": [
+        "status",
+        "select",
+        "start-held",
+        "check",
+        "export",
+        "report"
+      ],
+      "realRegistry": true,
+      "realIsolatedTools": true,
+      "paidRequests": 0,
+      "graphicalAcceptance": false,
+      "evidenceSha256": "addb1e83f6bad78991f31d3f2fff5dc4eadaa8857b3a3d300586c49a89c669f9"
+    },
+    "memory": {
+      "schemaVersion": 1,
+      "offlineOnly": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "snapshotSha256": "d7ed87f6ed8f102b393a875625ff16dd25ccbfc29d0c4f5bdc4babd246734077",
+      "records": [
+        {
+          "label": "writer",
+          "recipe": "B",
+          "save": true,
+          "retrieved": true,
+          "databaseContainsMarker": true,
+          "requests": 7,
+          "auxiliaryRequests": 1,
+          "testPass": true,
+          "snapshotUnchanged": true
+        },
+        {
+          "label": "fresh-b",
+          "recipe": "B",
+          "save": false,
+          "retrieved": false,
+          "databaseContainsMarker": false,
+          "requests": 6,
+          "auxiliaryRequests": 1,
+          "testPass": true,
+          "snapshotUnchanged": true
+        },
+        {
+          "label": "fresh-d",
+          "recipe": "D",
+          "save": false,
+          "retrieved": false,
+          "databaseContainsMarker": false,
+          "requests": 10,
+          "auxiliaryRequests": 1,
+          "testPass": true,
+          "snapshotUnchanged": true
+        }
+      ],
+      "evidenceSha256": "acf18db0fbdde35307375fcfec7f87ac652e795c178ac45fe8acce16cde76ddf"
+    }
+  }
+}
