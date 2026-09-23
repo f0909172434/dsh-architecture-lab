@@ -1,0 +1,17 @@
+{
+  "name": "dsh-profile-lab-a",
+  "private": true,
+  "dependencies": {
+    "dsh-architecture-lab": "link:__PROJECT_ROOT__"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-headless",
+        "dsh-architecture-lab"
+      ],
+      "patchReload": "startup"
+    }
+  }
+}

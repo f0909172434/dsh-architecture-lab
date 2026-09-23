@@ -1,0 +1,19 @@
+{
+  "name": "dsh-profile-lab-web-b",
+  "private": true,
+  "dependencies": {
+    "dsh-architecture-lab": "link:__PROJECT_ROOT__",
+    "@kenz1117/dsh-engram": "0.7.12"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "@kenz1117/dsh-engram",
+        "dsh-architecture-lab"
+      ],
+      "patchReload": "startup"
+    }
+  }
+}

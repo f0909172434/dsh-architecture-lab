@@ -1,0 +1,11 @@
+- id: dsh-engram
+  config:
+    dbDir: "__LAB_ROOT__/engram/lab-d"
+    modelCacheDir: "__LAB_ROOT__/engram/models"
+    ingest: 'off'
+    legacyMigration: 'conservative'
+- id: headless-runner
+  disabled: true
+- insert:
+    - id: architecture-lab-planner-runner
+      name: dsh-architecture-lab/planner-runner

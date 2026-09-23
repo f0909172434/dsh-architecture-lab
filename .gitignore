@@ -1,0 +1,13 @@
+upstream/
+state/
+node_modules/
+dist/
+.DS_Store
+
+
+vendor/
+.env
+.env.*
+!.env.example
+.credentials.yaml
+.public-export/

@@ -1,0 +1,139 @@
+{
+  "kind": "scripted-offline-integration",
+  "researchEligible": false,
+  "paidRequests": 0,
+  "date": "2026-09-23",
+  "modelResponses": "prewritten synthetic tool calls; no real model invoked",
+  "recipes": [
+    {
+      "offlineOnly": true,
+      "recipe": "A",
+      "paidRequests": 0,
+      "dispatches": 7,
+      "registeredTools": [
+        "bash",
+        "read",
+        "write"
+      ],
+      "crossTrialReadDenied": true,
+      "judgeReadDenied": true,
+      "meteredDispatches": 7,
+      "humanMemoryAttribution": null,
+      "planningPhase": null,
+      "evaluatorStatus": "pass",
+      "evaluatorEvents": 47,
+      "verdict": {
+        "protocol": "architecture-lab-values-v1",
+        "taskId": "stale-fee",
+        "total": 7,
+        "pass": true,
+        "status": "passed",
+        "passed": 7,
+        "failedCases": []
+      },
+      "evidenceSha256": {
+        "acceptance.json": "110810ee086d88a29eb090036a4c7246ff444b98e5f6c7d8bd0362de422f9168",
+        "evaluation/report.json": "f56ea46cd0dae316a3a9e77e5e6af0f29791fbe56b549119febdd965fdce19e6",
+        "outcome.json": "78b589c7b2025e8ea226d8fd70e542ea9a32a90f144576d4639e658b72576f11"
+      }
+    },
+    {
+      "offlineOnly": true,
+      "recipe": "B",
+      "paidRequests": 0,
+      "dispatches": 7,
+      "registeredTools": [
+        "bash",
+        "read",
+        "write"
+      ],
+      "crossTrialReadDenied": true,
+      "judgeReadDenied": true,
+      "meteredDispatches": 7,
+      "humanMemoryAttribution": true,
+      "planningPhase": null,
+      "evaluatorStatus": "pass",
+      "evaluatorEvents": 48,
+      "verdict": {
+        "protocol": "architecture-lab-values-v1",
+        "taskId": "stale-fee",
+        "total": 7,
+        "pass": true,
+        "status": "passed",
+        "passed": 7,
+        "failedCases": []
+      },
+      "evidenceSha256": {
+        "acceptance.json": "7faf76af7be14c226f61e9efbbb4cc3aef5d23e4c8a1f482eb0db345ebcb1ca8",
+        "evaluation/report.json": "01e840808dd68d5b4fa7d8f340ae525e9b6c5d489aee54d584d3830e178eb8dd",
+        "outcome.json": "f6a5b4f62e17f429490052931f9565813577c7a4a08bfb3f805a5c00024652e8"
+      }
+    },
+    {
+      "offlineOnly": true,
+      "recipe": "C",
+      "paidRequests": 0,
+      "dispatches": 8,
+      "registeredTools": [
+        "write",
+        "submit_plan",
+        "bash",
+        "report_step"
+      ],
+      "crossTrialReadDenied": null,
+      "judgeReadDenied": null,
+      "meteredDispatches": 8,
+      "humanMemoryAttribution": null,
+      "planningPhase": "completed",
+      "evaluatorStatus": "pass",
+      "evaluatorEvents": 66,
+      "verdict": {
+        "protocol": "architecture-lab-values-v1",
+        "taskId": "stale-fee",
+        "total": 7,
+        "pass": true,
+        "status": "passed",
+        "passed": 7,
+        "failedCases": []
+      },
+      "evidenceSha256": {
+        "acceptance.json": "113ede6e25eb685113849a2ce79e9efd20b834e10f7d02ab47843e6ba2455586",
+        "evaluation/report.json": "e1f438f7b7d2d2ec143110c172db05e552b89d80a666e33c4edfb10a2441f316",
+        "outcome.json": "7f292a661d4c0b5383d30c1fa70e1fd46b003e4c56bf6713d70ab16fb4c5266e"
+      }
+    },
+    {
+      "offlineOnly": true,
+      "recipe": "D",
+      "paidRequests": 0,
+      "dispatches": 8,
+      "registeredTools": [
+        "write",
+        "submit_plan",
+        "bash",
+        "report_step"
+      ],
+      "crossTrialReadDenied": null,
+      "judgeReadDenied": null,
+      "meteredDispatches": 8,
+      "humanMemoryAttribution": true,
+      "planningPhase": "completed",
+      "evaluatorStatus": "pass",
+      "evaluatorEvents": 67,
+      "verdict": {
+        "protocol": "architecture-lab-values-v1",
+        "taskId": "stale-fee",
+        "total": 7,
+        "pass": true,
+        "status": "passed",
+        "passed": 7,
+        "failedCases": []
+      },
+      "evidenceSha256": {
+        "acceptance.json": "690b128136bfe4d6fc575ac161ea58cb8373cf2c37d11cb943339d7ea44d5446",
+        "evaluation/report.json": "8efe3830bac57c34441356b45c9052807505b13ade6028f997e99e35bbea9583",
+        "outcome.json": "cc7dea5f74fb17b3126327809159028a90346d0f94b1c7d79cdb342577788c1e"
+      }
+    }
+  ]
+}

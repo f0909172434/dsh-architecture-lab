@@ -1,0 +1,19 @@
+{
+  "name": "dsh-profile-lab-c",
+  "private": true,
+  "dependencies": {
+    "dsh-architecture-lab": "link:__PROJECT_ROOT__",
+    "dsh-plan-and-execute": "0.5.0"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-headless",
+        "dsh-plan-and-execute",
+        "dsh-architecture-lab"
+      ],
+      "patchReload": "startup"
+    }
+  }
+}
