@@ -1,4 +1,4 @@
-# 0.1.0-dev.1 development preview
+# 0.1.0-dev.2 development preview
 
 This snapshot exposes the architecture-lab implementation and reproducible
 offline checks. It is not a stable v0.1 release or a completed architecture study.
@@ -11,7 +11,7 @@ offline checks. It is not a stable v0.1 release or a completed architecture stud
   reservations for uncertain usage. Paid startup stays disabled.
 - English, Traditional Chinese and Simplified Chinese READMEs are included.
 
-Local validation: 32 source tests pass with one platform-specific skip; the
+Local validation: 33 source tests pass with one platform-specific skip; the
 planner adapter/orchestrator suite passes 88 tests, Engram security passes 28,
 and the evaluator runner passes 60. Scripted A/B/C/D probes pass with seven,
 seven, eight and eight fake-provider dispatches respectively. No paid call is
@@ -27,3 +27,12 @@ real-model comparison and no architecture winner.
 The original pilots and the compatibility-call incident remain documented.
 Full private evidence stays local; public summaries include no raw sessions,
 credentials, personal memory or billing ledgers.
+
+## Change from dev.1
+
+A macOS CI run exposed a repeated SIGKILL on an already terminated process
+group. The exit cleanup now avoids signalling the same group after a successful
+stop. A deterministic regression reproduces the EPERM with the old source and
+passes with the fix. The failed dev.1 run remains available:
+https://github.com/f0909172434/dsh-architecture-lab/actions/runs/35885507674
+This does not expand the cancellation claim to detached process groups.

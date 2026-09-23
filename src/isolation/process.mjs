@@ -19,7 +19,16 @@ export async function runIsolatedProcess({ executable = process.execPath, args =
       env: { PATH: `${dirname(binary)}:/usr/bin:/bin`, HOME: home, TMPDIR: cwd, TZ: 'UTC', LANG: 'C.UTF-8', ...env },
     })
     let stdout = '', stderr = '', bytes = 0, reason = null
-    const killTree = () => { if (child.pid) { try { process.kill(-child.pid, 'SIGKILL') } catch (error) { if (error.code !== 'ESRCH') throw error } } }
+    let groupTerminated = false
+    const killTree = () => {
+      if (!child.pid || groupTerminated) return
+      try { process.kill(-child.pid, 'SIGKILL') }
+      catch (error) { if (error.code !== 'ESRCH') throw error }
+      // SIGKILL already covers this group. The exit callback must not signal
+      // it again: macOS can report EPERM for a now zombie-only group, and a
+      // delayed signal could target a reused process-group identity.
+      groupTerminated = true
+    }
     const stop = label => { reason ??= label; killTree() }
     const abort = () => stop('cancelled')
     signal?.addEventListener('abort', abort, { once: true })

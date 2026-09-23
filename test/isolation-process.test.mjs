@@ -84,3 +84,21 @@ onMac('cancel and timeout terminate a running child process group', async () => 
     assert.ok(status===''||status.startsWith('Z'),status)
   }
 }))
+
+onMac('timeout and exit do not resignal a terminated group', async () => temporary(async root => {
+  const originalKill=process.kill
+  const groupSignals=[]
+  process.kill=function(pid,signal){
+    if(pid<0&&signal==='SIGKILL'){
+      if(groupSignals.includes(pid))throw Object.assign(new Error('simulated macOS zombie-group EPERM'),{code:'EPERM'})
+      groupSignals.push(pid)
+    }
+    return originalKill.call(process,pid,signal)
+  }
+  try{
+    const result=await runIsolatedProcess({args:['-e','console.log("running");setInterval(()=>{},1000)'],cwd:root,readOnly:[root],timeoutMs:300})
+    assert.equal(result.reason,'timeout')
+    assert.match(result.stdout,/running/)
+    assert.equal(groupSignals.length,1)
+  }finally{process.kill=originalKill}
+}))

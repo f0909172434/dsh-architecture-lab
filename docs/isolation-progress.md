@@ -113,7 +113,7 @@ check pass; browser declarations and real rendering are **not** accepted.
 
 Build records bind the host version, patch, lockfile and host bundle hashes;
 a changed dependency requires rebuilding before use. Source-only tests currently
-report 32 pass, zero fail and one platform-specific skip on macOS.
+report 33 pass, zero fail and one platform-specific skip on macOS.
 
 ## Remaining gates
 
@@ -126,3 +126,11 @@ report 32 pass, zero fail and one platform-specific skip on macOS.
   remains unresolved and has not been bypassed.
 - Verify public clean-checkout CI. Publish development work with explicit limits;
   a stable v0.1 requires the outstanding product and research acceptance gates.
+
+## Preview CI follow-up
+
+A subsequent dev.1 macOS run failed when timeout cleanup and the process exit
+callback both signalled the same group. A later tag-triggered run passed, so
+that passing rerun alone was not accepted as resolution. In dev.2 successful
+group termination is idempotent. The added regression fails against the old
+source and passes against the fix; other containment checks remain required.
