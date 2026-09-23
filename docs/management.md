@@ -1,9 +1,9 @@
-# Management preview (dev.5)
+# Management preview (dev.6)
 
 The native `/architecture-lab` command and the CLI now share one controller and
 a transactional SQLite registry. Each attempt gets a new directory and isolated
-DSH world. The legacy JSON records and real billing ledger are not migrated or
-rewritten. This release is an offline installation preview, not a research
+DSH world. Legacy JSON records and original billing entries are preserved; reviewed
+aggregate reconciliation is stored alongside the original entries. This release is an offline installation preview, not a research
 comparison or a stable graphical product.
 
 ## Use after isolated setup
@@ -78,10 +78,15 @@ success denominator, including failures, limits and interruptions. Successful
 resumes never substitute for first attempts. All current installation checks
 have `evidenceValid: false`; their reported research success rate is null.
 
-The offline controller uses a separate synthetic ledger. The original NT$300
-real ledger remains fully reserved pending historical-cost reconciliation;
-that reservation is not a claim of NT$300 provider charges. There were zero
-paid requests in these new probes.
+The offline controller uses a separate synthetic ledger. All live output roots
+share the original NT$300 ledger. Historical usage is now covered by a reviewed
+conservative provider-day bound with the original entries preserved; per-request
+costs remain unknown. There were zero paid requests in these new probes.
+
+The report's `research.protocols` separates protocols, checks matched quartets,
+keeps missing coverage visible and weights represented tasks equally. The old
+`summary` field remains operational diagnostics only. See the
+[candidate comparison method](research-protocol.md).
 
 ## Remaining acceptance
 
@@ -92,7 +97,7 @@ and new trials. An unreachable control endpoint with a live PID is not proof of
 death. Recovered usage comes from the durable ledger; uncertain reservations
 stay unchanged. The evidence panel can read the recovered registry record even
 when abrupt death prevented writing the final artifact. Graphical acceptance,
-daily recipe use, protocol review and billing evidence remain outstanding.
+daily recipe use, protocol review and eligibility validation remain outstanding.
 
 `prepare` writes an immutable protocol candidate with source, task, snapshot,
 build and pricing hashes; its review status is pending. It does not certify a

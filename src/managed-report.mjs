@@ -4,6 +4,7 @@ import { readRegistry, visibleRegistry } from './registry.mjs'
 import { compare } from './report.mjs'
 import { readState } from './store.mjs'
 import { liveBlockers } from './readiness.mjs'
+import { analyzeResearch } from './research-analysis.mjs'
 
 export function compareRuns(runs){
   return Object.fromEntries(['A','B','C','D'].map(recipe=>{
@@ -35,7 +36,8 @@ export async function managedReport(root){
   const state=visibleRegistry(readRegistry(root)),legacy=await readState(join(root,'lab-state.json'))
   let audit=null
   try{audit=JSON.parse(await readFile(join(root,'analysis/pilot-audit.json'),'utf8'))}catch(error){if(error.code!=='ENOENT')throw error}
-  return {schemaVersion:2,generatedAt:new Date().toISOString(),comparisonReady:liveBlockers.length===0&&state.runs.some(row=>row.evidenceValid===true),blockers:liveBlockers,selectedRecipe:state.selectedRecipe,active:state.active,summary:compareRuns(state.runs),runs:state.runs,
+  const research=analyzeResearch(state.runs)
+  return {schemaVersion:2,generatedAt:new Date().toISOString(),comparisonReady:liveBlockers.length===0&&research.protocols.some(row=>row.comparisonAvailable),blockers:liveBlockers,selectedRecipe:state.selectedRecipe,active:state.active,summary:compareRuns(state.runs),summaryScope:'operational diagnostics only; use research.protocols for comparisons',research,runs:state.runs,
     legacy:{comparisonEligible:false,source:'lab-state.json',summary:compare(legacy.trials),trials:legacy.trials,evidenceAudit:audit},
   }
 }

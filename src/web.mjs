@@ -13,9 +13,10 @@ import { committedTwd } from './broker/accounting.mjs'
 import { executionBackend } from './linux-runtime.mjs'
 import { verifyLinuxImage } from './isolation/linux-dsh.mjs'
 import { readRegistry } from './registry.mjs'
+import { authoritativeBudgetRoot } from './broker/location.mjs'
 
 const prefix='/api/architecture-lab'
-const staticFiles=new Map([['/architecture-lab','index.html'],['/architecture-lab/app.mjs','app.mjs'],['/architecture-lab/style.css','style.css']])
+const staticFiles=new Map([['/architecture-lab','index.html'],['/architecture-lab/app.mjs','app.mjs'],['/architecture-lab/research.mjs','research.mjs'],['/architecture-lab/style.css','style.css']])
 const types={html:'text/html; charset=utf-8',mjs:'text/javascript; charset=utf-8',css:'text/css; charset=utf-8'}
 const json=(res,status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(value))}
 
@@ -44,7 +45,7 @@ export async function budgetView(root){
     const ledger=JSON.parse(await readFile(join(root,'budget.json'),'utf8'))
     const committed=committedTwd(ledger)
     const unknown=ledger.entries.filter(e=>e.accountingVersion!==2||e.status!=='metered').length
-    return {capTwd:300,committedTwd:committed,availableTwd:Math.max(0,300-committed),unknownRequests:unknown,estimatedMeteredTwd:ledger.entries.filter(e=>e.accountingVersion===2&&e.status==='metered').reduce((n,e)=>n+e.actualTwd,0),invoiceTotalTwd:null}
+    return {capTwd:300,committedTwd:committed,availableTwd:Math.max(0,300-committed),unknownRequests:unknown,estimatedMeteredTwd:ledger.entries.filter(e=>e.accountingVersion===2&&e.status==='metered').reduce((n,e)=>n+e.actualTwd,0),historicalUpperBoundTwd:(ledger.reconciliations??[]).reduce((sum,row)=>sum+row.chargedUpperBoundTwd,0),invoiceTotalTwd:null}
   }catch(error){if(error.code==='ENOENT')return {capTwd:300,committedTwd:0,availableTwd:300,unknownRequests:0,estimatedMeteredTwd:0,invoiceTotalTwd:null};return {capTwd:300,committedTwd:null,availableTwd:null,unknownRequests:null,estimatedMeteredTwd:null,invoiceTotalTwd:null,error:'費用帳本無法讀取；付費實驗保持停用。'}}
 }
 
@@ -94,7 +95,7 @@ async function evidence(root,runId,kind){
   finally{await handle.close()}
 }
 
-export function createLabWebHandler({root,port,launch,token=randomBytes(32).toString('hex')}){
+export function createLabWebHandler({root,budgetRoot=root,port,launch,token=randomBytes(32).toString('hex')}){
   let availability,checkedAt=0
   return async(req,res)=>{
     let origin
@@ -114,7 +115,7 @@ export function createLabWebHandler({root,port,launch,token=randomBytes(32).toSt
       if(req.method==='GET'&&url.pathname===prefix+'/state'){
         const state=await recoverRegistry(root),report=await managedReport(root)
         if(!availability||Date.now()-checkedAt>30000){availability=await recipeAvailability(root);checkedAt=Date.now()}
-        return json(res,200,{...report,executionBackend:executionBackend(),attention:state.attention??null,budget:await budgetView(root),tasks,availability,liveReady:liveBlockers.length===0})
+        return json(res,200,{...report,executionBackend:executionBackend(),attention:state.attention??null,budget:await budgetView(budgetRoot),tasks,availability,liveReady:liveBlockers.length===0})
       }
       if(req.method==='GET'&&url.pathname===prefix+'/report')return json(res,200,await managedReport(root))
       if(req.method==='GET'&&url.pathname===prefix+'/evidence')return json(res,200,await evidence(root,url.searchParams.get('runId'),url.searchParams.get('kind')))
@@ -125,6 +126,6 @@ export function createLabWebHandler({root,port,launch,token=randomBytes(32).toSt
 }
 
 export function registerLabWeb(ctx,{root,launch}){
-  const handler=createLabWebHandler({root,launch,port:ctx.webServer.port})
+  const handler=createLabWebHandler({root,budgetRoot:authoritativeBudgetRoot,launch,port:ctx.webServer.port})
   for(const path of ['/architecture-lab',prefix])ctx.effect(()=>ctx.webServer.register({kind:'prefix',path,handler}),`architecture-lab route ${path}`)
 }

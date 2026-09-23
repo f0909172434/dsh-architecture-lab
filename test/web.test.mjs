@@ -35,7 +35,7 @@ test('web page, selection, labelled report and validated offline launch share th
   const page=await call('/architecture-lab');assert.equal(page.status,200)
   assert.match(page.headers.get('content-security-policy'),/frame-ancestors 'self'/)
   assert.ok((await page.text()).includes(token))
-  for(const path of ['app.mjs','style.css'])assert.equal((await call('/architecture-lab/'+path)).status,200)
+  for(const path of ['app.mjs','research.mjs','style.css'])assert.equal((await call('/architecture-lab/'+path)).status,200)
   assert.equal((await action({action:'select',recipe:'B'})).status,200)
   assert.equal(readRegistry(root).selectedRecipe,'B')
   assert.equal((await action({action:'check',recipe:'B',repetition:2})).status,200)

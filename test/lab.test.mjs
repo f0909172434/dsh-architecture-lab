@@ -13,12 +13,22 @@ import { tasks } from '../tasks/catalog.mjs'
 
 const pricing = { provider: 'deepseek-official', model: 'deepseek-flash', source: 'https://api-docs.deepseek.com/quick_start/pricing/', fxSource: 'https://open.er-api.com/v6/latest/USD', checkedAt: new Date().toISOString(), inputUsdPerMillion: 0.3, cacheHitUsdPerMillion: 0.006, outputUsdPerMillion: 1.2, usdTwd: 31.7 }
 
-test('schedule is 72 independent trial identities with rotated recipe order', () => {
+test('schedule balances recipe positions across all 72 unique trial identities', () => {
   const rows = trialOrder(tasks.map((task) => task.id))
   assert.equal(rows.length, 72)
   assert.equal(new Set(rows.map((row) => `${row.taskId}:${row.recipe}:${row.repetition}`)).size, 72)
-  assert.deepEqual(rows.slice(0, 4).map((row) => row.recipe), ['A', 'B', 'C', 'D'])
-  assert.deepEqual(rows.slice(24, 28).map((row) => row.recipe), ['B', 'C', 'D', 'A'])
+  const counts=Object.fromEntries(['A','B','C','D'].map(id=>[id,[0,0,0,0]]))
+  for(let i=0;i<rows.length;i+=4){
+    const block=rows.slice(i,i+4)
+    assert.equal(new Set(block.map(row=>row.taskId+':'+row.repetition)).size,1)
+    assert.equal(new Set(block.map(row=>row.recipe)).size,4)
+    block.forEach((row,index)=>counts[row.recipe][index]++)
+  }
+  assert.ok(Object.values(counts).flat().every(count=>count===4||count===5))
+  assert.notEqual(rows[24].taskId,rows[0].taskId)
+  assert.deepEqual(trialOrder(tasks.map(task=>task.id)),rows)
+  assert.throws(()=>trialOrder(['same','same']),/unique/)
+  assert.throws(()=>trialOrder(['one'],4),/1-3/)
 })
 
 test('price gate rejects stale data and unknown routes before dispatch', () => {

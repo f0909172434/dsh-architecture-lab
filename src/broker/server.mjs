@@ -1,10 +1,11 @@
 import { createServer } from 'node:http'
 import { randomBytes, timingSafeEqual } from 'node:crypto'
 import { appendFile, mkdir, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { loadPricing } from '../budget.mjs'
 import { assertLiveReady } from '../readiness.mjs'
 import { reserveDispatch, settleDispatch } from './accounting.mjs'
+import { authoritativeBudgetRoot } from './location.mjs'
 
 const MAX_BODY = 1024 * 1024
 const MAX_RESPONSE = 4 * 1024 * 1024
@@ -161,6 +162,7 @@ async function start({ root, trialId, apiKey, endpoint, durationMs = 600_000 }) 
 /** Live path stays gated until the whole DSH process is demonstrably jailed. */
 export async function startModelBroker(options) {
   assertLiveReady()
+  if(resolve(options.root)!==authoritativeBudgetRoot)throw new Error('live calls must use the original shared budget ledger')
   return start({ ...options, endpoint: 'https://api.deepseek.com/chat/completions' })
 }
 

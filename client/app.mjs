@@ -1,3 +1,4 @@
+import { renderResearch } from './research.mjs'
 const $=id=>document.getElementById(id)
 const token=document.querySelector('meta[name="lab-token"]').content
 let state=null,busy=false,refreshing=false,evidenceRun=null,connected=false
@@ -63,12 +64,12 @@ function render(){
   $('budget').textContent=money(state.budget.committedTwd)+' / 300'
   $('counts').textContent=String(state.runs.length)
   $('counts-note').textContent=`${state.runs.filter(r=>r.status==='completed').length} 次完成 · ${state.runs.filter(r=>r.status==='interrupted').length} 次中斷`
-  const eligible=Object.values(state.summary).reduce((n,r)=>n+r.eligibleFirstAttempts,0)
+  const eligible=state.research.protocols.reduce((total,protocol)=>total+Object.values(protocol.recipes??{}).reduce((n,r)=>n+r.launchedFirstAttempts,0),0)
   $('eligible').textContent=eligible?`${eligible} 次有效試驗`:'尚無有效比較'
   $('blockers').replaceChildren(...state.blockers.map(text=>node('li',text)))
   if(!$('task').options.length)for(const task of state.tasks){const option=node('option',task.id);option.value=task.id;$('task').append(option)}
-  $('legacy').textContent=`保留 ${state.legacy.trials.length} 筆舊紀錄，均排除於正式比較。${state.budget.unknownRequests??'未知數量'} 次用量仍需核對。`
-  $('comparison').replaceChildren(...Object.entries(state.summary).map(([id,row])=>{const article=node('article');article.append(node('span',`${id} · ${names[id][0]}`),node('strong',row.successRate==null?'—':`${(row.successRate*100).toFixed(1)}%`),node('small',`${row.eligibleFirstAttempts} 次有效首試 · ${row.falseCompletions} 次錯誤完成宣稱`));return article}))
+  $('legacy').textContent=`保留 ${state.legacy.trials.length} 筆舊紀錄，均排除於正式比較。${state.budget.historicalUpperBoundTwd?`歷史呼叫已按 ${money(state.budget.historicalUpperBoundTwd)} 保守總額上界核對；逐筆費用仍未知。`:`${state.budget.unknownRequests??'未知數量'} 次用量仍需核對。`}`
+  renderResearch(document,$('comparison'),state.research)
   recipeCards();renderRuns();buttons()
 }
 async function refresh(){

@@ -4,19 +4,35 @@ import { withLedger, validatePricing } from '../budget.mjs'
 const roundUp = amount => Math.ceil(amount * 100) / 100
 export const fingerprint = value => createHash('sha256').update(JSON.stringify(value)).digest('hex')
 
-/** Full legacy reservations stay charged. Only verified v2 HTTP dispatches
- * release unused headroom; an interrupted/ambiguous dispatch keeps its bound.
+/** Legacy reservations stay charged unless covered by a reviewed provider
+ * aggregate bound. Verified v2 dispatches settle individually; an interrupted
+ * or ambiguous dispatch keeps its bound.
  */
 export function committedTwd(ledger) {
   if (ledger?.capTwd !== 300 || !Array.isArray(ledger.entries)) throw new Error('invalid budget ledger')
+  const covered=new Set()
+  let grouped=0
+  for(const group of ledger.reconciliations??[]){
+    if(group.kind!=='provider-window-upper-bound-v1'||!Array.isArray(group.coveredEntryIds)||!group.coveredEntryIds.length||!Number.isFinite(group.chargedUpperBoundTwd)||group.chargedUpperBoundTwd<=0)throw new Error('invalid historical reconciliation')
+    const p=group.calculation
+    if(!p||!Number.isFinite(p.displayedCny)||p.displayedCny<0||p.displayUnitCny!==.01||!Number.isFinite(p.cnyToTwd)||p.cnyToTwd<=0||p.fxMargin!==1.1||group.chargedUpperBoundTwd!==Math.ceil((p.displayedCny+p.displayUnitCny)*p.cnyToTwd*p.fxMargin))throw new Error('invalid reconciliation bound')
+    const entries=group.coveredEntryIds.map(id=>{
+      const matches=ledger.entries.filter(entry=>entry.id===id)
+      if(matches.length!==1||covered.has(id)||matches[0].accountingVersion===2)throw new Error('invalid reconciliation coverage')
+      covered.add(id);return matches[0]
+    })
+    if(fingerprint(entries)!==group.coveredEntriesSha256||group.chargedUpperBoundTwd>entries.reduce((sum,row)=>sum+row.reservedTwd,0)||!Array.isArray(group.evidence)||!group.evidence.length||group.evidence.some(row=>!/^([a-f0-9]{64})$/.test(row.sha256??'')))throw new Error('historical evidence changed')
+    grouped+=group.chargedUpperBoundTwd
+  }
   return ledger.entries.reduce((sum, entry) => {
     if (!Number.isFinite(entry.reservedTwd) || entry.reservedTwd <= 0) throw new Error('invalid reservation')
+    if(covered.has(entry.id))return sum
     if (entry.accountingVersion === 2 && entry.status === 'metered') {
       if (!Number.isFinite(entry.actualTwd) || entry.actualTwd < 0) throw new Error('invalid metered cost')
       return sum + entry.actualTwd
     }
     return sum + entry.reservedTwd
-  }, 0)
+  }, grouped)
 }
 
 export function dispatchBound(body, pricing) {

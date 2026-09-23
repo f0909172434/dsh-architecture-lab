@@ -15,6 +15,8 @@ import { readIsolatedCredential } from './credential.mjs'
 import { brokerCompletion } from './completion.mjs'
 import { verifyContainerCleanup } from './linux-process.mjs'
 import { executionBackend } from './linux-runtime.mjs'
+import { ledgerRootFor, authoritativeBudgetRoot } from './broker/location.mjs'
+import { loadPricing } from './budget.mjs'
 
 async function entriesAt(root) {
   try { return JSON.parse(await readFile(join(root,'budget.json'),'utf8')).entries }
@@ -50,7 +52,7 @@ export async function recoverRegistry(root) {
   const lost=before.runs.find(run=>run.runId===active.runId)
   let accounting={}
   if(lost?.mode&&lost.trialId){
-    const ledgerRoot=lost.mode==='offline'?join(root,'v2','offline-budget'):root
+    const ledgerRoot=ledgerRootFor(root,lost.mode)
     const priorIds=new Set(before.runs.filter(run=>run.trialId===lost.trialId&&run.runId!==lost.runId).flatMap(run=>run.requestIds??[]))
     const entries=(await entriesAt(ledgerRoot)).filter(row=>row.trialId===lost.trialId&&!priorIds.has(row.id))
     const completion=await brokerCompletion(ledgerRoot,entries)
@@ -101,7 +103,7 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
   const controller=new AbortController()
   const abort=()=>controller.abort()
   const control=await openControl(runId,abort)
-  const ledgerRoot=mode==='offline'?join(root,'v2','offline-budget'):root
+  const ledgerRoot=ledgerRootFor(root,mode)
   const outputDir=join(root,'v2','runs',runId)
   let provider,broker,record,priorIds=new Set(),result
   try{
@@ -127,7 +129,8 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       provider=await startOfflineProvider({recipe,responseDelayMs,onRequest:({step})=>writeFile(join(outputDir,'request-progress.json'),JSON.stringify({step,at:new Date().toISOString()})+'\n',{mode:0o600})})
       broker=await startOfflineBroker({root:ledgerRoot,trialId,endpoint:provider.endpoint,durationMs:600000})
     }else{
-      const apiKey=await readIsolatedCredential(join(root,'dsh-home'))
+      if(JSON.stringify(protocol.pricing)!==JSON.stringify(await loadPricing(ledgerRoot)))throw new Error('protocol prices differ from the shared live budget')
+      const apiKey=await readIsolatedCredential(join(authoritativeBudgetRoot,'dsh-home'))
       broker=await startModelBroker({root:ledgerRoot,trialId,apiKey,durationMs:600000})
     }
     result=await evaluateIsolatedTrial({root:outputDir,broker,recipe,taskId,signal:controller.signal,backend,

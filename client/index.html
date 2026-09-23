@@ -9,7 +9,7 @@
 <p class="muted">離線驗證使用固定的小型程式任務與模擬回應，測試整合是否可運作，不呼叫付費模型。</p>
 <details><summary>正式實驗</summary><ul id="blockers"></ul><div class="controls"><label>任務 <select id="task"></select></label><button id="start" disabled>執行單次試驗</button><button id="batch" disabled>依序執行四組</button></div><p class="muted">總額 NT$300；每次最多 12 次模型請求、10 分鐘。日常使用模式尚未開放。</p></details></section>
 <section class="panel"><div class="section-head"><h2>執行紀錄</h2><label>顯示 <select id="filter"><option value="all">全部配方</option><option>A</option><option>B</option><option>C</option><option>D</option></select></label></div><div class="table-wrap"><table><thead><tr><th>配方／任務</th><th>狀態</th><th>外部測試</th><th>模型宣稱</th><th>用量／耗時</th><th>操作</th></tr></thead><tbody id="runs"></tbody></table></div><p id="empty" class="empty">尚無執行紀錄。選擇配方後，可先做離線驗證。</p></section>
-<section class="panel"><h2>四組比較</h2><p class="muted">只納入證據有效的首次正式試驗；不以恢復後的成功取代原始結果。</p><div id="comparison" class="comparison"></div></section>
+<section class="panel"><h2>四組比較</h2><p class="muted">各協定分開呈現；只納入有效首試，不以恢復後的成功替換。配對比較限於同任務、同次獨立執行的完整四組；未知測試仍計入已啟動分母。</p><div id="comparison"></div></section>
 <details class="panel"><summary>歷史資料與限制</summary><p id="legacy"></p><p>早期試驗已有污染問題，不用來宣稱任何架構勝出。研究結論只適用於實測任務與模型，不代表已實現 AGI 或持續學習。</p></details>
 <dialog id="evidence"><div class="section-head"><h2>實驗證據</h2><button id="close-evidence">關閉</button></div><label>內容 <select id="evidence-kind"><option value="record">整合紀錄</option><option value="outcome">外部驗收</option><option value="upstream">上游原始報告</option><option value="process">程序輸出</option></select></label><pre id="evidence-text"></pre></dialog>
 <footer>所有資料保留於本機。匯出內容可能包含本機路徑與任務輸出；公開前請先檢查。</footer>

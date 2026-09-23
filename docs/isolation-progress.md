@@ -124,8 +124,9 @@ subsequent management and memory changes add focused regressions.
   Unacknowledged container creation retains uncertainty and blocks restarting.
 - Review/freeze protocol v2 and audit evidence provenance. Completion markers
   now come from broker-owned provider streams, separately from correctness.
-- Reconcile historical and incident costs without resetting the NT$300 cap.
-  Current reservations consume the full allowance; actual charges are not NT$300.
+- Historical and incident costs were reconciled in dev.6 using a conservative
+  provider-day aggregate bound. Original entries and the NT$300 cap remain intact;
+  individual historical request costs are still unknown.
 - Validate the real DSH interface. Prior administrative browser access rejection
   remains unresolved and has not been bypassed.
 - Verify public clean-checkout CI. Publish development work with explicit limits;

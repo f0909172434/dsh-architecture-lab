@@ -27,3 +27,9 @@ This is native HTTP/module acceptance only. Browser rendering, keyboard use,
 visual layout and interactive navigation have not been accepted. The prior
 administrative browser restriction remains unresolved and has not been bypassed.
 A panel source file or passing HTTP probe does not prove graphical completion.
+
+The dev.6 comparison panel groups results by immutable protocol, displays
+complete/incomplete block coverage and task-balanced memory/planning contrasts,
+and retains unknown cost/time differences. It never pools protocols or declares
+a winner. Text-tree tests verify report content only; they do not establish
+visual layout or graphical acceptance.

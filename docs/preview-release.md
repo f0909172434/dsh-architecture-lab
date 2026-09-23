@@ -1,4 +1,27 @@
-# 0.1.0-dev.4 development preview
+# 0.1.0-dev.6 development preview
+
+Desktop 0.17.0 is installed and its recommended Harness remains 0.1.5-rc.3.
+The Desktop installer adds a non-commercial condition; the separately published
+plugin source remains MIT. Three README languages include this distinction.
+
+Reports now compare matched first attempts within each protocol, disclose
+incomplete coverage and unknown cost/time, and use equal task weights. Balanced
+recipe positions replace the old order that never put D first. Prompts clarify
+existing task expectations before eligible live trials. The method is a
+[candidate for review](research-protocol.md), not an accepted study.
+
+Historical budget reservations were reconciled against a closed provider-day UI
+observation using a conservative aggregate bound. Original entries and the exact
+old ledger are retained; unknown individual costs are not manufactured. All live
+experiment roots now share the original allowance. No new paid calls were made.
+
+See [this version's checks](dev6-validation.json). Older dev.5 evidence in
+[Linux integration results](linux-integration-results.json) remains unchanged.
+Graphical acceptance, daily recipe use, method review and eligibility validation
+are still incomplete. This is not a stable release or evidence of an architecture
+winner.
+
+# Historical dev.4 development preview
 
 A dedicated Architecture Lab sidebar panel now serves through DSH's client
 module graph and web server. Recipe selection, offline start, authenticated

@@ -16,6 +16,15 @@ scripted: this is integration evidence, not architecture-performance research.
 The v1 pilots remain ineligible. There is no valid winner or stable release.
 [Linux evidence](docs/linux-integration-results.json) · [Roadmap](ROADMAP.md).
 
+
+Comparison exports and the panel now separate protocol identities and show
+matched A/B/C/D contrasts, missing coverage and unknown costs. The order is
+counterbalanced across blocks. See the [candidate method](docs/research-protocol.md).
+Historical costs have been reconciled using a conservative provider-day bound;
+original entries are preserved, per-request costs remain unknown, and all live
+experiment directories share the original NT$300 cap. Method review and graphical
+acceptance still block paid starts. [Current checks](docs/dev6-validation.json).
+
 | Recipe | Memory | Planning |
 | --- | --- | --- |
 | A | Native DSH | Native DSH |
@@ -61,7 +70,7 @@ Installation downloads packages into isolated project directories; it does not
 update global DSH or copy credentials. See [installation and recovery](docs/installation.md).
 Versions are recorded in [versions.json](versions.json). Harness latest-channel
 0.1.5-rc.3 is staged for v2; historical pilots used rc.2. Engram is 0.7.12,
-planner 0.5.0, evaluator 0.4.0. Desktop 0.16.0 was verified against its official
+planner 0.5.0, evaluator 0.4.0. Desktop 0.17.0 was verified against its official
 release checksum and installed locally on 2026-09-24.
 
 The Engram patch corrects human-message attribution and aligns its local
@@ -118,3 +127,7 @@ after host-controller SIGKILL. Unknown reservations are retained.
 [MIT license](LICENSE). Upstream projects retain their own licenses.
 Contributions must preserve budget limits, fail-closed behavior, negative
 results, and the distinction between offline tests and real-interface acceptance.
+
+The separately installed Desktop 0.17.0 has an additional **non-commercial-only**
+condition. This plugin remains MIT; its license does not override Desktop terms.
+See [third-party notices](THIRD_PARTY_NOTICES.md).

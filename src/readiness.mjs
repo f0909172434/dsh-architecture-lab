@@ -4,7 +4,6 @@
 export const liveBlockers = Object.freeze([
   'v2 研究協定尚未完成審查與凍結',
   'DSH 圖形介面尚未完成驗收；Linux 離線驗證不代替實際介面驗收',
-  '歷史與意外呼叫費用尚待核對，NT$300 預留額度維持不變',
 ])
 
 export function assertLiveReady() {

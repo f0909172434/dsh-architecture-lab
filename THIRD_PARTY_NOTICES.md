@@ -6,6 +6,7 @@ copies and complete dependency trees are not redistributed in this repository.
 
 | Component | Pinned version/source | Declared license | Use |
 | --- | --- | --- | --- |
+| [Deepseek Harness Desktop](https://github.com/dsh-tauri/deepseek-harness-desktop/releases/tag/v0.17.0) | 0.17.0 | MIT plus non-commercial condition; additional terms prevail | Optional desktop host; installed separately |
 | DeepSeek Harness | `@deepseek-ai/dsh` 0.1.5-rc.3 | See installed package/source terms | Host runtime; downloaded separately |
 | [Engram](https://github.com/kenz1117/dsh-engram) | `@kenz1117/dsh-engram` 0.7.12 | MIT; package includes LICENSE | Memory integration; downloaded separately |
 | [Plan-and-Execute](https://github.com/jimmyzhang219/dsh-plan-and-execute) | 0.5.0 | MIT in package manifest | Planning integration; downloaded separately |
@@ -17,6 +18,13 @@ LICENSE file was found in that revision or the installed planning package.
 Do not invent or remove upstream copyright notices when adding further patches
 or redistributing source. Engram's included LICENSE must accompany any future
 redistributed copy. This project's MIT license does not replace upstream terms.
+
+Desktop 0.17.0's installer prohibits direct or indirect use for commercial gain,
+monetary compensation, or as part of a paid commercial product or service. Its
+additional condition takes precedence over the MIT text. It is not an
+unrestricted MIT distribution. This repository's own source remains MIT; the
+Desktop binary is not redistributed here. Review the installer agreement when
+installing or updating Desktop.
 
 ## Published patches
 

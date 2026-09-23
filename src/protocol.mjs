@@ -7,6 +7,7 @@ import { trialOrder } from './recipes.mjs'
 import { verifyDependencyBuild } from './dependency-build.mjs'
 import { loadPricing } from './budget.mjs'
 import { verifyLinuxImage } from './isolation/linux-dsh.mjs'
+import { analysisPolicy } from './research-analysis.mjs'
 
 export const hashBytes = bytes => createHash('sha256').update(bytes).digest('hex')
 export const protocolPath = root => join(root,'v2','protocol.json')
@@ -46,6 +47,7 @@ export async function prepareProtocol(root){
   for(const ref of refs)ref.sha256=hashBytes(await readFile(join(ref.scope==='project'?project:root,ref.path)))
   const contents={schemaVersion:2,reviewStatus:'pending',execution:{backend:'linux',imageId:image.imageId,baseImage:image.baseImage,architecture:image.architecture,sourceManifest:image.manifest,dependencyLocksSha256:image.dependencyLocksSha256},model:'deepseek-official/deepseek-flash',reasoningEffort:'high',maxRequestsPerTrial:12,maxDurationMs:600000,capTwd:300,plugins:pins,builds,pricing,files:refs,trials:trialOrder(tasks.map(t=>t.id)),
     outcomes:{correctness:'external isolated value comparison',claimedCompletion:'explicit completion marker only; missing marker is unknown',resumes:'fresh attempt, retained separately; never best-of success',denominator:'every launched independent first attempt, including limits and interruptions'},
+    analysis:analysisPolicy,
   }
   const protocol={...contents,id:hashBytes(JSON.stringify(contents)),preparedAt:new Date().toISOString()}
   await mkdir(join(root,'v2'),{recursive:true,mode:0o700})

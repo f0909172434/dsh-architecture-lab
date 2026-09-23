@@ -61,9 +61,17 @@ Keep `state/`, credentials, raw sessions and personal memory private. The broker
 retains the provider key in a trusted parent and gives the jailed DSH only a
 temporary token. Its integration passes scripted tests; paid starts remain held.
 
-Never reset `state/budget.json`. Historical reservations remain charged. The
-compatibility incident holds the remaining allowance pending reconciliation;
-this does not mean the provider charged NT$300. Unknown usage is never zero.
+Never reset `state/budget.json`. All live experiment directories share this
+original ledger. A reviewed conservative provider-day bound now covers the old
+reservations without deleting or rewriting the original entries. Its exact
+before-image is preserved. Per-request historical costs remain unknown; this is
+not an invoice. New v2 dispatches are added separately under the same NT$300 cap.
+Offline probes retain separate synthetic ledgers.
+
+Desktop 0.17.0 was separately installed after explicit acceptance of its MIT plus
+non-commercial condition. This plugin's MIT license does not override Desktop's
+restriction. See [upstream terms](../THIRD_PARTY_NOTICES.md). Desktop is not
+bundled with the plugin; the latest recommended Harness remains 0.1.5-rc.3.
 
 ## Credential-free integration
 
