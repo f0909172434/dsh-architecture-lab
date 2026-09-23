@@ -2,6 +2,8 @@
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md)
 
+[公开源码](https://github.com/f0909172434/dsh-architecture-lab) · MIT · 开发预览
+
 比较记忆与规划效果的本地 DSH 插件，复用 DSH、
 [Engram](https://github.com/kenz1117/dsh-engram)、
 [Plan-and-Execute](https://github.com/jimmyzhang219/dsh-plan-and-execute)
