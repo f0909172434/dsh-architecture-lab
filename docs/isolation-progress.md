@@ -1,9 +1,11 @@
 # Isolation and accounting repair evidence
 
 This is a development milestone, not acceptance of the full architecture lab.
-The live hold remains active. `src/evaluator.mjs` now connects the new modules
-to the upstream evaluator through a contained-process adapter. The management
-CLI still uses the held v1 entry; its old results remain ineligible.
+The live hold remains active. The management CLI and panel use the v2 controller
+and the isolated upstream evaluator. Legacy v1 results remain ineligible.
+This page retains the earlier repair findings; use the
+[current acceptance map](acceptance-status.md) and [dev.9 evidence](dev9-validation.json)
+for the latest coverage and outstanding work.
 
 ## Trusted judge
 
@@ -19,10 +21,10 @@ defects. Positive execution and negative containment probes run together;
 sandbox startup failure does not qualify as successful containment. Canonical
 root checks cover macOS `/var`/`/private/var` aliases and symbolic links.
 
-The new case catalog is intended for protocol v2. Its hash has not yet been
-frozen into a live schedule. It must not be silently substituted into v1 pilot
-results. The fixed small test suite measures only the specified examples and
-edge cases, not general program correctness or resistance to kernel exploits.
+The v2 case catalog is now bound into the dev.9 local candidate and its separate
+single-agent review receipt. No eligible live trial has been launched. It must
+not be silently substituted into v1 pilot results. The fixed small test suite
+measures only the specified examples and edge cases, not general program correctness or resistance to kernel exploits.
 
 ## Native DSH backend boundary
 
@@ -53,9 +55,10 @@ pinned text-only model/effort/output limits, no redirect following, and no HTTP
 retry loop. Reliable complete SSE usage settles the actual cache-hit, cache-miss,
 and output cost; malformed or interrupted usage retains its reservation.
 
-Legacy reservations remain fully charged and unchanged. Only v2 reservations
-with verified usage release unused headroom. Bound violations stop subsequent
-dispatches. The current broker buffers a bounded response before delivery;
+Original legacy entries remain unchanged. A reviewed conservative provider-day
+reconciliation now bounds their aggregate charge; individual historical costs
+remain unknown. New v2 reservations release unused headroom only with verified
+usage. Bound violations stop subsequent dispatches. The current broker buffers a bounded response before delivery;
 live streaming responsiveness has not been validated. Paid broker startup is
 still held. Tests use a loopback fake provider and dummy credentials only.
 
@@ -122,15 +125,18 @@ subsequent management and memory changes add focused regressions.
   abrupt controller death, explicit resume and cross-trial memory mutation.
   Native macOS process-group cleanup remains insufficient; the default is Linux.
   Unacknowledged container creation retains uncertainty and blocks restarting.
-- Review/freeze protocol v2 and audit evidence provenance. Completion markers
-  now come from broker-owned provider streams, separately from correctness.
+- One exact dev.9 protocol has a substantive single-agent review receipt. Each
+  live launch must still match its reviewed sources, image, snapshots and fresh
+  prices. Independent final review remains outstanding. Completion markers come
+  from broker-owned provider streams, separately from correctness.
 - Historical and incident costs were reconciled in dev.6 using a conservative
   provider-day aggregate bound. Original entries and the NT$300 cap remain intact;
   individual historical request costs are still unknown.
 - Validate the real DSH interface. Prior administrative browser access rejection
   remains unresolved and has not been bypassed.
-- Verify public clean-checkout CI. Publish development work with explicit limits;
-  a stable v0.1 requires the outstanding product and research acceptance gates.
+- Public dev.9 clean-checkout tests and macOS/Linux CI passed. A stable v0.1
+  still requires graphical acceptance, real-model trials, daily-use acceptance
+  and independent final review; another preview is not a substitute.
 
 ## Preview CI follow-up
 

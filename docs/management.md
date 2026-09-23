@@ -1,4 +1,4 @@
-# Management preview (dev.7)
+# Management preview (dev.9)
 
 The native `/architecture-lab` command and the CLI now share one controller and
 a transactional SQLite registry. Each attempt gets a new directory and isolated
@@ -24,15 +24,17 @@ In an actual DSH command input, use `/architecture-lab check B 1`, `status`,
 a background process; `status` confirms whether it started and reports the
 result. Repeating a completed identity is rejected; use another repetition
 (1–3) or a fresh experiment root. A resumed attempt retains the first attempt's
-record, uses a fresh world, and shares its cumulative 12-request allowance.
+record, uses a fresh world, and shares its cumulative 12-request allowance and
+original ten-minute deadline, including time between attempts.
 There is no automatic retry and no best-of scoring.
 
 `run-one`, `resume-one`, `run-batch`, and DSH `start`, `resume`, `batch` remain
 held before credentials or paid evidence are touched. Management-session model
 streams are independently disabled even if the trial hold is later removed.
-Daily recipe use remains future work. The dedicated panel now has native
-HTTP/module integration acceptance; graphical acceptance is still pending. See
-[panel details](web-panel.md).
+Daily project copies, drafts, offline examples, adoption and export are available
+in the panel and CLI; [paid daily use](daily-mode.md) remains held. The dedicated
+panel has native HTTP/module integration acceptance; graphical acceptance is
+still pending. See [panel details](web-panel.md).
 
 Never pass slash-looking command text as a positional argument to headless DSH:
 that is a model prompt, not command dispatch.
@@ -97,9 +99,12 @@ and new trials. An unreachable control endpoint with a live PID is not proof of
 death. Recovered usage comes from the durable ledger; uncertain reservations
 stay unchanged. The evidence panel can read the recovered registry record even
 when abrupt death prevented writing the final artifact. Graphical acceptance,
-daily recipe use and substantive protocol review remain outstanding. Review
-receipts and derived eligibility audits are implemented; see
-[review and qualification](protocol-review.md).
+real-model comparison, paid daily use and independent final review remain
+outstanding. A substantive single-agent method review and one exact dev.9
+protocol receipt are recorded; these do not remove the live gate or accept other
+protocols. See [method review](method-review.md),
+[review and qualification](protocol-review.md) and the
+[current acceptance map](acceptance-status.md).
 
 `prepare` writes an immutable protocol candidate with source, task, snapshot,
 build and pricing hashes; its review status is pending. It does not certify a

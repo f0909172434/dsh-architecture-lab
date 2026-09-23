@@ -4,6 +4,8 @@
 
 [公開原始碼](https://github.com/f0909172434/dsh-architecture-lab) · MIT · 開發預覽
 
+[完整交付驗收對照表](docs/acceptance-status.md)：各項證據與尚未完成的要求。
+
 比較記憶與規劃效果的本機 DSH 插件，重用 DSH、
 [Engram](https://github.com/kenz1117/dsh-engram)、
 [Plan-and-Execute](https://github.com/jimmyzhang219/dsh-plan-and-execute)

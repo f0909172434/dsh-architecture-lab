@@ -4,6 +4,8 @@
 
 [Public source](https://github.com/f0909172434/dsh-architecture-lab) · MIT · development preview
 
+[Full delivery acceptance status](docs/acceptance-status.md): evidence and remaining requirements.
+
 A local DSH plugin comparing memory and planning, reusing DSH,
 [Engram](https://github.com/kenz1117/dsh-engram),
 [Plan-and-Execute](https://github.com/jimmyzhang219/dsh-plan-and-execute), and

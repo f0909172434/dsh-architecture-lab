@@ -39,4 +39,4 @@ forms, a clearly labelled fixed offline sample, preview/adoption and new-directo
 export. Daily action bodies are bounded to 64 KiB; other writes retain their
 4 KiB limit. Both endpoints retain the same capability, Host and origin checks.
 The native HTTP probe now covers the daily flow and confirms it does not enter
-research reports. [Daily mode](daily-mode.md) · [Current checks](dev8-validation.json).
+research reports. [Daily mode](daily-mode.md) · [Current checks](dev9-validation.json).

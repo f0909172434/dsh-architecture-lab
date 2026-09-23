@@ -92,6 +92,6 @@ explicit resumes. `npm run check:web` exercises these controls through the real
 DSH HTTP server. Source checks also cover authentication, size limits, links,
 tampering, stale branches, competing mode starts and expired resumes.
 
-See [dev.8 checks](dev8-validation.json). These checks establish neither graphical
+See [dev.9 checks](dev9-validation.json). These checks establish neither graphical
 usability nor model quality. The existing administrative browser restriction has
 not been bypassed; graphical acceptance and paid daily use remain incomplete.
