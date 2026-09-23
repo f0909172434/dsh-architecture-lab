@@ -59,6 +59,7 @@ function renderRuns(){
   $('runs').replaceChildren(fragment)
 }
 function render(){
+  $('backend').textContent=state.executionBackend==='linux'?'Linux 隔離環境':'原生診斷環境'
   $('budget').textContent=money(state.budget.committedTwd)+' / 300'
   $('counts').textContent=String(state.runs.length)
   $('counts-note').textContent=`${state.runs.filter(r=>r.status==='completed').length} 次完成 · ${state.runs.filter(r=>r.status==='interrupted').length} 次中斷`

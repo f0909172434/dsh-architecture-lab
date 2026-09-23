@@ -14,7 +14,7 @@ pass a credential-free integration probe using real DSH tools, the upstream
 evaluator, an external billing broker and the isolated judge. Responses are
 scripted: this is integration evidence, not architecture-performance research.
 The v1 pilots remain ineligible. There is no valid winner or stable release.
-[Evidence](docs/integration-results.json) · [Roadmap](ROADMAP.md).
+[Linux evidence](docs/linux-integration-results.json) · [Roadmap](ROADMAP.md).
 
 | Recipe | Memory | Planning |
 | --- | --- | --- |
@@ -38,8 +38,7 @@ npm test
 npm run lab -- doctor
 ```
 
-No API key, provider account, dependency installation or upstream checkout is
-required. Kernel-containment tests require macOS. Other hosts run portable tests
+Source checks need no API key, provider account, dependency installation or upstream checkout. Kernel-containment tests require macOS. Other hosts run portable tests
 and explicitly report the unsupported isolation backend; there is no unrestricted
 fallback. `doctor` does not call a model.
 
@@ -51,6 +50,11 @@ npm run evaluator
 npm run engram
 npm run planner
 npm run profiles
+npm run seed
+npm run linux
+npm run linux:supervisor
+npm run linux:image
+npm run check:linux-dsh
 ```
 
 Installation downloads packages into isolated project directories; it does not
@@ -82,6 +86,9 @@ npm run check:memory
 npm run check:web
 ```
 
+The default execution backend is the dedicated Lima Linux VM, not Parallels.
+A missing or stale accepted image disables execution; there is no automatic native fallback.
+
 Memory acceptance writes a synthetic marker using real Engram tools: the writer
 retrieves it, fresh B/D trials do not, and the original snapshot stays unchanged.
 Auxiliary query rewriting uses the same pinned route and shares the request
@@ -92,8 +99,10 @@ ledger. [Management evidence and usage](docs/management.md).
 
 A dedicated [Lima/Linux environment](docs/linux-runtime.md) now passes eight
 real container probes, including detached descendants, cancellation, deadline,
-and host/guest controller SIGKILL. Full DSH recipes, the broker bridge and manager
-recovery are not yet connected to this backend. [Containment evidence](docs/linux-results.json).
+and host/guest controller SIGKILL. The default Linux backend now passes real DSH A/B/C/D tool execution,
+authenticated broker forwarding, Engram mutation isolation and explicit recovery
+after host-controller SIGKILL. Unknown reservations are retained.
+[Containment](docs/linux-results.json) · [Integration](docs/linux-integration-results.json).
 
 ## Evidence and limits
 

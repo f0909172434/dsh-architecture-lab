@@ -1,6 +1,6 @@
 {
   "name": "dsh-architecture-lab",
-  "version": "0.1.0-dev.4",
+  "version": "0.1.0-dev.5",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -45,7 +45,11 @@
     "linux": "node scripts/bootstrap-linux.mjs",
     "linux:supervisor": "node scripts/install-linux-supervisor.mjs",
     "check:linux": "node scripts/check-linux-containment.mjs",
-    "check:web": "node scripts/check-web.mjs"
+    "check:web": "node scripts/check-web.mjs",
+    "linux:image": "node scripts/build-linux-image.mjs",
+    "check:linux-bridge": "node scripts/check-linux-bridge.mjs",
+    "check:linux-dsh": "node scripts/check-linux-dsh.mjs",
+    "check:linux-recovery": "node scripts/check-linux-recovery.mjs"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",

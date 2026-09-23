@@ -1,10 +1,11 @@
 {
   "kind": "scripted-offline-management-acceptance",
   "date": "2026-09-24",
+  "backend": "linux",
   "researchEligible": false,
   "paidRequests": 0,
   "graphicalAcceptance": false,
-  "abruptControllerCleanupAccepted": false,
+  "abruptControllerCleanupAccepted": true,
   "records": {
     "management": {
       "offlineOnly": true,
@@ -41,6 +42,7 @@
     },
     "memory": {
       "schemaVersion": 1,
+      "backend": "linux",
       "offlineOnly": true,
       "paidRequests": 0,
       "comparisonEligible": false,
@@ -80,7 +82,22 @@
           "snapshotUnchanged": true
         }
       ],
-      "evidenceSha256": "acf18db0fbdde35307375fcfec7f87ac652e795c178ac45fe8acce16cde76ddf"
+      "evidenceSha256": "8db04c5a616b22c24826a9a1f24a8d3d8b05735bedcc64b27076ea5db5c25770"
+    },
+    "recovery": {
+      "createdAt": "2026-09-23T18:12:45.577Z",
+      "backend": "linux",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "controllerSigkillAfterDispatch": true,
+      "independentGuestCleanup": true,
+      "daemonAbsenceReadback": true,
+      "interruptedRecordPreserved": true,
+      "explicitResume": true,
+      "requestsAcrossResume": 5,
+      "uncertainReservationsUnchanged": true,
+      "evidenceSha256": "86e90ea6cea7ecf500d79be025297c480baac0effe6a8085d35fabbeb5dd5ab9"
     }
   }
 }

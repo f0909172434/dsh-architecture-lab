@@ -1,4 +1,4 @@
-# Management preview (dev.3)
+# Management preview (dev.5)
 
 The native `/architecture-lab` command and the CLI now share one controller and
 a transactional SQLite registry. Each attempt gets a new directory and isolated
@@ -8,8 +8,8 @@ comparison or a stable graphical product.
 
 ## Use after isolated setup
 
-Node.js 24+, the pinned runtime/evaluator/plugin builds and macOS containment
-are required for native checks. B/D also need synthetic snapshots from
+Node.js 24+, the pinned evaluator and accepted Lima/Linux runtime image
+are required for default checks; see [Linux setup](linux-runtime.md). B/D also need synthetic snapshots from
 `npm run seed`. In the repository:
 
 ```sh
@@ -85,13 +85,14 @@ paid requests in these new probes.
 
 ## Remaining acceptance
 
-Normal process-group cancellation passed. A confirmed dead controller is marked
-interrupted, and unknown cleanup blocks both resume and new trials in that
-experiment root. An unreachable control endpoint with a live PID is not treated
-as proof of death. This conservative recovery is not proof that detached
-processes or abrupt controller death are fully handled. Supervised cleanup,
-graphical acceptance, daily recipe use, protocol review and billing evidence
-remain necessary before the paid research comparison.
+Linux cancellation, host-controller SIGKILL and explicit recovery now pass with
+a root-owned terminal receipt and a fresh Docker absence check. A confirmed
+dead controller is marked interrupted; missing cleanup proof blocks both resume
+and new trials. An unreachable control endpoint with a live PID is not proof of
+death. Recovered usage comes from the durable ledger; uncertain reservations
+stay unchanged. The evidence panel can read the recovered registry record even
+when abrupt death prevented writing the final artifact. Graphical acceptance,
+daily recipe use, protocol review and billing evidence remain outstanding.
 
 `prepare` writes an immutable protocol candidate with source, task, snapshot,
 build and pricing hashes; its review status is pending. It does not certify a

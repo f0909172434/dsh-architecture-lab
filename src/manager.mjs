@@ -13,13 +13,28 @@ import { evaluateIsolatedTrial } from './evaluator.mjs'
 import { loadProtocol } from './protocol.mjs'
 import { readIsolatedCredential } from './credential.mjs'
 import { brokerCompletion } from './completion.mjs'
+import { verifyContainerCleanup } from './linux-process.mjs'
+import { executionBackend } from './linux-runtime.mjs'
 
 async function entriesAt(root) {
   try { return JSON.parse(await readFile(join(root,'budget.json'),'utf8')).entries }
   catch(error){if(error.code==='ENOENT')return [];throw error}
 }
 
+async function reconcileContainerCleanup(root){
+  for(const row of readRegistry(root).runs.filter(row=>['interrupted','failed'].includes(row.status)&&row.cleanupVerified===false&&row.backend==='linux'&&row.containerRunId)){
+    let proof
+    try{proof=await verifyContainerCleanup(row.containerRunId,row.containerImage)}catch{continue}
+    if(!proof)continue
+    updateRegistry(root,state=>{
+      const current=state.runs.find(item=>item.runId===row.runId)
+      if(['interrupted','failed'].includes(current?.status)&&current.cleanupVerified===false)Object.assign(current,{cleanupVerified:true,cleanupEvidence:proof})
+    })
+  }
+}
+
 export async function recoverRegistry(root) {
+  await reconcileContainerCleanup(root)
   const before=readRegistry(root),active=before.active
   if(!active)return visibleRegistry(before)
   try { await contactControl(active);return visibleRegistry(before) }
@@ -30,12 +45,27 @@ export async function recoverRegistry(root) {
     try{process.kill(active.pid,0)}catch(cause){if(cause.code==='ESRCH')absent=true}
     if(!absent)return {...visibleRegistry(before),attention:'執行狀態尚無法確認；不會自動重啟。'}
   }
+  // A killed owner never writes its final record. Recover usage only from the
+  // durable broker ledger; missing usage stays unknown and reservations remain.
+  const lost=before.runs.find(run=>run.runId===active.runId)
+  let accounting={}
+  if(lost?.mode&&lost.trialId){
+    const ledgerRoot=lost.mode==='offline'?join(root,'v2','offline-budget'):root
+    const priorIds=new Set(before.runs.filter(run=>run.trialId===lost.trialId&&run.runId!==lost.runId).flatMap(run=>run.requestIds??[]))
+    const entries=(await entriesAt(ledgerRoot)).filter(row=>row.trialId===lost.trialId&&!priorIds.has(row.id))
+    const completion=await brokerCompletion(ledgerRoot,entries)
+    accounting={requests:entries.length,requestIds:entries.map(row=>row.id),
+      costTwd:entries.every(row=>row.status==='metered'&&Number.isFinite(row.actualTwd))?entries.reduce((sum,row)=>sum+row.actualTwd,0):null,
+      reservedTwd:entries.reduce((sum,row)=>sum+row.reservedTwd,0),paidRequests:lost.mode==='offline'?0:entries.length,
+      claimedCompletion:completion.claimedCompletion,completionEvidence:completion,completionSource:'broker-captured-provider-stream'}
+  }
   updateRegistry(root,state=>{
     if(state.active?.runId!==active.runId)return
     const record=state.runs.find(run=>run.runId===active.runId)
-    if(record?.status==='running')Object.assign(record,{status:'interrupted',terminalReason:'controller_lost',finishedAt:new Date().toISOString(),evidenceValid:false,cleanupVerified:false})
+    if(record?.status==='running')Object.assign(record,{...accounting,status:'interrupted',terminalReason:'controller_lost',finishedAt:new Date().toISOString(),evidenceValid:false,cleanupVerified:false})
     state.active=null
   })
+  await reconcileContainerCleanup(root)
   return visibleRegistry(readRegistry(root))
 }
 
@@ -55,9 +85,11 @@ export function chooseRecipe(root,id) {
 /** Both CLI and DSH use this controller. Offline is a labelled installation
  * check with a separate synthetic ledger. There is no paid fallback or retry.
  */
-export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', repetition=1, mode='live', resume=false, signal, responseDelayMs=0 }) {
+export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', repetition=1, mode='live', resume=false, signal, responseDelayMs=0, backend=executionBackend() }) {
   if(mode!=='offline'&&mode!=='live')throw new Error('unknown execution mode')
   if(mode==='live')assertLiveReady() // before importing credentials or creating evidence
+  if(!['native','linux'].includes(backend))throw new Error('unsupported execution backend')
+  if(mode==='live'&&backend!=='linux')throw new Error('正式實驗必須使用 Linux 容器後端')
   const selected=selectRecipe(recipe),spec=task(taskId)
   if(!Number.isInteger(repetition)||repetition<1||repetition>3)throw new Error('次數須為 1、2 或 3')
   if(mode==='offline'&&taskId!=='stale-fee')throw new Error('安裝驗證只使用固定合成任務 stale-fee')
@@ -79,7 +111,8 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       const prior=state.runs.filter(run=>run.trialId===trialId)
       if(!resume&&prior.length)throw new Error('此試驗已有紀錄；中斷試驗請明確使用 resume，不會覆蓋')
       if(resume&&prior.at(-1)?.status!=='interrupted')throw new Error('沒有可恢復的中斷試驗')
-      const row={schemaVersion:2,trialId,runId,attempt:prior.length+1,taskId,category:spec.category,recipe,repetition,mode,status:'running',startedAt,protocolId:protocol?.id??null,evidenceValid:false,outputDir}
+      if(resume&&prior.at(-1)?.backend&&prior.at(-1).backend!==backend)throw new Error('恢復試驗須使用原來的執行後端')
+      const row={schemaVersion:2,trialId,runId,attempt:prior.length+1,taskId,category:spec.category,recipe,repetition,mode,backend,status:'running',startedAt,protocolId:protocol?.id??null,evidenceValid:false,outputDir}
       state.runs.push(row)
       state.active={runId,trialId,pid:process.pid,startedAt,control:control.descriptor}
       return row
@@ -97,13 +130,14 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       const apiKey=await readIsolatedCredential(join(root,'dsh-home'))
       broker=await startModelBroker({root:ledgerRoot,trialId,apiKey,durationMs:600000})
     }
-    result=await evaluateIsolatedTrial({root:outputDir,broker,recipe,taskId,signal:controller.signal,
+    result=await evaluateIsolatedTrial({root:outputDir,broker,recipe,taskId,signal:controller.signal,backend,
       memorySnapshot:selected.memory?join(root,'snapshots',taskId,'user.db'):undefined,
       memoryCache:join(project,'state/engram/models'),
       beforeRun:world=>{
         record.launched=true
-        updateRegistry(root,state=>{state.runs.find(run=>run.runId===runId).launched=true})
-        provider?.setWorkspace(world.workspace)
+        if(world.containerRunId)Object.assign(record,{containerRunId:world.containerRunId,containerImage:world.containerImage})
+        updateRegistry(root,state=>{Object.assign(state.runs.find(run=>run.runId===runId),{launched:true,...(world.containerRunId?{containerRunId:world.containerRunId,containerImage:world.containerImage}:{})})})
+        provider?.setWorkspace(world.agentWorkspace??world.workspace)
       },
     })
     const trace=result.report.cases[0]
@@ -111,7 +145,7 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       status:controller.signal.aborted?'interrupted':result.result?.status===0&&!provider?.error?'completed':'failed',
       test:result.verdict,agentCompleted:trace?.turnEnd==='completed',claimedCompletion:result.outcome.claimedCompletion,
       terminalReason:result.outcome.terminalReason,evaluatorStatus:trace?.status??'error',error:provider?.error??trace?.error??null,
-      durationMs:result.outcome.durationMs,cleanupVerified:true,
+      durationMs:result.outcome.durationMs,cleanupVerified:backend==='linux'?result.result?.cleanupVerified===true:true,
       evidence:{rawReport:join(outputDir,'evaluation/report.json'),outcome:join(outputDir,'outcome.json'),process:join(outputDir,'process.json')},
     })
   }catch(error){

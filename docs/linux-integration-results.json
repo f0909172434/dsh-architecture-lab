@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0-dev.5",
+  "kind": "scripted-linux-integration-acceptance",
+  "date": "2026-09-24",
+  "backend": "linux",
+  "paidRequests": 0,
+  "researchEligible": false,
+  "graphicalAcceptance": false,
+  "runtime": {
+    "imageId": "sha256:d64d598114a88d85466917691cf7583cbc89056353a4cc9ee505e14c48d18f78",
+    "baseImage": "node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+    "architecture": "arm64",
+    "dependencyLocksSha256": "b717138ada37b5d505f9332e8d8b3b662d4a7a81d81fb530405ff5400bb3d298"
+  },
+  "sourceTests": {
+    "passed": 55,
+    "skipped": 1,
+    "failed": 0
+  },
+  "records": {
+    "dsh": {
+      "createdAt": "2026-09-23T18:12:07.318Z",
+      "passed": true,
+      "paidRequests": 0,
+      "results": [
+        {
+          "recipe": "A",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 4,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:d64d598114a88d85466917691cf7583cbc89056353a4cc9ee505e14c48d18f78",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "B",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 4,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:d64d598114a88d85466917691cf7583cbc89056353a4cc9ee505e14c48d18f78",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "C",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 8,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:d64d598114a88d85466917691cf7583cbc89056353a4cc9ee505e14c48d18f78",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "D",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 8,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:d64d598114a88d85466917691cf7583cbc89056353a4cc9ee505e14c48d18f78",
+          "paidRequests": 0
+        }
+      ],
+      "limitation": "Scripted integration only; no comparative model-performance result.",
+      "evidenceSha256": "b030f76841b3295a5c3adb4cb6e2dce690f69540755aaeb498a70476db3000a4"
+    },
+    "bridge": {
+      "createdAt": "2026-09-23T17:54:58.197Z",
+      "passed": true,
+      "paidRequests": 0,
+      "cleanupVerified": true,
+      "socketRemoved": true,
+      "bridgeControllerDeathCleanup": true,
+      "providerDispatches": 12,
+      "meteredEntries": 12,
+      "validDispatches": 12,
+      "wrongTokenRejected": true,
+      "unknownRouteRejected": true,
+      "unpricedModelRejected": true,
+      "thirteenthRequestRejected": true,
+      "networkInterfaces": [
+        "lo"
+      ],
+      "limitations": [
+        "Native DSH execution through the relay is a separate integration gate."
+      ],
+      "evidenceSha256": "cbbe8e164ccb3fc0e8b412c6dcd3fc7b120925820464c05c464f10189fe67fec"
+    },
+    "recovery": {
+      "createdAt": "2026-09-23T18:12:45.577Z",
+      "backend": "linux",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "controllerSigkillAfterDispatch": true,
+      "independentGuestCleanup": true,
+      "daemonAbsenceReadback": true,
+      "interruptedRecordPreserved": true,
+      "explicitResume": true,
+      "requestsAcrossResume": 5,
+      "uncertainReservationsUnchanged": true,
+      "evidenceSha256": "86e90ea6cea7ecf500d79be025297c480baac0effe6a8085d35fabbeb5dd5ab9"
+    },
+    "memory": {
+      "schemaVersion": 1,
+      "backend": "linux",
+      "offlineOnly": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "snapshotSha256": "d7ed87f6ed8f102b393a875625ff16dd25ccbfc29d0c4f5bdc4babd246734077",
+      "records": [
+        {
+          "label": "writer",
+          "recipe": "B",
+          "save": true,
+          "retrieved": true,
+          "databaseContainsMarker": true,
+          "requests": 7,
+          "auxiliaryRequests": 1,
+          "testPass": true,
+          "snapshotUnchanged": true
+        },
+        {
+          "label": "fresh-b",
+          "recipe": "B",
+          "save": false,
+          "retrieved": false,
+          "databaseContainsMarker": false,
+          "requests": 6,
+          "auxiliaryRequests": 1,
+          "testPass": true,
+          "snapshotUnchanged": true
+        },
+        {
+          "label": "fresh-d",
+          "recipe": "D",
+          "save": false,
+          "retrieved": false,
+          "databaseContainsMarker": false,
+          "requests": 10,
+          "auxiliaryRequests": 1,
+          "testPass": true,
+          "snapshotUnchanged": true
+        }
+      ],
+      "evidenceSha256": "8db04c5a616b22c24826a9a1f24a8d3d8b05735bedcc64b27076ea5db5c25770"
+    },
+    "management": {
+      "offlineOnly": true,
+      "paidRequests": 0,
+      "recipes": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "cancelAfterDispatch": true,
+      "explicitResume": true,
+      "recordsPreserved": true,
+      "newProcessReadback": true,
+      "budgetAcrossResume": true,
+      "completionSource": "broker",
+      "comparisonEligible": false,
+      "evidenceSha256": "122dfc695c05eae10d78bc5782b5f5c8a1e0db41763ced913ecc67e15e891fee"
+    },
+    "commands": {
+      "commands": [
+        "status",
+        "select",
+        "start-held",
+        "check",
+        "export",
+        "report"
+      ],
+      "realRegistry": true,
+      "realIsolatedTools": true,
+      "paidRequests": 0,
+      "graphicalAcceptance": false,
+      "evidenceSha256": "addb1e83f6bad78991f31d3f2fff5dc4eadaa8857b3a3d300586c49a89c669f9"
+    },
+    "web": {
+      "nativeWebServer": true,
+      "clientModuleServed": true,
+      "controls": [
+        "select",
+        "paid-start-held",
+        "check",
+        "report",
+        "evidence"
+      ],
+      "realIsolatedTools": true,
+      "paidRequests": 0,
+      "graphicalAcceptance": false,
+      "evidenceSha256": "4f956ed5ae06486f8b182861954cf12733adf1c6bfe454c006ef46ec2badb811"
+    },
+    "protocol": {
+      "passed": true,
+      "backend": "linux",
+      "imageId": "sha256:d64d598114a88d85466917691cf7583cbc89056353a4cc9ee505e14c48d18f78",
+      "dependencyLocksSha256": "b717138ada37b5d505f9332e8d8b3b662d4a7a81d81fb530405ff5400bb3d298",
+      "trials": 72,
+      "reviewStatus": "pending",
+      "tamperRejected": true,
+      "paidRequests": 0,
+      "evidenceSha256": "2fcee39d90980b099f8c4b82ff12713fe0a98ed80f1379f838bbc2a349c054ec"
+    }
+  },
+  "limits": [
+    "Scripted responses validate integration only; there is no architecture performance result.",
+    "Graphical acceptance, daily recipe use, protocol review and original-budget reconciliation remain outstanding.",
+    "Unacknowledged Docker creation stays uncertain even after an empty daemon inventory.",
+    "The runtime lock is retained locally; rebuilding dependencies is not claimed to be bit-identical."
+  ]
+}

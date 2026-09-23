@@ -2,9 +2,13 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 import json
+import tempfile
+from pathlib import Path
+import os
 
 import receipt
 from supervisor import validate
+from files import relative, export
 
 RUN = '12345678-1234-1234-1234-123456789abc'
 IMAGE = 'sha256:' + 'a' * 64
@@ -16,6 +20,32 @@ def result(stdout='', code=0):
 
 
 class SupervisorTests(unittest.TestCase):
+    def test_file_exchange_rejects_paths_and_unconfirmed_cleanup(self):
+        for path in ['/etc/passwd', 'workspace/../other', 'workspace//double', 'home/./dot', 'workspace\\other', 'supervisor.json']:
+            with self.assertRaises(ValueError):
+                relative(path)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'supervisor.json').write_text(json.dumps({'cleanupVerified': False}))
+            with self.assertRaises(ValueError):
+                export(root)
+
+    def test_file_exchange_rejects_candidate_links(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'supervisor.json').write_text(json.dumps({'cleanupVerified': True, 'systemdCleanupCheckedAt': 1}))
+            work = root / 'workspace'
+            work.mkdir()
+            target = root / 'outside'
+            target.write_text('must not export')
+            (work / 'link').symlink_to(target)
+            with self.assertRaises(ValueError):
+                export(root)
+            (work / 'link').unlink()
+            os.link(target, work / 'link')
+            with self.assertRaises(ValueError):
+                export(root)
+
     def config(self, **updates):
         return dict(runId=RUN, image=IMAGE, timeoutMs=1000, command=['node', '-e', '0'], **updates)
 
@@ -53,6 +83,13 @@ class SupervisorTests(unittest.TestCase):
         with patch('receipt.docker', return_value=result()):
             receipt.cleanup(RUN, data)
         self.assertTrue(data['cleanupVerified'])
+
+    def test_inflight_creation_cannot_be_cleared_by_empty_inventory(self):
+        data = {'image': IMAGE, 'creationPending': True}
+        with patch('receipt.docker', return_value=result()):
+            receipt.cleanup(RUN, data)
+        self.assertFalse(data['cleanupVerified'])
+        self.assertIn('not acknowledged', data['cleanupError'])
 
     def test_normal_exit_and_removal_use_immutable_identity(self):
         item = {'Name': '/dsh-lab-' + RUN, 'Image': IMAGE, 'Config': {'Labels': {'dsh.architecture.run': RUN}}, 'State': {'Running': False, 'ExitCode': 7}}

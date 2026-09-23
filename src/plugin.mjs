@@ -9,6 +9,7 @@ import { managedReport, exportManagedReport } from './managed-report.mjs'
 import { assertLiveReady, liveBlockers } from './readiness.mjs'
 import { task } from '../tasks/catalog.mjs'
 import { registerLabWeb } from './web.mjs'
+import { executionBackend } from './linux-runtime.mjs'
 
 export const name='dsh-architecture-lab'
 export const inject=[]
@@ -18,7 +19,7 @@ async function launch(args){
   const logDir=join(labRoot,'v2','launches');await mkdir(logDir,{recursive:true,mode:0o700})
   const path=join(logDir,`${Date.now()}-${process.pid}.log`),log=await open(path,'ax',0o600)
   try{
-    const child=spawn(process.execPath,[join(project,'src/cli.mjs'),...args],{cwd:project,env:{PATH:process.env.PATH,HOME:process.env.HOME,DSH_ARCH_LAB_ROOT:labRoot},stdio:['ignore',log.fd,log.fd],detached:true})
+    const child=spawn(process.execPath,[join(project,'src/cli.mjs'),...args],{cwd:project,env:{PATH:process.env.PATH,HOME:process.env.HOME,DSH_ARCH_LAB_ROOT:labRoot,DSH_ARCH_LAB_BACKEND:executionBackend()},stdio:['ignore',log.fd,log.fd],detached:true})
     await new Promise((resolve,reject)=>{child.once('spawn',resolve);child.once('error',reject)})
     child.unref()
     return {kind:'success',text:`已送出${args[0].includes('check')?'離線安裝驗證':'實驗'}；請用 /architecture-lab status 查看結果。日誌：${path}`}

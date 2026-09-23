@@ -42,7 +42,7 @@ export function apply(ctx){
       completed=readRegistry(root).runs.find(row=>row.recipe==='A'&&row.repetition===1);
       if(completed&&completed.status!=='running')break;await wait(50);
     }
-    assert.equal(completed?.status,'completed',JSON.stringify(completed));assert.equal(completed.test.pass,true);
+    assert.equal(completed?.status,'completed',JSON.stringify(completed));assert.equal(completed.backend,'linux');assert.equal(completed.cleanupVerified,true);assert.equal(completed.test.pass,true);
     const path=join(root,'export with spaces.json');
     await execute('export '+JSON.stringify(path));
     const exported=JSON.parse(await readFile(path,'utf8'));assert.equal(exported.runs.length,1);assert.equal(exported.comparisonReady,false);

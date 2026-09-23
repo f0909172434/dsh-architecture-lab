@@ -1,6 +1,6 @@
 // Loaded only in the dedicated jailed runtime. Management UI/model calls remain
 // held by plugin.mjs; this adapter accepts only a scoped loopback broker token.
-import { completionInstruction } from './completion.mjs'
+import { completionInstruction } from './completion-protocol.mjs'
 export const name = 'architecture-lab-trial-agent'
 export const inject = ['systemPrompt']
 export function validateTrialEnvironment(env=process.env) {

@@ -2,6 +2,7 @@ import { copyFile, mkdir, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { harness, project } from './runtime.mjs'
 import { prepareDshWorld } from './isolation/dsh.mjs'
+import { prepareLinuxDshWorld } from './isolation/linux-dsh.mjs'
 import { judge } from './judge/index.mjs'
 import { task } from '../tasks/catalog.mjs'
 
@@ -19,7 +20,8 @@ async function collectLogs(source,destination){
  * broker owns the request limit, deadline, credentials and durable ledger.
  * Live broker creation remains held until protocol and billing reconciliation.
  */
-export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memorySnapshot, memoryCache, signal, timeoutMs = 600_000, prompt, seedDir, beforeRun }) {
+export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memorySnapshot, memoryCache, signal, timeoutMs = 600_000, prompt, seedDir, beforeRun, backend='native', allowUnacceptedImage=false }) {
+  if(!['native','linux'].includes(backend))throw new Error('unsupported trial backend')
   const spec=task(taskId),runtime=await harness()
   const {runEval}=await import('../upstream/dsh-eval-harness/lib/runner.js')
   const caseDir=join(root,'case'),outputDir=join(root,'evaluation'),worldRoot=join(root,'world')
@@ -33,7 +35,8 @@ export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memo
     judge:async()=>{throw new Error('auxiliary model judging is disabled')},
     processRunner:async input=>{
       if(++launches!==1)throw new Error('a trial permits exactly one attempt')
-      world=await prepareDshWorld(worldRoot,broker,{recipe,memorySnapshot,memoryCache,workspace:input.workspace})
+      const prepare=backend==='linux'?prepareLinuxDshWorld:prepareDshWorld
+      world=await prepare(worldRoot,broker,{recipe,memorySnapshot,memoryCache,workspace:input.workspace,allowUnacceptedImage})
       await beforeRun?.(world)
       result=await world.run(input.prompt,{timeoutMs:input.timeoutMs,signal:input.signal})
       await writeFile(join(root,'process.json'),JSON.stringify(result,null,2)+'\n',{mode:0o600})
@@ -46,7 +49,8 @@ export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memo
   const verdict=world?await judge(taskId,world.workspace):{pass:false,status:'unavailable',reason:'trial_not_launched'}
   const trace=report.cases[0]
   const outcome={
-    schemaVersion:2,taskId,recipe,attempts:launches,
+    schemaVersion:2,taskId,recipe,attempts:launches,backend,
+    ...(backend==='linux'?{exportedWorkspace:world?.workspace??null}:{}),
     correctness:verdict,
     // Preserve text for later preregistered coding; a normal stop alone does
     // not prove the model claimed that the task was solved.

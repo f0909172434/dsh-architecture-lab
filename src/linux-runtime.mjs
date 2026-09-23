@@ -3,6 +3,8 @@ import { spawn, execFileSync } from 'node:child_process'
 import { join } from 'node:path'
 import { project } from './runtime.mjs'
 
+export const executionBackend=()=>process.env.DSH_ARCH_LAB_BACKEND??'linux'
+
 /** Dedicated Lima state only; never inherits provider credentials or SSH agents. */
 export async function linuxRuntime() {
   const config=JSON.parse(await readFile(join(project,'containers/runtime.json'),'utf8'))

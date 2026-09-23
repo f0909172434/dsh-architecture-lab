@@ -2,8 +2,8 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { streamUsage } from './broker/server.mjs'
 
-export const completionSection='Architecture Lab completion declaration'
-export const completionInstruction=`${completionSection}\nAt the end of your final answer, use exactly one last line: ARCHITECTURE_LAB_RESULT=complete if you claim the requested task is solved, ARCHITECTURE_LAB_RESULT=blocked if it is not solved, or ARCHITECTURE_LAB_RESULT=continue for an intermediate planning turn. This is your claim only; an external test independently checks correctness.`
+import { completionSection } from './completion-protocol.mjs'
+export { completionSection, completionInstruction } from './completion-protocol.mjs'
 
 export function parseCompletionStream(sse){
   if(!streamUsage(sse).complete)return {claimedCompletion:null,finalText:'',finishReason:null}

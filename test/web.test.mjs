@@ -68,6 +68,15 @@ test('budget view retains legacy reservations and distinguishes unknown from zer
   assert.equal((await budgetView(root)).availableTwd,null)
 }))
 
+test('a killed controller record remains viewable without a final artifact',()=>fixture(async({root,call})=>{
+  const runId='12345678-1234-1234-1234-123456789abc'
+  updateRegistry(root,state=>state.runs.push({runId,status:'interrupted',terminalReason:'controller_lost',requests:1,costTwd:null,cleanupVerified:false}))
+  const response=await call(`/api/architecture-lab/evidence?runId=${runId}&kind=record`)
+  assert.equal(response.status,200)
+  const row=await response.json()
+  assert.equal(row.recordSource,'durable-registry-recovery');assert.equal(row.costTwd,null);assert.equal(row.requests,1)
+}))
+
 test('client registers a matching sidebar identity and main panel using host services',async()=>{
   let module
   runInNewContext(await readFile(new URL('../client/index.js',import.meta.url),'utf8'),{window:{__ModuleLoader__:{load:entry=>{module=entry}}}})

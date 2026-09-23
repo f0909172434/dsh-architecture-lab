@@ -118,9 +118,10 @@ subsequent management and memory changes add focused regressions.
 
 ## Remaining gates
 
-- Validate cleanup after abrupt controller death and detached child groups.
-  Normal cancellation, explicit resume, restart readback and memory mutation
-  now pass through the contained management path.
+- Linux containment and real DSH integration now pass detached descendants,
+  abrupt controller death, explicit resume and cross-trial memory mutation.
+  Native macOS process-group cleanup remains insufficient; the default is Linux.
+  Unacknowledged container creation retains uncertainty and blocks restarting.
 - Review/freeze protocol v2 and audit evidence provenance. Completion markers
   now come from broker-owned provider streams, separately from correctness.
 - Reconcile historical and incident costs without resetting the NT$300 cap.

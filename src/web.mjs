@@ -10,6 +10,9 @@ import { recipe } from './recipes.mjs'
 import { tasks, task } from '../tasks/catalog.mjs'
 import { assertLiveReady, liveBlockers } from './readiness.mjs'
 import { committedTwd } from './broker/accounting.mjs'
+import { executionBackend } from './linux-runtime.mjs'
+import { verifyLinuxImage } from './isolation/linux-dsh.mjs'
+import { readRegistry } from './registry.mjs'
 
 const prefix='/api/architecture-lab'
 const staticFiles=new Map([['/architecture-lab','index.html'],['/architecture-lab/app.mjs','app.mjs'],['/architecture-lab/style.css','style.css']])
@@ -50,11 +53,13 @@ async function recipeAvailability(root){
   try{
     await harness();await access(join(project,'upstream/dsh-eval-harness/lib/runner.js'))
     if(process.platform!=='darwin')throw new Error('尚未驗收此系統的執行後端')
+    if(executionBackend()==='linux')await verifyLinuxImage()
+    else if(executionBackend()!=='native')throw new Error('unknown execution backend')
   }catch{common='尚未完成隔離執行環境安裝或驗收'}
   let memory=null,planning=null
   if(!common){
-    try{await verifyDependencyBuild('engram');await access(join(root,'snapshots/stale-fee/user.db'))}catch{memory='記憶插件建置或初始快照尚未就緒'}
-    try{await verifyDependencyBuild('planner')}catch{planning='規劃插件建置尚未就緒'}
+    try{if(executionBackend()==='native')await verifyDependencyBuild('engram');await access(join(root,'snapshots/stale-fee/user.db'))}catch{memory='記憶插件建置或初始快照尚未就緒'}
+    try{if(executionBackend()==='native')await verifyDependencyBuild('planner')}catch{planning='規劃插件建置尚未就緒'}
   }
   return Object.fromEntries(['A','B','C','D'].map(id=>{const config=recipe(id),reason=common||(config.memory&&memory)||(config.planning&&planning)||null;return [id,{available:!reason,reason}]}))
 }
@@ -77,6 +82,10 @@ async function evidence(root,runId,kind){
   if(!/^[a-f0-9-]{36}$/.test(runId??''))throw new Error('invalid run')
   const files={record:'record.json',outcome:'outcome.json',upstream:'evaluation/report.json',process:'process.json'}
   if(!Object.hasOwn(files,kind))throw new Error('invalid evidence kind')
+  if(kind==='record'){
+    const recovered=readRegistry(root).runs.find(row=>row.runId===runId&&row.terminalReason==='controller_lost')
+    if(recovered)return {...recovered,recordSource:'durable-registry-recovery'}
+  }
   const base=await realpath(join(root,'v2/runs',runId)),path=await realpath(join(base,files[kind]))
   const runsRoot=await realpath(join(root,'v2/runs'))
   if(!base.startsWith(runsRoot+sep)||!path.startsWith(base+sep))throw new Error('invalid evidence location')
@@ -105,7 +114,7 @@ export function createLabWebHandler({root,port,launch,token=randomBytes(32).toSt
       if(req.method==='GET'&&url.pathname===prefix+'/state'){
         const state=await recoverRegistry(root),report=await managedReport(root)
         if(!availability||Date.now()-checkedAt>30000){availability=await recipeAvailability(root);checkedAt=Date.now()}
-        return json(res,200,{...report,attention:state.attention??null,budget:await budgetView(root),tasks,availability,liveReady:liveBlockers.length===0})
+        return json(res,200,{...report,executionBackend:executionBackend(),attention:state.attention??null,budget:await budgetView(root),tasks,availability,liveReady:liveBlockers.length===0})
       }
       if(req.method==='GET'&&url.pathname===prefix+'/report')return json(res,200,await managedReport(root))
       if(req.method==='GET'&&url.pathname===prefix+'/evidence')return json(res,200,await evidence(root,url.searchParams.get('runId'),url.searchParams.get('kind')))

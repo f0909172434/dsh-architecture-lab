@@ -11,6 +11,8 @@ import selectors
 import subprocess
 import sys
 import time
+import stat
+from pathlib import Path
 from receipt import ROOT, cleanup, docker, save as save_receipt, validate_id
 MAX_OUTPUT = 1024 * 1024
 MAX_DURATION = 600
@@ -41,6 +43,8 @@ def validate(config):
         raise ValueError('invalid child environment')
     if 'DEEPSEEK_API_KEY' in env and not re.fullmatch(r'[a-f0-9]{64}', env['DEEPSEEK_API_KEY']):
         raise ValueError('provider keys may not enter a container')
+    if type(config.get('brokerBridge', False)) is not bool:
+        raise ValueError('invalid broker bridge selection')
     return config
 
 
@@ -99,6 +103,11 @@ def main():
         args += ['--mount', f'type=bind,src={path},dst={target}']
     for key, value in config.get('env', {}).items():
         args += ['--env', key + '=' + value]
+    if config.get('brokerBridge'):
+        socket = Path('/run/dsh-architecture-bridges') / run_id / 'broker.sock'
+        if not stat.S_ISSOCK(socket.lstat().st_mode):
+            raise ValueError('trial-scoped broker socket unavailable')
+        args += ['--mount', f'type=bind,src={socket},dst=/broker.sock,readonly']
     args += [config['image'], *config['command']]
     child = None
     reason = None
@@ -106,6 +115,8 @@ def main():
     stdout, stderr = bytearray(), bytearray()
     total = 0
     try:
+        receipt['creationPending'] = True
+        save()
         created = docker(*args)
         if created.returncode:
             raise RuntimeError('container creation failed: ' + created.stderr[-1000:])
@@ -113,6 +124,7 @@ def main():
         if not re.fullmatch(r'[a-f0-9]{64}', container_id):
             raise RuntimeError('invalid container identity')
         receipt['containerId'] = container_id
+        receipt['creationPending'] = False
         save()
         emit({'event': 'created', 'runId': run_id, 'containerId': container_id})
         child = subprocess.Popen(['/usr/bin/docker', 'start', '--attach', container_id], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

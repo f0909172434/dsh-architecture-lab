@@ -12,5 +12,6 @@
   "paidRequests": 0,
   "graphicalAcceptance": false,
   "evidenceSha256": "4f956ed5ae06486f8b182861954cf12733adf1c6bfe454c006ef46ec2badb811",
+  "backend": "linux",
   "researchEligible": false
 }

@@ -30,12 +30,12 @@ export function apply(ctx){
       return {status:response.status,value:await response.json()};
     };
     assert.equal((await api('action',{action:'select',recipe:'D'})).status,200);
-    assert.equal((await api('state')).value.selectedRecipe,'D');
+    const selected=(await api('state')).value;assert.equal(selected.selectedRecipe,'D');assert.equal(selected.executionBackend,'linux');assert.equal(selected.availability.A.available,true);
     assert.equal((await api('action',{action:'start',recipe:'A',taskId:'stale-fee',repetition:1})).status,400);
     assert.equal((await api('action',{action:'check',recipe:'A',repetition:1})).status,200);
     let row;
     for(let i=0;i<400;i++){row=(await api('state')).value.runs[0];if(row&&row.status!=='running')break;await new Promise(resolve=>setTimeout(resolve,50));}
-    assert.equal(row?.status,'completed',JSON.stringify(row));assert.equal(row.test.pass,true);assert.equal(row.claimedCompletion,true);assert.equal(row.paidRequests,0);
+    assert.equal(row?.status,'completed',JSON.stringify(row));assert.equal(row.backend,'linux');assert.equal(row.cleanupVerified,true);assert.equal(row.test.pass,true);assert.equal(row.claimedCompletion,true);assert.equal(row.paidRequests,0);
     const report=await api('report');assert.equal(report.value.runs[0].runId,row.runId);assert.equal(report.value.comparisonReady,false);
     const evidence=await api('evidence?runId='+row.runId+'&kind=record');assert.equal(evidence.value.runId,row.runId);
     process.stdout.write('ARCHITECTURE_WEB_PROBE='+JSON.stringify({nativeWebServer:true,clientModuleServed:true,controls:['select','paid-start-held','check','report','evidence'],realIsolatedTools:true,paidRequests:0,graphicalAcceptance:false})+'\\n');

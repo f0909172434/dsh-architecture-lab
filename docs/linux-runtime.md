@@ -21,6 +21,10 @@ agent, no imported host SSH public keys, and no automatic guest-port forwarding.
 npm run linux
 npm run linux:supervisor
 npm run check:linux
+npm run linux:image
+npm run check:linux-bridge
+npm run check:linux-dsh
+npm run check:linux-recovery
 ```
 
 This explicit setup downloads Lima and an Ubuntu cloud image, verifies the
@@ -43,9 +47,11 @@ runtime deadline and ExecStopPost cleanup. A controller heartbeat expires after
 five seconds. Cleanup verifies the immutable image/container identity and run
 label before removal. Daemon errors or identity mismatch preserve uncertain
 cleanup status. Evidence is stored outside candidate-writable mounts. These are
-actual fixture tests, not yet full DSH A/B/C/D acceptance. The restricted broker
-bridge, Linux dependency image, manager recovery integration and full recipe
-acceptance still need implementation/verification before paid use.
+actual fixture tests. The default Linux backend also passes real DSH A/B/C/D
+tools, the upstream evaluator and external judge with a scripted provider.
+The bridge checks route, token, pinned model and 12-request enforcement. Real
+Engram save/search and host-controller SIGKILL recovery pass. These are
+integration checks, not research performance measurements.
 
 The tested fixture boundary is a fresh Docker PID namespace with no network,
 read-only runtime, dropped capabilities, no privilege escalation, bounded CPU,
@@ -56,10 +62,39 @@ termination. No Docker socket or real provider credential may enter a trial.
 
 A manager restart must confirm container cleanup by immutable container identity before
 resuming. The same original budget/request ledger remains authoritative across
-attempts and across execution backends. This document records implementation
-direction and limits; it is not evidence of a finished DSH container backend.
+attempts. Resuming with a different backend is rejected. A lost owner is marked
+interrupted; request counts come from the broker ledger, and uncertain costs
+remain unknown. Neither stale receipts nor dead host PIDs alone prove cleanup.
+If the controller dies during unacknowledged Docker creation, even an empty
+inventory retains uncertainty and blocks further runs for that experiment root.
 
 Lima ignore rules explicitly set `guestIP: 0.0.0.0`, `guestIPMustBeZero: false`,
 `proto: any` and the entire port range. The explicit flag matters: otherwise
 loopback services may still be forwarded. Bootstrap checks the effective
 configuration and guest filesystem mounts; it does not merely trust the YAML.
+
+## Runtime image and data exchange
+
+Build after contributor setup and `npm run seed`. The builder sends an explicit
+source allowlist and public embedding weights; no task answers, judge, sessions,
+user memory or credentials enter the image. A single accepted immutable image
+is used by all four recipes. Source changes invalidate acceptance. Top-level
+pins and the actual runtime/plugin transitive locks are recorded locally; a
+future fresh npm resolution is not claimed to produce an identical image.
+
+Each trial gets new workspace/home/memory directories. Regular files cross the
+boundary through a bounded JSON/base64 manifest (8 MiB/file, 48 MiB total,
+2,048 files). Traversal, symlinks, hardlinks and special files are rejected.
+Export requires the trusted terminal cleanup receipt. The host judges the fresh
+export, preserving the original seed workspace.
+
+The no-network container receives one trial-scoped Unix broker socket. A
+separate SSH connection and guest lease remove that socket when the host dies.
+The real provider key stays on the host; only a temporary token enters DSH.
+The broker retains all request, price and deadline enforcement, including
+auxiliary memory calls. No paid call is enabled by these checks.
+
+Protocol candidates now include the immutable image, build-input manifest,
+transitive lock hash and supervisor/bridge sources. Review remains pending.
+Graphical acceptance and real-budget reconciliation are outstanding. See
+[reviewed integration results](linux-integration-results.json).

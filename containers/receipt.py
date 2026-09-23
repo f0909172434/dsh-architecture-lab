@@ -62,6 +62,11 @@ def cleanup(run_id, receipt):
             receipt['removeStatus'] = removed.returncode
         verified = docker('ps', '--all', '--quiet', '--no-trunc', '--filter', 'name=^/' + name + '$')
         receipt['cleanupVerified'] = verified.returncode == 0 and not verified.stdout.strip()
+        # A killed Docker CLI can leave a daemon-side create in flight. Even an
+        # empty inventory cannot prove absence until creation was acknowledged.
+        if receipt.get('creationPending'):
+            receipt['cleanupVerified'] = False
+            raise RuntimeError('container creation was not acknowledged; cleanup remains uncertain')
         if not receipt['cleanupVerified']:
             raise RuntimeError('container absence not confirmed')
     except Exception as error:

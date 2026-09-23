@@ -4,7 +4,7 @@
 <header><div><p class="eyebrow">DSH · 本機實驗</p><h1>架構實驗室</h1><p class="muted">比較記憶與規劃，保留每一次嘗試的證據。</p></div><button id="export" disabled>匯出報告 ↓</button></header>
 <p id="notice" role="status" aria-live="polite">正在讀取實驗紀錄…</p>
 <section class="metrics" aria-label="實驗概況"><article><p>預算已占用</p><strong id="budget">—</strong><small>預留與估計用量；不是供應商帳單</small></article><article><p>執行紀錄</p><strong id="counts">—</strong><small id="counts-note">每次恢復分開保留</small></article><article><p>正式研究結果</p><strong id="eligible">尚未開始</strong><small>離線檢查不計入架構勝率</small></article></section>
-<section class="panel"><div class="section-head"><h2>選擇架構</h2><span class="muted">DeepSeek Flash · high</span></div><div id="recipes" class="recipes" role="group" aria-label="架構配方"></div>
+<section class="panel"><div class="section-head"><h2>選擇架構</h2><small id="backend" class="muted"></small><span class="muted">DeepSeek Flash · high</span></div><div id="recipes" class="recipes" role="group" aria-label="架構配方"></div>
 <div class="controls"><label>第幾次執行 <select id="repetition"><option value="1">第 1 次</option><option value="2">第 2 次</option><option value="3">第 3 次</option></select></label><button id="check" class="primary" disabled>開始離線驗證</button><button id="stop" class="danger" disabled>停止目前實驗</button></div>
 <p class="muted">離線驗證使用固定的小型程式任務與模擬回應，測試整合是否可運作，不呼叫付費模型。</p>
 <details><summary>正式實驗</summary><ul id="blockers"></ul><div class="controls"><label>任務 <select id="task"></select></label><button id="start" disabled>執行單次試驗</button><button id="batch" disabled>依序執行四組</button></div><p class="muted">總額 NT$300；每次最多 12 次模型請求、10 分鐘。日常使用模式尚未開放。</p></details></section>

@@ -5,9 +5,9 @@ All lab-profile model calls are held during repair. Read the
 
 ## Source checks
 
-Node.js 24+ is sufficient for `npm test` and `npm run lab -- doctor`. Installing
+Node.js 24+ and Python 3 are sufficient for `npm test` and `npm run lab -- doctor`. Installing
 DSH peer dependencies at the repository root is not required. macOS kernel
-tests use `/usr/bin/sandbox-exec`; other platforms have no accepted backend.
+tests use `/usr/bin/sandbox-exec`; portable source tests also run on Linux; the packaged VM launcher targets macOS.
 If a launcher sandbox prohibits applying Seatbelt, positive execution tests
 fail. This is not successful containment; do not bypass administrative limits.
 
@@ -54,8 +54,8 @@ an identity after changing the judge. `next` and `alpha` are not default channel
 The management commands now use the isolated v2 evaluator. `prepare` creates an
 immutable candidate manifest with review pending; it does not enable paid runs.
 Native offline A/B/C/D, memory separation, cancellation/resume and restart
-readback have passed. Graphical acceptance and abrupt process-death cleanup
-remain incomplete. See [management usage and evidence](management.md).
+readback have passed. The default Linux backend also passes abrupt controller-death cleanup and
+explicit recovery. Graphical acceptance remains incomplete. See [management usage and evidence](management.md).
 
 Keep `state/`, credentials, raw sessions and personal memory private. The broker
 retains the provider key in a trusted parent and gives the jailed DSH only a
@@ -67,7 +67,9 @@ this does not mean the provider charged NT$300. Unknown usage is never zero.
 
 ## Credential-free integration
 
-After runtime/evaluator/patch setup, macOS can run:
+After runtime/evaluator/patch setup, run `npm run seed`, then follow
+[Linux setup and image acceptance](linux-runtime.md). The commands below include
+legacy native diagnostics; managed, memory and web checks use Linux by default.
 
 ```sh
 npm run check:isolation
@@ -79,6 +81,8 @@ npm run check:integration -- D
 npm run check:management
 npm run check:commands
 npm run check:memory
+npm run check:web
+npm run check:linux-recovery
 ```
 
 Seeding uses a fresh credential-free home, a local Engram save tool, and only

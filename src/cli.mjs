@@ -11,6 +11,8 @@ import { readRegistry } from './registry.mjs'
 import { recoverRegistry, runManagedTrial, stopManagedRun, chooseRecipe } from './manager.mjs'
 import { exportManagedReport } from './managed-report.mjs'
 import { prepareProtocol } from './protocol.mjs'
+import { executionBackend } from './linux-runtime.mjs'
+import { verifyLinuxImage } from './isolation/linux-dsh.mjs'
 
 const root = process.env.DSH_ARCH_LAB_ROOT ?? join(project,'state')
 const statePath=join(root,'lab-state.json'), home=join(root,'dsh-home')
@@ -27,9 +29,14 @@ async function doctor() {
   try { evaluator = JSON.parse(await readFile(join(project, 'upstream/dsh-eval-harness/package.json'), 'utf8')).version } catch (error) { if (error.code !== 'ENOENT') throw error }
   let isolatedHarness = null
   try { isolatedHarness = (await harness()).version } catch {}
+  let linux={available:false}
+  try{const image=await verifyLinuxImage();linux={available:true,imageId:image.imageId,dependencyLocksSha256:image.dependencyLocksSha256}}
+  catch{linux.reason='Linux environment or accepted image is unavailable; no automatic fallback'}
   const info = {
     pinnedVersions: await versions(),
     isolatedHarness,
+    executionBackend:executionBackend(),
+    linux,
     profiles: { A: 'lab-a', B: 'lab-b', C: 'lab-c', D: 'lab-d' },
     engram: await installed('lab-b', '@kenz1117/dsh-engram'),
     planner: await installed('lab-c', 'dsh-plan-and-execute'),

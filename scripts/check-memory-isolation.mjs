@@ -9,7 +9,9 @@ import { project } from '../src/runtime.mjs'
 import { startOfflineProvider, offlinePricing } from '../src/offline-provider.mjs'
 import { startOfflineBroker } from '../src/broker/server.mjs'
 import { evaluateIsolatedTrial } from '../src/evaluator.mjs'
+import { executionBackend } from '../src/linux-runtime.mjs'
 
+const backend=executionBackend()
 const root=await mkdtemp(join(project,'state/memory-isolation-'))
 const snapshot=join(project,'state/snapshots/stale-fee/user.db')
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex')
@@ -30,11 +32,12 @@ for(const [label,recipe,action,expected] of [['writer','B','save-search',true],[
   let broker
   try{
     broker=await startOfflineBroker({root:trialRoot,trialId:label,endpoint:provider.endpoint,durationMs:60000})
-    const result=await evaluateIsolatedTrial({root:trialRoot,broker,recipe,taskId:'stale-fee',memorySnapshot:snapshot,memoryCache:join(project,'state/engram/models'),timeoutMs:60000,beforeRun:world=>provider.setWorkspace(world.workspace)})
+    const result=await evaluateIsolatedTrial({root:trialRoot,broker,recipe,backend,taskId:'stale-fee',memorySnapshot:snapshot,memoryCache:join(project,'state/engram/models'),timeoutMs:60000,beforeRun:world=>provider.setWorkspace(world.agentWorkspace??world.workspace)})
     await writeFile(join(trialRoot,'offline-requests.json'),JSON.stringify(provider.requests)+'\n')
     assert.equal(provider.error,null)
     assert.equal(result.result.status,0,JSON.stringify(result.result))
     assert.equal(result.verdict.pass,true)
+    if(backend==='linux')assert.equal(result.result.cleanupVerified,true)
     const contents=provider.requests.flatMap(req=>req.messages.filter(m=>m.role==='tool').map(m=>m.content))
     // Query echo is expected in current_user_request. Inspect only the
     // returned historical-memory block and separately the persisted nodes.
@@ -54,4 +57,4 @@ for(const [label,recipe,action,expected] of [['writer','B','save-search',true],[
     console.log(`${label}: actual save/search isolation passed (${provider.requests.length} requests, ${auxiliaryRequests} auxiliary)`)
   }finally{await broker?.close();await provider.close()}
 }
-await writeFile(join(root,'acceptance.json'),JSON.stringify({schemaVersion:1,offlineOnly:true,paidRequests:0,comparisonEligible:false,snapshotSha256:initialHash,records},null,2)+'\n')
+await writeFile(join(root,'acceptance.json'),JSON.stringify({schemaVersion:1,backend,offlineOnly:true,paidRequests:0,comparisonEligible:false,snapshotSha256:initialHash,records},null,2)+'\n')

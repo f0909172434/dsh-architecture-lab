@@ -12,7 +12,7 @@
 **目前為開發預覽，付費實驗仍暫停。** 四組已透過真實 DSH 工具、上游評測器、
 獨立費用代理與隔離裁判，通過不使用憑證的整合驗證。模型回應為預先編寫的模擬資料，
 只能證明整合可運作，不能用來比較架構效果。v1 試驗仍不合格；目前沒有有效的
-勝負結論或穩定版。[驗證摘要](docs/integration-results.json) · [里程碑](ROADMAP.md)。
+勝負結論或穩定版。[Linux 驗證摘要](docs/linux-integration-results.json) · [里程碑](ROADMAP.md)。
 
 | 配方 | 記憶 | 規劃 |
 | --- | --- | --- |
@@ -47,6 +47,11 @@ npm run evaluator
 npm run engram
 npm run planner
 npm run profiles
+npm run seed
+npm run linux
+npm run linux:supervisor
+npm run linux:image
+npm run check:linux-dsh
 ```
 
 安裝會下載套件到專案獨立目錄，不更新全域 DSH，也不複製憑證。詳見
@@ -73,6 +78,9 @@ npm run check:memory
 npm run check:web
 ```
 
+預設使用獨立 Lima Linux 虛擬機，不使用 Parallels。映像缺少或來源變動時會停止，
+不會自動改用原生執行。
+
 記憶驗收已確認：透過真實 Engram 工具新增的合成標記可在本次找回，但全新的
 B／D 試驗找不到，原始快照不變。輔助查詢改寫採相同模型與思考強度，也計入
 請求帳本。[管理入口用法與證據](docs/management.md)。
@@ -81,8 +89,9 @@ B／D 試驗找不到，原始快照不變。輔助查詢改寫採相同模型�
 終端機請用不經模型的 `npm run lab -- status` 或 `doctor` 查狀態。
 
 專用 [Lima／Linux 虛擬環境](docs/linux-runtime.md)已通過八項真實容器測試，包含
-脫離的子程序、取消、逾時，以及主機或虛擬機控制程式被強制終止。完整 DSH 配方、
-模型代理通道及管理器恢復尚未接上此後端。[容器驗證摘要](docs/linux-results.json)。
+脫離的子程序、取消、逾時，以及主機或虛擬機控制程式被強制終止。四組 DSH 配方、
+受控模型通道、跨試驗記憶隔離，以及主控程式被強制終止後的明確恢復均已通過。
+未知費用的預留不會被釋放。[容器驗證](docs/linux-results.json) · [整合驗證](docs/linux-integration-results.json)。
 
 ## 證據與限制
 
