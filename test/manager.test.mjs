@@ -103,6 +103,16 @@ test('managed export redacts control tokens, retains ineligible legacy findings 
   assert.equal(await readFile(join(root,'lab-state.json'),'utf8'),legacy)
 }))
 
+test('editing a registry eligibility flag cannot promote an unsealed live record',()=>temporary(async root=>{
+  updateRegistry(root,state=>state.runs.push({runId:'12345678-1234-1234-1234-123456789abc',recipe:'A',taskId:'stale-fee',repetition:1,attempt:1,
+    protocolId:'a'.repeat(64),containerImage:'sha256:'+'b'.repeat(64),mode:'live',status:'completed',launched:true,evidenceValid:true,test:{pass:true}}))
+  const report=await exportManagedReport(root,join(root,'report.json'))
+  assert.equal(report.runs[0].evidenceValid,false)
+  assert.equal(report.runs[0].evidenceAudit.integrityVerified,false)
+  assert.equal(report.research.protocols.length,0)
+  assert.equal(report.comparisonReady,false)
+}))
+
 test('frozen protocol inputs reject changes and path traversal',()=>temporary(async root=>{
   await writeFile(join(root,'fixture'),'fixed')
   const files=[{scope:'project',path:'fixture',sha256:hashBytes('fixed')}]

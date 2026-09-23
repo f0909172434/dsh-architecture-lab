@@ -47,6 +47,7 @@ function renderRuns(){
     const tr=node('tr'),title=node('td');title.append(node('strong',`${row.recipe} · ${row.taskId}`),node('small',`${row.mode==='offline'?'離線驗證':'正式試驗'} · 第 ${row.repetition} 次 · 嘗試 ${row.attempt}`),node('small',row.startedAt?new Date(row.startedAt).toLocaleString('zh-TW'):'時間未知'))
     const status=node('td');status.append(node('span',labels[row.status]??row.status,'badge'));if(row.error)status.append(node('small',row.error))
     const pass=node('td',row.test?.pass===true?'通過':row.test?.pass===false?'未通過':'尚無結果')
+    pass.append(node('small',row.attempt>1?'恢復紀錄，不替換首試':row.evidenceValid?'證據可納入研究':row.mode==='offline'?'離線驗證，不納入研究':row.evidenceAudit?.integrityVerified?'研究條件尚未滿足':'證據尚未通過查核'))
     const claim=node('td',row.claimedCompletion===true?'宣稱完成':row.claimedCompletion===false?'尚未完成':'未判定')
     const usage=node('td',`${row.requests??'—'} 次請求`);usage.append(node('small',row.durationMs==null?'耗時待確認':`${(row.durationMs/1000).toFixed(1)} 秒`),node('small',`${row.mode==='offline'?'模擬成本':'估計成本'} ${money(row.costTwd)}`))
     const controls=node('td'),view=node('button','查看證據');view.addEventListener('click',()=>showEvidence(row.runId));controls.append(view)
@@ -67,6 +68,8 @@ function render(){
   const eligible=state.research.protocols.reduce((total,protocol)=>total+Object.values(protocol.recipes??{}).reduce((n,r)=>n+r.launchedFirstAttempts,0),0)
   $('eligible').textContent=eligible?`${eligible} 次有效試驗`:'尚無有效比較'
   $('blockers').replaceChildren(...state.blockers.map(text=>node('li',text)))
+  const reviewLabels={'workflow-validation':'僅驗證審查流程，不屬於正式研究審查','not-prepared':'尚未建立固定研究協定',pending:'協定已固定，等待審查',invalid:'協定或審查證據已變動，正式試驗停用',accepted:'審查紀錄已保存；執行前仍需通過所有驗收與輸入查核'}
+  $('protocol-review').textContent=reviewLabels[state.protocolReview?.status]??'審查狀態未知'
   if(!$('task').options.length)for(const task of state.tasks){const option=node('option',task.id);option.value=task.id;$('task').append(option)}
   $('legacy').textContent=`保留 ${state.legacy.trials.length} 筆舊紀錄，均排除於正式比較。${state.budget.historicalUpperBoundTwd?`歷史呼叫已按 ${money(state.budget.historicalUpperBoundTwd)} 保守總額上界核對；逐筆費用仍未知。`:`${state.budget.unknownRequests??'未知數量'} 次用量仍需核對。`}`
   renderResearch(document,$('comparison'),state.research)

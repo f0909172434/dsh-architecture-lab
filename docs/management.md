@@ -1,4 +1,4 @@
-# Management preview (dev.6)
+# Management preview (dev.7)
 
 The native `/architecture-lab` command and the CLI now share one controller and
 a transactional SQLite registry. Each attempt gets a new directory and isolated
@@ -97,8 +97,12 @@ and new trials. An unreachable control endpoint with a live PID is not proof of
 death. Recovered usage comes from the durable ledger; uncertain reservations
 stay unchanged. The evidence panel can read the recovered registry record even
 when abrupt death prevented writing the final artifact. Graphical acceptance,
-daily recipe use, protocol review and eligibility validation remain outstanding.
+daily recipe use and substantive protocol review remain outstanding. Review
+receipts and derived eligibility audits are implemented; see
+[review and qualification](protocol-review.md).
 
 `prepare` writes an immutable protocol candidate with source, task, snapshot,
 build and pricing hashes; its review status is pending. It does not certify a
-protocol or remove any hold. Do not edit the registry or budget to bypass gates.
+protocol or remove any hold. Review is recorded separately with `review-protocol`.
+Reports verify sealed evidence rather than trusting a registry eligibility flag.
+Do not edit the registry or budget to bypass gates.

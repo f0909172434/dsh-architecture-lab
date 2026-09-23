@@ -47,6 +47,7 @@ export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memo
     },
   })
   const verdict=world?await judge(taskId,world.workspace):{pass:false,status:'unavailable',reason:'trial_not_launched'}
+  if(verdict.status==='unavailable')verdict.pass=null
   const trace=report.cases[0]
   const outcome={
     schemaVersion:2,taskId,recipe,attempts:launches,backend,
@@ -58,7 +59,7 @@ export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memo
     terminalReason:signal?.aborted?'cancelled':result?.reason??trace?.turnEnd??'unknown',
     evaluatorStatus:trace?.status??'error',durationMs:report.durationMs,
     rawReport:'evaluation/report.json',processEvidence:'process.json',
-    evidenceValid:false,evidenceLimit:'Protocol v2 has not been frozen; integration evidence only.',
+    evidenceValid:false,evidenceLimit:'Eligibility is derived by the controller evidence audit; this outcome alone cannot qualify a trial.',
   }
   await writeFile(join(root,'outcome.json'),JSON.stringify(outcome,null,2)+'\n',{mode:0o600})
   return {world,result,report,outcome,verdict}

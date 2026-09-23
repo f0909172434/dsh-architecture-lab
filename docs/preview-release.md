@@ -1,4 +1,23 @@
-# 0.1.0-dev.6 development preview
+# 0.1.0-dev.7 development preview
+
+Protocol review now has a separate immutable receipt with copied, hash-verified
+evidence. It must precede live trials. Workflow-validation receipts cannot enable
+research, and current sources, image, snapshots and prices are rechecked before
+execution. The substantive method review remains pending.
+
+Attempt reports now derive research eligibility from trusted preflight and sealed
+artifacts rather than a registry flag. Broker entries, completion claims and
+external-test outcomes are checked independently. Confirmed launched failures and
+interruptions remain in the denominator; an unavailable judge stays unknown.
+Interrupted evidence can be sealed after independently confirmed guest cleanup.
+
+[Review workflow](protocol-review.md) · [Version validation](dev7-validation.json)
+
+All new probes use local scripted providers. The graphical interface, daily
+recipe mode, substantive research review and actual model comparison remain
+unfinished. This is a development preview, not a stable research product.
+
+# Historical dev.6 development preview
 
 Desktop 0.17.0 is installed and its recommended Harness remains 0.1.5-rc.3.
 The Desktop installer adds a non-commercial condition; the separately published

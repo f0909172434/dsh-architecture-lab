@@ -11,12 +11,13 @@ import { readRegistry } from './registry.mjs'
 import { recoverRegistry, runManagedTrial, stopManagedRun, chooseRecipe } from './manager.mjs'
 import { exportManagedReport } from './managed-report.mjs'
 import { prepareProtocol } from './protocol.mjs'
+import { acceptProtocolReview, protocolReviewStatus } from './protocol-review.mjs'
 import { executionBackend } from './linux-runtime.mjs'
 import { verifyLinuxImage } from './isolation/linux-dsh.mjs'
 
 const root = process.env.DSH_ARCH_LAB_ROOT ?? join(project,'state')
 const statePath=join(root,'lab-state.json'), home=join(root,'dsh-home')
-const commands=['doctor','prepare','status','select','check-one','resume-check','run-one','resume-one','run-batch','report','stop']
+const commands=['doctor','prepare','review-protocol <review.json>','review-status','status','select','check-one','resume-check','run-one','resume-one','run-batch','report','stop']
 
 async function installed(profile, name) {
   try { return JSON.parse(await readFile(join(home, 'profiles', profile, 'node_modules', name, 'package.json'), 'utf8')).version } catch { return null }
@@ -65,6 +66,11 @@ process.once('SIGINT',interrupt);process.once('SIGTERM',interrupt)
 try{
   if(command==='doctor')await doctor()
   else if(command==='prepare')console.log(JSON.stringify(await prepareProtocol(root),null,2))
+  else if(command==='review-protocol'){
+    if(args.length!==1)throw new Error('review-protocol requires one review document')
+    console.log(JSON.stringify(await acceptProtocolReview(root,args[0]),null,2))
+  }
+  else if(command==='review-status')console.log(JSON.stringify(await protocolReviewStatus(root),null,2))
   else if(command==='status')console.log(JSON.stringify(await recoverRegistry(root),null,2))
   else if(command==='select')console.log(`已選擇 ${chooseRecipe(root,args[0])}；後續實驗會以此配方建立獨立環境。`)
   else if(['run-one','resume-one','check-one','resume-check'].includes(command)){

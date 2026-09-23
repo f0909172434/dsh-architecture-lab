@@ -1,10 +1,11 @@
-# Candidate comparison method (dev.6)
+# Candidate comparison method (dev.7)
 
 This is a reviewable method, not an accepted protocol or a completed study.
 Paid starts remain held. `prepare` records immutable source, task, judge,
-snapshot, dependency, image and price identities with review pending. A separate
-review attestation and eligibility audit still need implementation; changing a
-JSON field does not constitute review.
+snapshot, dependency, image and price identities with review pending. The
+[review attestation and evidence audit](protocol-review.md) now preserve the
+decision separately; changing a JSON field does not constitute review. The
+actual method review remains pending.
 
 ## Question and fixed tasks
 
@@ -71,7 +72,8 @@ results across protocols. The panel renders each protocol separately.
   failed test. Unknown declarations/tests are not false successes.
 - Record resumed, offline, unlaunched, ineligible, nonterminal and malformed
   records separately. Successful resumes never replace failed first attempts.
-  Eligibility must not depend on patch success; the audit mechanism is pending.
+  Eligibility is derived from preflight and sealed evidence, independent of
+  patch success; an unavailable judge stays explicitly unknown.
 - Pair only complete A/B/C/D quartets with identical protocol, task and repetition.
   All eligible launched arms still appear in the marginal denominators. Disclose
   incomplete/unlaunched blocks and represented tasks.
@@ -83,7 +85,7 @@ results across protocols. The panel renders each protocol separately.
 - Any missing required cost/time keeps its full contrast unknown. Do not average
   only the cheaper or faster known subset.
 - Reject analyses with duplicate first attempts, different immutable images or
-  an unavailable judge incorrectly labelled eligible.
+  an unavailable judge incorrectly assigned a known pass/fail result.
 
 This study is descriptive. Six selected tasks and repeated calls do not support
 population-level significance claims or AGI conclusions. Partial budget-limited
@@ -92,7 +94,7 @@ automatic winner. Retain negative and inconclusive results and failures.
 
 ## Remaining acceptance
 
-Before spending: finish method/fixture review, implement a hash-bound review
-attestation and eligibility validation, freeze a fresh candidate, and pass actual
+Before spending: finish method/fixture review, record the hash-bound review
+attestation, freeze the final candidate before review, and pass actual
 DSH graphical acceptance under permitted access. Offline probes prove integration
 only. Daily recipe use is also unfinished and must not be advertised as available.

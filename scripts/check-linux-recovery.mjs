@@ -10,6 +10,7 @@ import { project } from '../src/runtime.mjs'
 import { readRegistry } from '../src/registry.mjs'
 import { recoverRegistry, runManagedTrial } from '../src/manager.mjs'
 import { verifyContainerCleanup } from '../src/linux-process.mjs'
+import { auditRunEvidence } from '../src/run-evidence.mjs'
 
 const root=await mkdtemp(join(project,'state/linux-recovery-'))
 console.log(JSON.stringify({root,paidRequests:0}))
@@ -42,6 +43,9 @@ try{
   assert.equal(old.cleanupVerified,true,JSON.stringify(old))
   assert.ok(await verifyContainerCleanup(old.containerRunId,old.containerImage))
   assert.equal(old.requests,before.length);assert.equal(old.costTwd,null)
+  const evidenceAudit=await auditRunEvidence(root,old)
+  assert.equal(evidenceAudit.integrityVerified,true,JSON.stringify(evidenceAudit))
+  assert.equal(evidenceAudit.eligible,false)
   assert.deepEqual(JSON.parse(await readFile(ledgerPath,'utf8')).entries,before,'recovery may not settle or release uncertain requests')
   await writeFile(join(root,'recovered-record.json'),JSON.stringify(old,null,2)+'\n')
   await assert.rejects(runManagedTrial({root,recipe:'A',mode:'offline',backend:'linux'}),/已有紀錄/)

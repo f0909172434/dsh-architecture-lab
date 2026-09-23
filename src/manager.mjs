@@ -10,13 +10,14 @@ import { openControl, contactControl } from './control.mjs'
 import { startModelBroker, startOfflineBroker } from './broker/server.mjs'
 import { offlinePricing, startOfflineProvider } from './offline-provider.mjs'
 import { evaluateIsolatedTrial } from './evaluator.mjs'
-import { loadProtocol } from './protocol.mjs'
+import { loadReviewedProtocol } from './protocol-review.mjs'
 import { readIsolatedCredential } from './credential.mjs'
 import { brokerCompletion } from './completion.mjs'
 import { verifyContainerCleanup } from './linux-process.mjs'
 import { executionBackend } from './linux-runtime.mjs'
 import { ledgerRootFor, authoritativeBudgetRoot } from './broker/location.mjs'
 import { loadPricing } from './budget.mjs'
+import { writeLaunchEvidence, sealRunEvidence } from './run-evidence.mjs'
 
 async function entriesAt(root) {
   try { return JSON.parse(await readFile(join(root,'budget.json'),'utf8')).entries }
@@ -35,8 +36,21 @@ async function reconcileContainerCleanup(root){
   }
 }
 
+async function sealRecoveredEvidence(root){
+  for(const row of readRegistry(root).runs.filter(row=>row.terminalReason==='controller_lost'&&row.cleanupVerified===true&&row.outputDir)){
+    try{
+      try{await readFile(join(row.outputDir,'evidence-seal.json'));continue}catch(error){if(error.code!=='ENOENT')throw error}
+      // A crash may leave no final file. Preserve an existing final artifact
+      // instead of overwriting it; a mismatch will remain ineligible on audit.
+      try{await writeFile(join(row.outputDir,'record.json'),JSON.stringify(row,null,2)+'\n',{flag:'wx',mode:0o600})}catch(error){if(error.code!=='EEXIST')throw error}
+      await sealRunEvidence(root,row)
+    }catch{ /* Recovery remains readable; the audit explicitly reports no seal. */ }
+  }
+}
+
 export async function recoverRegistry(root) {
   await reconcileContainerCleanup(root)
+  await sealRecoveredEvidence(root)
   const before=readRegistry(root),active=before.active
   if(!active)return visibleRegistry(before)
   try { await contactControl(active);return visibleRegistry(before) }
@@ -68,6 +82,7 @@ export async function recoverRegistry(root) {
     state.active=null
   })
   await reconcileContainerCleanup(root)
+  await sealRecoveredEvidence(root)
   return visibleRegistry(readRegistry(root))
 }
 
@@ -95,8 +110,8 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
   const selected=selectRecipe(recipe),spec=task(taskId)
   if(!Number.isInteger(repetition)||repetition<1||repetition>3)throw new Error('次數須為 1、2 或 3')
   if(mode==='offline'&&taskId!=='stale-fee')throw new Error('安裝驗證只使用固定合成任務 stale-fee')
-  const protocol=mode==='live'?await loadProtocol(root):null
-  if(protocol&&protocol.reviewStatus!=='accepted')throw new Error('protocol review has not been accepted')
+  const reviewed=mode==='live'?await loadReviewedProtocol(root):null
+  const protocol=reviewed?.protocol
   await recoverRegistry(root)
   const trialId=`${mode==='offline'?'offline':protocol.id}-${taskId}-${recipe}-${repetition}`
   const runId=randomUUID(),startedAt=new Date().toISOString()
@@ -136,9 +151,10 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
     result=await evaluateIsolatedTrial({root:outputDir,broker,recipe,taskId,signal:controller.signal,backend,
       memorySnapshot:selected.memory?join(root,'snapshots',taskId,'user.db'):undefined,
       memoryCache:join(project,'state/engram/models'),
-      beforeRun:world=>{
+      beforeRun:async world=>{
         record.launched=true
         if(world.containerRunId)Object.assign(record,{containerRunId:world.containerRunId,containerImage:world.containerImage})
+        await writeLaunchEvidence(record,reviewed)
         updateRegistry(root,state=>{Object.assign(state.runs.find(run=>run.runId===runId),{launched:true,...(world.containerRunId?{containerRunId:world.containerRunId,containerImage:world.containerImage}:{})})})
         provider?.setWorkspace(world.agentWorkspace??world.workspace)
       },
@@ -168,6 +184,7 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       await mkdir(outputDir,{recursive:true,mode:0o700})
       if(provider)await writeFile(join(outputDir,'offline-requests.json'),JSON.stringify(provider.requests)+'\n',{mode:0o600})
       await writeFile(join(outputDir,'record.json'),JSON.stringify(record,null,2)+'\n',{flag:'wx',mode:0o600})
+      try{await sealRunEvidence(root,record)}catch{console.error('[architecture-lab] evidence seal unavailable; comparison remains ineligible')}
       updateRegistry(root,state=>{
         if(state.active?.runId!==runId)throw new Error('active controller changed unexpectedly')
         state.runs[state.runs.findIndex(run=>run.runId===runId)]=record

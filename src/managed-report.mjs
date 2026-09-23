@@ -5,6 +5,8 @@ import { compare } from './report.mjs'
 import { readState } from './store.mjs'
 import { liveBlockers } from './readiness.mjs'
 import { analyzeResearch } from './research-analysis.mjs'
+import { auditRunEvidence } from './run-evidence.mjs'
+import { protocolReviewStatus } from './protocol-review.mjs'
 
 export function compareRuns(runs){
   return Object.fromEntries(['A','B','C','D'].map(recipe=>{
@@ -34,10 +36,14 @@ export function compareRuns(runs){
 
 export async function managedReport(root){
   const state=visibleRegistry(readRegistry(root)),legacy=await readState(join(root,'lab-state.json'))
+  // Registry flags cannot promote a record. Eligibility is derived from the
+  // pre-launch review, trusted artifacts and broker ledger on every export.
+  const runs=[]
+  for(const row of state.runs){const evidenceAudit=await auditRunEvidence(root,row);runs.push({...row,evidenceValid:evidenceAudit.eligible,evidenceAudit})}
   let audit=null
   try{audit=JSON.parse(await readFile(join(root,'analysis/pilot-audit.json'),'utf8'))}catch(error){if(error.code!=='ENOENT')throw error}
-  const research=analyzeResearch(state.runs)
-  return {schemaVersion:2,generatedAt:new Date().toISOString(),comparisonReady:liveBlockers.length===0&&research.protocols.some(row=>row.comparisonAvailable),blockers:liveBlockers,selectedRecipe:state.selectedRecipe,active:state.active,summary:compareRuns(state.runs),summaryScope:'operational diagnostics only; use research.protocols for comparisons',research,runs:state.runs,
+  const research=analyzeResearch(runs)
+  return {schemaVersion:2,generatedAt:new Date().toISOString(),comparisonReady:liveBlockers.length===0&&research.protocols.some(row=>row.comparisonAvailable),blockers:liveBlockers,protocolReview:await protocolReviewStatus(root),selectedRecipe:state.selectedRecipe,active:state.active,summary:compareRuns(runs),summaryScope:'operational diagnostics only; use research.protocols for comparisons',research,runs,
     legacy:{comparisonEligible:false,source:'lab-state.json',summary:compare(legacy.trials),trials:legacy.trials,evidenceAudit:audit},
   }
 }

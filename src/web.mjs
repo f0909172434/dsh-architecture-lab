@@ -14,6 +14,7 @@ import { executionBackend } from './linux-runtime.mjs'
 import { verifyLinuxImage } from './isolation/linux-dsh.mjs'
 import { readRegistry } from './registry.mjs'
 import { authoritativeBudgetRoot } from './broker/location.mjs'
+import { auditRunEvidence } from './run-evidence.mjs'
 
 const prefix='/api/architecture-lab'
 const staticFiles=new Map([['/architecture-lab','index.html'],['/architecture-lab/app.mjs','app.mjs'],['/architecture-lab/research.mjs','research.mjs'],['/architecture-lab/style.css','style.css']])
@@ -81,6 +82,11 @@ export async function labAction(root,input,launch){
 
 async function evidence(root,runId,kind){
   if(!/^[a-f0-9-]{36}$/.test(runId??''))throw new Error('invalid run')
+  if(kind==='audit'){
+    const row=readRegistry(root).runs.find(row=>row.runId===runId)
+    if(!row)throw new Error('unknown run')
+    return auditRunEvidence(root,row)
+  }
   const files={record:'record.json',outcome:'outcome.json',upstream:'evaluation/report.json',process:'process.json'}
   if(!Object.hasOwn(files,kind))throw new Error('invalid evidence kind')
   if(kind==='record'){

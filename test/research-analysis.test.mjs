@@ -89,3 +89,12 @@ test('missing pass evidence stays in launched denominator; malformed metadata is
   assert.equal(analysis.protocols[0].recipes.A.unknownCompletionClaims,1)
   assert.equal(analysis.excluded.malformed,1);assert.equal(analysis.excluded.nonterminal,1)
 })
+
+test('an unavailable judge with an explicitly unknown result stays in the denominator',()=>{
+  const rows=quartet();rows[0].test={status:'unavailable',pass:null}
+  const report=first(rows)
+  assert.equal(report.comparisonAvailable,true)
+  assert.equal(report.recipes.A.verifiedPassRate,0)
+  assert.equal(report.recipes.A.unknownTestResults,1)
+  assert.equal(report.recipes.A.falseCompletions,0)
+})

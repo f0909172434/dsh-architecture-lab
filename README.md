@@ -23,7 +23,9 @@ counterbalanced across blocks. See the [candidate method](docs/research-protocol
 Historical costs have been reconciled using a conservative provider-day bound;
 original entries are preserved, per-request costs remain unknown, and all live
 experiment directories share the original NT$300 cap. Method review and graphical
-acceptance still block paid starts. [Current checks](docs/dev6-validation.json).
+acceptance still block paid starts. [Current checks](docs/dev7-validation.json).
+
+Review receipts and sealed attempt evidence now make research eligibility inspectable. Reports derive eligibility from the pre-launch review, guest execution receipt, judge artifacts and broker ledger; a registry flag cannot promote old trials. See [review workflow](docs/protocol-review.md). The substantive method review is still pending.
 
 | Recipe | Memory | Planning |
 | --- | --- | --- |

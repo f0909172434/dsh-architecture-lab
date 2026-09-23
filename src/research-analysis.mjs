@@ -81,7 +81,7 @@ export function analyzeResearch(runs){
       const block=blocks.get(key)
       if(block.rows[row.recipe])integrityErrors.push(`duplicate first attempt: ${key}:${row.recipe}`)
       block.rows[row.recipe]=row
-      if(row.test?.status==='unavailable')integrityErrors.push(`unavailable judge marked eligible: ${key}:${row.recipe}`)
+      if(row.test?.status==='unavailable'&&row.test.pass!=null)integrityErrors.push(`unavailable judge recorded a pass/fail: ${key}:${row.recipe}`)
       if(!/^sha256:[a-f0-9]{64}$/.test(row.containerImage??''))integrityErrors.push(`missing immutable image: ${key}:${row.recipe}`)
     }
     if(new Set(rows.map(row=>row.containerImage)).size!==1)integrityErrors.push('multiple execution images in one protocol')

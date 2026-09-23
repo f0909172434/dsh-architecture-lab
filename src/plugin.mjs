@@ -10,6 +10,7 @@ import { assertLiveReady, liveBlockers } from './readiness.mjs'
 import { task } from '../tasks/catalog.mjs'
 import { registerLabWeb } from './web.mjs'
 import { executionBackend } from './linux-runtime.mjs'
+import { protocolReviewStatus } from './protocol-review.mjs'
 
 export const name='dsh-architecture-lab'
 export const inject=[]
@@ -34,7 +35,7 @@ export function apply(ctx){
   ctx.inject(['commands'],({commands})=>commands.register({
     name:'architecture-lab',
     description:'架構實驗室：選配方、離線驗證、執行控制與證據報告',
-    input:{hint:'status | select A/B/C/D | check/resume-check [配方] [次數] | start/resume <配方> <題目> <次數> | batch | stop | report | export <路徑>'},
+    input:{hint:'status | review-status | select A/B/C/D | check/resume-check [配方] [次數] | start/resume <配方> <題目> <次數> | batch | stop | report | export <路徑>'},
     handler:async({rawInput})=>{
       try{
         const [action='status',arg,arg2,arg3]=rawInput.trim().split(/\s+/)
@@ -45,9 +46,10 @@ export function apply(ctx){
         }
         if(action==='select'){
           chooseRecipe(labRoot,arg)
-          return {kind:'success',text:`已選擇 ${arg} ${recipe(arg).label}。下一次實驗會建立對應的獨立環境；日常 DSH 會話仍須重新開啟對應 profile。`}
+          return {kind:'success',text:`已選擇 ${arg} ${recipe(arg).label}。下一次實驗會建立對應的獨立環境；日常使用模式尚未開放。`}
         }
         if(action==='report')return {kind:'success',text:JSON.stringify(await managedReport(labRoot),null,2)}
+        if(action==='review-status')return {kind:'success',text:JSON.stringify(await protocolReviewStatus(labRoot),null,2)}
         if(action==='export'){
           const tail=rawInput.trim().slice('export'.length).trim()
           if(!tail)throw new Error('請提供匯出路徑')
@@ -67,7 +69,7 @@ export function apply(ctx){
           return await launch([action==='start'?'run-one':'resume-one',arg2,String(n),arg])
         }
         if(action==='batch')return await launch(['run-batch'])
-        throw new Error('可用操作：status、select、check、resume-check、start、resume、batch、stop、report、export')
+        throw new Error('可用操作：status、review-status、select、check、resume-check、start、resume、batch、stop、report、export')
       }catch(error){return {kind:'error',text:error.message}}
     },
   }))

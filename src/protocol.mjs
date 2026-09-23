@@ -12,6 +12,18 @@ import { analysisPolicy } from './research-analysis.mjs'
 export const hashBytes = bytes => createHash('sha256').update(bytes).digest('hex')
 export const protocolPath = root => join(root,'v2','protocol.json')
 
+export function validateProtocolIdentity(protocol){
+  const {id,preparedAt,...contents}=protocol
+  if(protocol.schemaVersion!==2||protocol.reviewStatus!=='pending'||id!==hashBytes(JSON.stringify(contents))||!Number.isFinite(Date.parse(preparedAt))||protocol.capTwd!==300||protocol.maxRequestsPerTrial!==12||protocol.maxDurationMs!==600000||protocol.model!=='deepseek-official/deepseek-flash'||protocol.reasoningEffort!=='high')throw new Error('protocol identity or limits are invalid')
+  return protocol
+}
+
+// Reporting an old protocol must not require today's prices or source tree.
+// Execution uses loadProtocol(), which additionally checks all current inputs.
+export async function loadStoredProtocol(root){
+  return validateProtocolIdentity(JSON.parse(await readFile(protocolPath(root),'utf8')))
+}
+
 async function sourceFiles(directory,relative=''){
   const result=[]
   for(const entry of (await readdir(join(directory,relative),{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){
@@ -42,7 +54,9 @@ export async function prepareProtocol(root){
     {scope:'project',path:`state/runtime/${runtime.version}/package-lock.json`},
     {scope:'project',path:'upstream/dsh-eval-harness/lib/runner.js'}]
   refs.push({scope:'project',path:'state/linux-vm/runtime-dependency-locks.json'})
-  for(const dir of ['src','tasks','patches','containers','scripts'])for(const path of await sourceFiles(join(project,dir)))if(!path.includes('__pycache__'))refs.push({scope:'project',path:join(dir,path)})
+  refs.push({scope:'project',path:'docs/research-protocol.md'})
+  refs.push({scope:'project',path:'docs/protocol-review.md'})
+  for(const dir of ['src','tasks','patches','containers','scripts','client'])for(const path of await sourceFiles(join(project,dir)))if(!path.includes('__pycache__'))refs.push({scope:'project',path:join(dir,path)})
   for(const item of tasks)refs.push({scope:'experiment',path:`snapshots/${item.id}/user.db`})
   for(const ref of refs)ref.sha256=hashBytes(await readFile(join(ref.scope==='project'?project:root,ref.path)))
   const contents={schemaVersion:2,reviewStatus:'pending',execution:{backend:'linux',imageId:image.imageId,baseImage:image.baseImage,architecture:image.architecture,sourceManifest:image.manifest,dependencyLocksSha256:image.dependencyLocksSha256},model:'deepseek-official/deepseek-flash',reasoningEffort:'high',maxRequestsPerTrial:12,maxDurationMs:600000,capTwd:300,plugins:pins,builds,pricing,files:refs,trials:trialOrder(tasks.map(t=>t.id)),
@@ -56,9 +70,7 @@ export async function prepareProtocol(root){
 }
 
 export async function loadProtocol(root){
-  const protocol=JSON.parse(await readFile(protocolPath(root),'utf8'))
-  const {id,preparedAt,...contents}=protocol
-  if(protocol.schemaVersion!==2||id!==hashBytes(JSON.stringify(contents))||protocol.capTwd!==300||protocol.maxRequestsPerTrial!==12||protocol.maxDurationMs!==600000||protocol.model!=='deepseek-official/deepseek-flash'||protocol.reasoningEffort!=='high')throw new Error('protocol identity or limits are invalid')
+  const protocol=await loadStoredProtocol(root)
   await verifyFileManifest(protocol.files,{project,experiment:root})
   const image=await verifyLinuxImage()
   if(protocol.execution?.backend!=='linux'||protocol.execution.imageId!==image.imageId||protocol.execution.dependencyLocksSha256!==image.dependencyLocksSha256||JSON.stringify(protocol.execution.sourceManifest)!==JSON.stringify(image.manifest))throw new Error('protocol execution image changed')

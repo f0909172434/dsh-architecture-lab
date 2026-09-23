@@ -1,6 +1,6 @@
 {
   "name": "dsh-architecture-lab",
-  "version": "0.1.0-dev.6",
+  "version": "0.1.0-dev.7",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -50,7 +50,8 @@
     "check:linux-bridge": "node scripts/check-linux-bridge.mjs",
     "check:linux-dsh": "node scripts/check-linux-dsh.mjs",
     "check:linux-recovery": "node scripts/check-linux-recovery.mjs",
-    "audit:historical-budget": "node scripts/reconcile-historical-budget.mjs"
+    "audit:historical-budget": "node scripts/reconcile-historical-budget.mjs",
+    "check:review": "node scripts/check-protocol-review.mjs"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",

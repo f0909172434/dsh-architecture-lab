@@ -37,7 +37,10 @@ export function apply(ctx){
     for(let i=0;i<400;i++){row=(await api('state')).value.runs[0];if(row&&row.status!=='running')break;await new Promise(resolve=>setTimeout(resolve,50));}
     assert.equal(row?.status,'completed',JSON.stringify(row));assert.equal(row.backend,'linux');assert.equal(row.cleanupVerified,true);assert.equal(row.test.pass,true);assert.equal(row.claimedCompletion,true);assert.equal(row.paidRequests,0);
     const report=await api('report');assert.equal(report.value.runs[0].runId,row.runId);assert.equal(report.value.comparisonReady,false);
+    assert.equal(report.value.runs[0].evidenceAudit.integrityVerified,true);assert.equal(report.value.runs[0].evidenceValid,false);
+    assert.equal(report.value.protocolReview.status,'not-prepared');
     const evidence=await api('evidence?runId='+row.runId+'&kind=record');assert.equal(evidence.value.runId,row.runId);
+    const audit=await api('evidence?runId='+row.runId+'&kind=audit');assert.equal(audit.value.integrityVerified,true);assert.equal(audit.value.eligible,false);
     process.stdout.write('ARCHITECTURE_WEB_PROBE='+JSON.stringify({nativeWebServer:true,clientModuleServed:true,controls:['select','paid-start-held','check','report','evidence'],realIsolatedTools:true,paidRequests:0,graphicalAcceptance:false})+'\\n');
     ctx.get('appExit')(0);
   };run().catch(error=>{console.error(error);ctx.get('appExit')(1)});
