@@ -1,4 +1,26 @@
-# 0.1.0-dev.3 development preview
+# 0.1.0-dev.4 development preview
+
+A dedicated Architecture Lab sidebar panel now serves through DSH's client
+module graph and web server. Recipe selection, offline start, authenticated
+stop, explicit resume, evidence viewing and JSON export share the existing
+controller. Real native HTTP/module acceptance passed; graphical interaction
+is still unverified. [Panel evidence](web-results.json).
+
+The new Lima/Linux fixture supervisor passed eight real Docker probes, including
+detached descendants, cancellation, deadline, expired heartbeat, host-controller
+SIGKILL, guest-supervisor SIGKILL, output limits and restricted filesystem/network
+access. systemd cleanup and independent Docker readback confirm container removal.
+The digest-pinned fixture image contains no credentials or judge answers.
+[Containment evidence](linux-results.json).
+
+The clean source suite has 52 passing tests and one macOS-specific skip, with
+five additional Python supervisor cases inside one source test. Desktop 0.16.0
+and its recommended Harness rc.3 were checked locally. This is still a preview:
+the full Linux DSH image, controlled broker bridge, manager recovery integration,
+graphical acceptance, daily recipe use, research protocol and cost reconciliation
+remain outstanding. No new paid model calls or valid research winner are claimed.
+
+## Historical dev.3 snapshot
 
 The native DSH commands and CLI now share an isolated evaluator controller,
 transactional run registry, authenticated stop control and explicit resume.

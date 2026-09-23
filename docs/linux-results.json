@@ -1,0 +1,78 @@
+{
+  "createdAt": "2026-09-23T17:31:01.938Z",
+  "schemaVersion": 1,
+  "passed": true,
+  "paidRequests": 0,
+  "imageId": "sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+  "imageDigests": [
+    "node@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df"
+  ],
+  "results": [
+    {
+      "name": "normal-detached",
+      "reason": null,
+      "exitCode": 0,
+      "cleanupVerified": true,
+      "passed": true
+    },
+    {
+      "name": "cancel-detached",
+      "reason": "cancelled",
+      "cleanupVerified": true,
+      "passed": true
+    },
+    {
+      "name": "deadline-detached",
+      "reason": "timeout",
+      "cleanupVerified": true,
+      "passed": true
+    },
+    {
+      "name": "heartbeat-expired",
+      "reason": "controller_lost",
+      "cleanupVerified": true,
+      "passed": true
+    },
+    {
+      "name": "host-controller-killed",
+      "reason": "controller_lost",
+      "cleanupVerified": true,
+      "passed": true
+    },
+    {
+      "name": "guest-supervisor-killed",
+      "reason": "supervisor_lost",
+      "exitCode": 143,
+      "cleanupVerified": true,
+      "passed": true
+    },
+    {
+      "name": "output-limit",
+      "reason": "output_limit",
+      "exitCode": 137,
+      "cleanupVerified": true,
+      "passed": true
+    },
+    {
+      "name": "filesystem-network-boundary",
+      "reason": null,
+      "exitCode": 0,
+      "cleanupVerified": true,
+      "passed": true
+    }
+  ],
+  "boundary": {
+    "uid": 1000,
+    "networkInterfaces": [
+      "lo"
+    ],
+    "restrictions": true
+  },
+  "limits": [
+    "Fixture containment only; DSH container integration and broker bridge are not yet accepted."
+  ],
+  "lima": "2.2.0",
+  "guest": "Ubuntu 26.04",
+  "docker": "29.8.1",
+  "source": "scripts/check-linux-containment.mjs"
+}

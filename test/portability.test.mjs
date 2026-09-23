@@ -18,7 +18,7 @@ test('profile paths survive spaces, quotes and replacement metacharacters', asyn
     assert.equal(value.dependencies['dsh-architecture-lab'], `link:${projectRoot}`)
     const yaml = renderProfile(await readFile(join(project, 'profiles', entry.name, 'cordis.patch.yml'), 'utf8'), { projectRoot, stateRoot })
     for (const match of yaml.matchAll(/(?:dbDir|modelCacheDir): (.+)/g)) assert.ok(JSON.parse(match[1]).startsWith(stateRoot + '/'))
-    assert.doesNotMatch(source + yaml, /\/Users\/wangzhikai/)
+    assert.doesNotMatch(source + yaml, /\/Users\/[^/]+/)
   }
 })
 

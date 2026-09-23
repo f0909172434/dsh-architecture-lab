@@ -63,7 +63,7 @@ test('direct DSH model stream and slash command cannot bypass the audit hold', a
     const { apply } = await import(`../src/plugin.mjs?hold-test=${Date.now()}`)
     const listeners = new Map()
     let command
-    apply({ on: (event, callback) => listeners.set(event, callback), inject: (_services, callback) => callback({ commands: { register: (entry) => { command = entry } } }) })
+    apply({ on: (event, callback) => listeners.set(event, callback), inject: (services, callback) => services.includes('commands') && callback({ commands: { register: (entry) => { command = entry } } }) })
     let dispatched = false
     await assert.rejects(async () => {
       const stream = listeners.get('llm/stream')({}, () => { dispatched = true; return (async function* () {})() })

@@ -1,0 +1,16 @@
+{
+  "limaVersion": "2.2.0",
+  "checkedAt": "2026-09-24",
+  "source": "https://github.com/lima-vm/lima/releases/tag/v2.2.0",
+  "archives": {
+    "arm64": "bbdef91774885a0d05f7b048c4eb89ae2bcf3a0c252ae7ca7934e63df76d93c3",
+    "x64": "0d6f99c19f6e4bc3c92730c4c29d929e6927f0cb0a0ba1a84383367135a8ff31"
+  },
+  "vmName": "architecture",
+  "cpus": 4,
+  "memoryGiB": 6,
+  "diskGiB": 24,
+  "dockerRepository": "https://download.docker.com/linux/ubuntu",
+  "probeImage": "node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+  "note": "Lima is isolated under project state. Docker stable packages are installed in the dedicated VM and their exact installed versions are recorded. No host directory is mounted."
+}

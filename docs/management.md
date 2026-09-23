@@ -30,7 +30,9 @@ There is no automatic retry and no best-of scoring.
 `run-one`, `resume-one`, `run-batch`, and DSH `start`, `resume`, `batch` remain
 held before credentials or paid evidence are touched. Management-session model
 streams are independently disabled even if the trial hold is later removed.
-Daily recipe use and a dedicated graphical result panel remain future work.
+Daily recipe use remains future work. The dedicated panel now has native
+HTTP/module integration acceptance; graphical acceptance is still pending. See
+[panel details](web-panel.md).
 
 Never pass slash-looking command text as a positional argument to headless DSH:
 that is a model prompt, not command dispatch.

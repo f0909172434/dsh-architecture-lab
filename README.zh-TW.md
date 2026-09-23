@@ -28,7 +28,7 @@ Flash／high。客觀正確性、模型宣稱完成、終止原因、證據有�
 
 ## 離線試用
 
-在原始碼目錄使用 Node.js 24 以上版本：
+在原始碼目錄使用 Node.js 24 以上版本及 Python 3：
 
 ```sh
 npm test
@@ -52,7 +52,7 @@ npm run profiles
 安裝會下載套件到專案獨立目錄，不更新全域 DSH，也不複製憑證。詳見
 [安裝與回復](docs/installation.md)。[版本紀錄](versions.json)中，Harness latest
 通道 0.1.5-rc.3 已放入 v2 獨立副本，舊試驗使用 rc.2；Engram 0.7.12、規劃插件
-0.5.0、評測器 0.4.0。Desktop 是否為最新版尚未重新確認。
+0.5.0、評測器 0.4.0。Desktop 0.16.0 已於 2026-09-24 核對官方校驗碼並安裝。
 
 Engram 修補了人類訊息來源辨識，並對齊本機嵌入依賴。規劃插件修補了 rc.3
 會話替換介面、系統訊息保留與會話快照更新；建置腳本會驗證固定來源與測試。
@@ -62,13 +62,15 @@ DSH `/architecture-lab` 提供 `status`、`select`、`check`、`resume-check`、
 `report`、`export`、`start`、`resume`、`batch`、`stop`。離線 `check` 使用模擬回應，
 透過隔離評測器執行。配方選擇套用於下一次新試驗；取消、明確恢復、重新啟動後
 讀回與匯出已通過原生指令驗證，恢復前後共用 12 次請求額度。日常模型會話與
-付費開始仍暫停；專用圖形結果面板尚未實作。
+付費開始仍暫停。專用側邊欄面板已通過原生 HTTP／模組接線測試，
+畫面顯示與操作仍待驗收，詳見[面板說明](docs/web-panel.md)。
 
 ```sh
 # 完成開發者安裝與合成記憶初始化（npm run seed）後：
 npm run check:management
 npm run check:commands
 npm run check:memory
+npm run check:web
 ```
 
 記憶驗收已確認：透過真實 Engram 工具新增的合成標記可在本次找回，但全新的
@@ -77,6 +79,10 @@ B／D 試驗找不到，原始快照不變。輔助查詢改寫採相同模型�
 
 **無介面 DSH 的位置參數即使長得像斜線指令，也可能被當成模型提示。**
 終端機請用不經模型的 `npm run lab -- status` 或 `doctor` 查狀態。
+
+專用 [Lima／Linux 虛擬環境](docs/linux-runtime.md)已通過八項真實容器測試，包含
+脫離的子程序、取消、逾時，以及主機或虛擬機控制程式被強制終止。完整 DSH 配方、
+模型代理通道及管理器恢復尚未接上此後端。[容器驗證摘要](docs/linux-results.json)。
 
 ## 證據與限制
 

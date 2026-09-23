@@ -1,0 +1,50 @@
+# Dedicated experiment VM; intentionally does not inherit _default/mounts.
+minimumLimaVersion: 2.2.0
+images:
+- location: https://cloud-images.ubuntu.com/releases/resolute/release-20260720/ubuntu-26.04-server-cloudimg-arm64.img
+  arch: aarch64
+  digest: sha256:7bcf159e29ad0000bfed9c57875908c39268f5ed1257f4958fa6a9f5f60edd54
+- location: https://cloud-images.ubuntu.com/releases/resolute/release-20260720/ubuntu-26.04-server-cloudimg-amd64.img
+  arch: x86_64
+  digest: sha256:117816726abbdefc5ef3e38902e81a76f1c76c3610e709999d0885f9d5d9b477
+vmType: vz
+cpus: 4
+memory: 6GiB
+disk: 24GiB
+mounts: []
+containerd:
+  system: false
+  user: false
+ssh:
+  localPort: 0
+  loadDotSSHPubKeys: false
+  forwardAgent: false
+propagateProxyEnv: false
+portForwards:
+- guestPortRange: [1, 65535]
+  guestIP: 0.0.0.0
+  guestIPMustBeZero: false
+  proto: any
+  ignore: true
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -euo pipefail
+    command -v docker >/dev/null 2>&1 && exit 0
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y ca-certificates curl
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+    . /etc/os-release
+    printf 'deb [arch=%s signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu %s stable\n' "$(dpkg --print-architecture)" "$VERSION_CODENAME" > /etc/apt/sources.list.d/docker.list
+    apt-get update
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin
+    systemctl enable --now docker
+probes:
+- script: |
+    #!/bin/sh
+    sudo docker info >/dev/null
+  hint: Docker must start inside the dedicated experiment VM.

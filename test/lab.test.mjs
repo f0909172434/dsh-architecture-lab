@@ -81,7 +81,7 @@ test('DSH slash-command entry selects a recipe and explains the audit hold', asy
   try {
     const { apply } = await import(`../src/plugin.mjs?test=${Date.now()}`)
     let command
-    apply({ on: () => {}, inject: (_services, callback) => callback({ commands: { register: (definition) => { command = definition } } }) })
+    apply({ on: () => {}, inject: (services, callback) => services.includes('commands') && callback({ commands: { register: (definition) => { command = definition } } }) })
     assert.equal(command.name, 'architecture-lab')
     const selected = await command.handler({ rawInput: 'select C' })
     assert.equal(selected.kind, 'success')

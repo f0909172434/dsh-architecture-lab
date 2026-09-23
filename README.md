@@ -31,7 +31,7 @@ not establish AGI or continuous learning.
 
 ## Offline checks
 
-With Node.js 24+ in a source checkout:
+With Node.js 24+ and Python 3 in a source checkout:
 
 ```sh
 npm test
@@ -57,7 +57,8 @@ Installation downloads packages into isolated project directories; it does not
 update global DSH or copy credentials. See [installation and recovery](docs/installation.md).
 Versions are recorded in [versions.json](versions.json). Harness latest-channel
 0.1.5-rc.3 is staged for v2; historical pilots used rc.2. Engram is 0.7.12,
-planner 0.5.0, evaluator 0.4.0. Desktop update status has not been reverified.
+planner 0.5.0, evaluator 0.4.0. Desktop 0.16.0 was verified against its official
+release checksum and installed locally on 2026-09-24.
 
 The Engram patch corrects human-message attribution and aligns its local
 embedding dependencies. The planner patch supports rc.3 session replacement,
@@ -70,14 +71,15 @@ The DSH `/architecture-lab` command provides `status`, `select`, `check`,
 Offline `check` runs the contained evaluator with synthetic responses. Selection
 applies to the next fresh trial. Cancellation, explicit resume with a shared
 12-request allowance, restart readback and export have passed native command
-checks. Daily model sessions and paid starts remain held. A dedicated graphical
-results panel is not yet implemented.
+checks. Daily model sessions and paid starts remain held. A dedicated sidebar panel now has native HTTP/module acceptance; graphical
+rendering and interaction remain unverified. See [panel details](docs/web-panel.md).
 
 ```sh
 # After contributor setup and synthetic memory seeding (npm run seed):
 npm run check:management
 npm run check:commands
 npm run check:memory
+npm run check:web
 ```
 
 Memory acceptance writes a synthetic marker using real Engram tools: the writer
@@ -87,6 +89,11 @@ ledger. [Management evidence and usage](docs/management.md).
 
 **A slash-looking positional argument to headless DSH is a model prompt.** Use
 `npm run lab -- status` or `doctor` for model-free terminal inspection.
+
+A dedicated [Lima/Linux environment](docs/linux-runtime.md) now passes eight
+real container probes, including detached descendants, cancellation, deadline,
+and host/guest controller SIGKILL. Full DSH recipes, the broker bridge and manager
+recovery are not yet connected to this backend. [Containment evidence](docs/linux-results.json).
 
 ## Evidence and limits
 

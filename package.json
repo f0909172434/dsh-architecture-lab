@@ -1,6 +1,6 @@
 {
   "name": "dsh-architecture-lab",
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.4",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -10,11 +10,19 @@
     "./budget": "./src/budget.mjs",
     "./planner-runner": "./src/planner-runner.mjs",
     "./memory-seeder": "./src/memory-seeder.mjs",
-    "./cordis.patch.yml": "./cordis.patch.yml"
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./client": "./client/index.js"
   },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ],
+      "platform": "web"
     }
   },
   "scripts": {
@@ -33,7 +41,11 @@
     "check:integration": "node scripts/check-brokered-dsh.mjs",
     "check:management": "node scripts/check-management.mjs",
     "check:commands": "node scripts/check-management-commands.mjs",
-    "check:memory": "node scripts/check-memory-isolation.mjs"
+    "check:memory": "node scripts/check-memory-isolation.mjs",
+    "linux": "node scripts/bootstrap-linux.mjs",
+    "linux:supervisor": "node scripts/install-linux-supervisor.mjs",
+    "check:linux": "node scripts/check-linux-containment.mjs",
+    "check:web": "node scripts/check-web.mjs"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
