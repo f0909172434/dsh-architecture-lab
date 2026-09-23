@@ -1,4 +1,26 @@
-# 0.1.0-dev.2 development preview
+# 0.1.0-dev.3 development preview
+
+The native DSH commands and CLI now share an isolated evaluator controller,
+transactional run registry, authenticated stop control and explicit resume.
+Offline A/B/C/D execution, cancellation after dispatch, preserved prior records,
+restart readback, report export and actual Engram cross-trial mutation/retrieval
+all pass. Auxiliary query rewriting uses the pinned model/effort and is metered.
+Completion claims come from broker-owned provider streams and remain separate
+from correctness.
+
+The source-only suite has 46 passing tests and one platform-specific skip on
+macOS. A clean public checkout also passes without credentials or installed
+DSH. All new integration probes use scripted local providers: zero paid calls,
+no comparative research result. English, Traditional Chinese and Simplified
+Chinese READMEs describe the current behavior.
+
+See [management usage and limitations](management.md) and the
+[reviewed acceptance summary](management-results.json). Abrupt process-death
+cleanup, detached children, graphical results, daily recipe use, research
+protocol review and historical billing reconciliation remain incomplete.
+Paid starts stay held; the original NT$300 ledger is not reset.
+
+## Historical dev.2 snapshot
 
 This snapshot exposes the architecture-lab implementation and reproducible
 offline checks. It is not a stable v0.1 release or a completed architecture study.
@@ -28,7 +50,7 @@ The original pilots and the compatibility-call incident remain documented.
 Full private evidence stays local; public summaries include no raw sessions,
 credentials, personal memory or billing ledgers.
 
-## Change from dev.1
+### Change from dev.1
 
 A macOS CI run exposed a repeated SIGKILL on an already terminated process
 group. The exit cleanup now avoids signalling the same group after a successful
