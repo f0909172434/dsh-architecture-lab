@@ -1,9 +1,10 @@
+export const formatCost=value=>value!==0&&Math.abs(value)<1?value.toPrecision(4):value.toFixed(2)
 // Text-only rendering: run metadata must never become HTML. Protocols remain
 // separate even when their task names, recipes and repetitions match.
 export function renderResearch(document, target, analysis) {
   const node=(tag,text,className)=>{const el=document.createElement(tag);if(text!=null)el.textContent=text;if(className)el.className=className;return el}
   const percentage=value=>value==null?'—':`${(value*100).toFixed(1)}%`
-  const difference=(value,scale,unit)=>value==null?'未知':`${value>0?'+':''}${(value*scale).toFixed(2)} ${unit}`
+  const difference=(value,scale,unit)=>value==null?'未知':`${value>0?'+':''}${unit==='NT$'?formatCost(value*scale):(value*scale).toFixed(2)} ${unit}`
   const fragment=document.createDocumentFragment()
   const protocols=analysis?.protocols??[]
   if(!protocols.length)fragment.append(node('p','尚無符合研究條件的正式試驗。離線驗證與歷史 pilot 不產生架構效果結論。','muted'))
@@ -21,7 +22,7 @@ export function renderResearch(document, target, analysis) {
     for(const [id,row] of Object.entries(protocol.recipes)){
       const article=node('article');article.append(node('span',`${id} · 外部測試驗證通過率`),node('strong',percentage(row.verifiedPassRate)),
         node('small',`${row.verifiedPasses} / ${row.launchedFirstAttempts} 次已啟動首試；${row.unknownTestResults} 次測試未知；${row.falseCompletions} 次錯誤完成宣稱。`),
-        node('small',`總費用 ${row.costTwd.total==null?'未知':`NT$${row.costTwd.total.toFixed(2)}`}；${row.costTwd.unknown} 次費用未知。`))
+        node('small',`總費用 ${row.costTwd.total==null?'未知':`NT$${formatCost(row.costTwd.total)}`}；${row.costTwd.unknown} 次費用未知。`))
       cards.append(article)
     }
     section.append(cards)

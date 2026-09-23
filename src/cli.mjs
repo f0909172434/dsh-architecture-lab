@@ -50,6 +50,7 @@ async function doctor() {
     legacyTrials: (await readState(statePath)).trials.length,
     liveReady: liveBlockers.length === 0,
     liveBlockers,
+    protocolReview:await protocolReviewStatus(root),
     readiness: {
       A: 'scripted isolated DSH/evaluator/judge integration passes; paid run held',
       B: 'patched Engram integration passes; historical pilot remains contaminated',

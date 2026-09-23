@@ -157,10 +157,10 @@ export async function runDailyTask({root,jobId,mode='live',resume=false,signal,r
     if(mode==='offline'){
       await mkdir(budget,{recursive:true,mode:0o700});await writeFile(join(budget,'pricing.json'),JSON.stringify(offlinePricing())+'\n',{mode:0o600})
       provider=await startOfflineProvider({recipe:job.recipe,responseDelayMs,memoryProbe,onRequest:({step})=>writeFile(join(outputDir,'request-progress.json'),JSON.stringify({step})+'\n',{mode:0o600})})
-      broker=await startOfflineBroker({root:budget,trialId,endpoint:provider.endpoint,durationMs:Math.max(1,remaining())})
+      broker=await startOfflineBroker({root:budget,trialId,endpoint:provider.endpoint,deadlineAt:Date.parse(firstStartedAt)+600000})
     }else{
       const apiKey=await readIsolatedCredential(join(authoritativeBudgetRoot,'dsh-home'))
-      broker=await startDailyModelBroker({root:budget,trialId,apiKey,durationMs:Math.max(1,remaining())})
+      broker=await startDailyModelBroker({root:budget,trialId,apiKey,deadlineAt:Date.parse(firstStartedAt)+600000})
     }
     await mkdir(join(outputDir,'world'),{mode:0o700})
     world=await prepareLinuxDshWorld(join(outputDir,'world'),broker,{recipe:job.recipe,purpose:'daily',workspace:join(outputDir,'input'),memorySnapshot:selected.memory?head.memorySnapshot:undefined})

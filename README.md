@@ -22,10 +22,10 @@ matched A/B/C/D contrasts, missing coverage and unknown costs. The order is
 counterbalanced across blocks. See the [candidate method](docs/research-protocol.md).
 Historical costs have been reconciled using a conservative provider-day bound;
 original entries are preserved, per-request costs remain unknown, and all live
-experiment directories share the original NT$300 cap. Method review and graphical
-acceptance still block paid starts. [Current checks](docs/dev8-validation.json).
+experiment directories share the original NT$300 cap. Graphical acceptance still blocks paid starts; every study also needs a matching
+current protocol receipt. [Current checks](docs/dev9-validation.json).
 
-Review receipts and sealed attempt evidence now make research eligibility inspectable. Reports derive eligibility from the pre-launch review, guest execution receipt, judge artifacts and broker ledger; a registry flag cannot promote old trials. See [review workflow](docs/protocol-review.md). The substantive method review is still pending.
+Review receipts and sealed attempt evidence now make research eligibility inspectable. Reports derive eligibility from the pre-launch review, guest execution receipt, judge artifacts and broker ledger; a registry flag cannot promote old trials. See [review workflow](docs/protocol-review.md). The [substantive single-agent review](docs/method-review.md) is complete for dev.9 and an exact local protocol receipt is preserved. This is not independent final review or permission to spend.
 
 | Recipe | Memory | Planning |
 | --- | --- | --- |
@@ -40,6 +40,17 @@ is DeepSeek Flash/high. Correctness, claimed completion, termination reason,
 evidence validity, time and cost are separate outcomes. These experiments do
 not establish AGI or continuous learning.
 
+## Research-method checkpoint
+
+The pre-study audit repaired deadlines across resumes, removed artificial
+per-call cent rounding, made budget locks recoverable after process death and
+verified installed supervisor source. Six reference solutions pass 54 external
+cases; every original defect fails, and all six memory snapshots match only their
+shared histories. Metered estimates retain small cost differences; reservations
+remain conservative. No eligible real-model results exist yet.
+
+[Method review](docs/method-review.md) · [GUI acceptance checklist](docs/gui-acceptance.md)
+
 ## Daily task preview
 
 The panel now supports independent project copies, custom task drafts, recipe
@@ -48,7 +59,7 @@ Per-project Engram memory persists only after adoption. Fixed offline A/B/C/D
 checks exercise real tools, cancellation and recovery after controller loss;
 they do not execute arbitrary user prompts. Paid daily tasks remain held and
 share the original spending cap once enabled. See [daily usage and limits](docs/daily-mode.md)
-and [dev.8 validation](docs/dev8-validation.json).
+and [dev.8 validation](docs/dev9-validation.json).
 
 ## Offline checks
 

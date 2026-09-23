@@ -7,7 +7,7 @@ from pathlib import Path
 import os
 
 import receipt
-from supervisor import validate
+from supervisor import validate, execution_deadline
 from files import relative, export
 
 RUN = '12345678-1234-1234-1234-123456789abc'
@@ -20,6 +20,15 @@ def result(stdout='', code=0):
 
 
 class SupervisorTests(unittest.TestCase):
+    def test_absolute_deadline_never_grants_a_fresh_timeout(self):
+        with patch('supervisor.time.monotonic', return_value=100), patch('supervisor.time.time', return_value=1000):
+            self.assertEqual(execution_deadline(self.config(deadlineAt=1000500), 100), 100.5)
+            self.assertEqual(execution_deadline(self.config(deadlineAt=999000), 100), 99)
+            self.assertEqual(execution_deadline(self.config(deadlineAt=1009000), 100), 101)
+        for value in [True, '1000500', -1, 1.5]:
+            with self.assertRaises(ValueError):
+                validate(self.config(deadlineAt=value))
+
     def test_file_exchange_rejects_paths_and_unconfirmed_cleanup(self):
         for path in ['/etc/passwd', 'workspace/../other', 'workspace//double', 'home/./dot', 'workspace\\other', 'supervisor.json']:
             with self.assertRaises(ValueError):

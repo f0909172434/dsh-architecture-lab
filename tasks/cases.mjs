@@ -5,6 +5,7 @@ export const cases = {
     [['1,234.50'], 1234.5], [['0'], 0], [['abc'], null], [['1,2,3'], null],
     [['-1,234'], -1234], [[12.5], 12.5], [[' 12.50 '], 12.5], [[''], null],
     [[null], null], [[true], null], [[[]], null], [['Infinity'], null],
+    [['9'.repeat(400)], null], [['1e3'], null], [['.5'], null], [['12.'], null], [['+12.50'], 12.5], [['   '], null],
   ] },
   'debug-ranges': { exportName: 'mergeRanges', cases: [
     [[[[4, 6], [1, 4], [10, 11]]], [[1, 6], [10, 11]]],
@@ -18,6 +19,7 @@ export const cases = {
     [[{ mode: 'safe', flags: { a: true } }, {}], { mode: 'safe', flags: { a: true } }],
     [[{ flags: { a: true } }, { flags: { a: false, c: true } }], { flags: { a: false, c: true } }],
     [[{ count: 4, flags: {} }, { count: 0 }], { count: 0, flags: {} }],
+    [[{ mode:'safe', enabled:true, flags:{} }, { mode:'', enabled:false }], { mode:'', enabled:false, flags:{} }],
   ] },
   'reuse-slug': { exportName: 'slugify', cases: [
     [['  Café   au Lait  '], 'cafe-au-lait'], [['Hello\tWorld'], 'hello-world'],
@@ -30,5 +32,6 @@ export const cases = {
     [['2026-02-05'], Date.UTC(2026, 1, 5)], [['2026-02-30'], null], [['bad'], null],
     [['2024-02-29'], Date.UTC(2024, 1, 29)], [['2025-02-29'], null],
     [['2026-13-01'], null], [['2026-04-31'], null], [['2026-01-01'], Date.UTC(2026, 0, 1)],
+    [['1900-02-29'], null], [['2000-02-29'], Date.UTC(2000, 1, 29)], [['2026-2-05'], null], [[' 2026-02-05 '], null],
   ] },
 }

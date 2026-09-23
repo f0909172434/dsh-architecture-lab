@@ -78,6 +78,22 @@ test('live management remains held before state, credentials or any provider is 
   assert.deepEqual(await readdir(root),[])
 }))
 
+test('research resumes retain first-start deadline even without a dispatched request',()=>temporary(async root=>{
+  const first=new Date(Date.now()-600001).toISOString()
+  updateRegistry(root,state=>state.runs.push({runId:'expired',trialId:'offline-stale-fee-A-1',mode:'offline',status:'interrupted',backend:'linux',cleanupVerified:true,startedAt:first}))
+  await assert.rejects(runManagedTrial({root,mode:'offline',resume:true,backend:'linux'}),/deadline reached/)
+  assert.equal(readRegistry(root).runs.length,1)
+  assert.equal(readRegistry(root).active,null)
+}))
+
+test('death before durable guest launch mapping does not strand a current Linux controller',()=>temporary(async root=>{
+  const registry=new URL('../src/registry.mjs',import.meta.url).href,control=new URL('../src/control.mjs',import.meta.url).href
+  await child(`import {updateRegistry} from ${JSON.stringify(registry)};import {openControl} from ${JSON.stringify(control)};const c=await openControl('prelaunch',()=>{});updateRegistry(${JSON.stringify(root)},s=>{s.runs=[{schemaVersion:2,runId:'prelaunch',backend:'linux',mode:'offline',trialId:'offline-stale-fee-A-1',status:'running',startedAt:new Date().toISOString()}];s.active={runId:'prelaunch',pid:process.pid,control:c.descriptor}});process.exit(0);`)
+  const recovered=await recoverRegistry(root)
+  assert.equal(recovered.active,null);assert.equal(recovered.runs[0].status,'interrupted')
+  assert.equal(recovered.runs[0].cleanupVerified,true);assert.equal(recovered.runs[0].requests,0)
+}))
+
 test('report counts interrupted first attempts and never substitutes a successful resume or offline check',()=>{
   const base={recipe:'A',mode:'live',attempt:1,evidenceValid:true,launched:true,costTwd:.1,requests:1}
   const summary=compareRuns([

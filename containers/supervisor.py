@@ -34,6 +34,8 @@ def validate(config):
         raise ValueError('immutable local image ID required')
     if type(config.get('timeoutMs')) is not int or not 1 <= config['timeoutMs'] <= MAX_DURATION * 1000:
         raise ValueError('invalid deadline')
+    if 'deadlineAt' in config and (type(config['deadlineAt']) is not int or config['deadlineAt'] <= 0):
+        raise ValueError('invalid absolute deadline')
     command = config.get('command')
     if not isinstance(command, list) or not command or not all(isinstance(x, str) and '\x00' not in x for x in command):
         raise ValueError('invalid command')
@@ -46,6 +48,13 @@ def validate(config):
     if type(config.get('brokerBridge', False)) is not bool:
         raise ValueError('invalid broker bridge selection')
     return config
+
+
+def execution_deadline(config, started):
+    relative = started + config['timeoutMs'] / 1000
+    if 'deadlineAt' not in config:
+        return relative
+    return min(relative, time.monotonic() + config['deadlineAt'] / 1000 - time.time())
 
 
 def read_config():
@@ -83,7 +92,8 @@ def main():
     receipt_path = directory / 'supervisor.json'
     if receipt_path.exists():
         raise ValueError('run identity already used')
-    receipt = {'schemaVersion': 1, 'runId': run_id, 'containerName': name, 'image': config['image'], 'startedAt': time.time(), 'cleanupVerified': False}
+    deadline = execution_deadline(config, started)
+    receipt = {'schemaVersion': 1, 'runId': run_id, 'containerName': name, 'image': config['image'], 'startedAt': time.time(), 'deadlineAt': config.get('deadlineAt'), 'cleanupVerified': False}
 
     def save():
         save_receipt(directory, receipt)
@@ -115,6 +125,8 @@ def main():
     stdout, stderr = bytearray(), bytearray()
     total = 0
     try:
+        if time.monotonic() >= deadline:
+            raise TimeoutError('trial deadline reached before creation')
         receipt['creationPending'] = True
         save()
         created = docker(*args)
@@ -127,11 +139,12 @@ def main():
         receipt['creationPending'] = False
         save()
         emit({'event': 'created', 'runId': run_id, 'containerId': container_id})
+        if time.monotonic() >= deadline:
+            raise TimeoutError('trial deadline reached before start')
         child = subprocess.Popen(['/usr/bin/docker', 'start', '--attach', container_id], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         selector.register(sys.stdin.buffer, selectors.EVENT_READ, 'control')
         selector.register(child.stdout, selectors.EVENT_READ, 'stdout')
         selector.register(child.stderr, selectors.EVENT_READ, 'stderr')
-        deadline = started + config['timeoutMs'] / 1000
         last_heartbeat = time.monotonic()
         while True:
             while b'\n' in pending:

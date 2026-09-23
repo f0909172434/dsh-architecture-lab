@@ -1,0 +1,632 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0-dev.9",
+  "date": "2026-09-24",
+  "kind": "method-and-allowance-validation",
+  "paidRequests": 0,
+  "researchEligible": false,
+  "graphicalAcceptance": false,
+  "independentReview": false,
+  "methodReviewKind": "single-agent",
+  "sourceTests": {
+    "passed": 95,
+    "skipped": 1,
+    "failed": 0
+  },
+  "runtime": {
+    "imageId": "sha256:5eb85035410c1f5f3596dbd3e6d34872c46ccaf66efd800929ff5101c142417f",
+    "baseImage": "node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+    "architecture": "arm64",
+    "dependencyLocksSha256": "b717138ada37b5d505f9332e8d8b3b662d4a7a81d81fb530405ff5400bb3d298"
+  },
+  "records": {
+    "fixtures": {
+      "createdAt": "2026-09-23T20:24:06.641Z",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "reviewKind": "input-and-judge-validation",
+      "results": [
+        {
+          "taskId": "debug-amount",
+          "category": "general-debug",
+          "cases": 18,
+          "promptSha256": "9e3ad4c2219656ac69bb4c26f1a176f9bf88969883af6ac13ad704db62e5eb03",
+          "historySha256": "d00aa1f09edf24a93d6494924a6a4109c84ddc3740f0a90fa8adcf69be950ab5",
+          "snapshotSha256": "a9e2b6242f04acf0c690554e2540d2fcfb4c36e92babdfa34a3c922568034ceb",
+          "caseCatalogSha256": "16b5fcf1e11b1186fef2d85366c1bdcc36ba45be95692da867d14dd684ae35d6",
+          "snapshotExactHistoryOnly": true,
+          "snapshotUnchanged": true,
+          "seedReceiptMatches": true,
+          "referenceSourceSha256": "3866449963e4a3522859767afe4028aff9f009512860c64e81c4f24223f4a70e",
+          "reference": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "debug-amount",
+            "total": 18,
+            "pass": true,
+            "status": "passed",
+            "passed": 18,
+            "failedCases": []
+          },
+          "original": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "debug-amount",
+            "total": 18,
+            "pass": false,
+            "status": "failed",
+            "passed": 8,
+            "failedCases": [
+              0,
+              4,
+              7,
+              8,
+              9,
+              10,
+              13,
+              14,
+              15,
+              17
+            ]
+          }
+        },
+        {
+          "taskId": "debug-ranges",
+          "category": "general-debug",
+          "cases": 6,
+          "promptSha256": "dd11b32ceff09561ab805cff003598840d3eaba71dc917e3d02435e465a9a7ef",
+          "historySha256": "49ae64c9f97d63b5f12ef59b5f9afd34f85681fcd0d62ee7ac4c614fff7a4925",
+          "snapshotSha256": "f54684442b1a0216e3a816584417a4b6f3cc89e3a170835e2ac83fef133f116d",
+          "caseCatalogSha256": "d82c3fc48d8793c0b4ceb05a33ff457eabc387196db4637bb74bc859c6884561",
+          "snapshotExactHistoryOnly": true,
+          "snapshotUnchanged": true,
+          "seedReceiptMatches": true,
+          "referenceSourceSha256": "c498d432ad0ac8f1cc8114250d243f6cf9a9a57d9e074faca3e4e82ee0e6c720",
+          "reference": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "debug-ranges",
+            "total": 6,
+            "pass": true,
+            "status": "passed",
+            "passed": 6,
+            "failedCases": []
+          },
+          "original": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "debug-ranges",
+            "total": 6,
+            "pass": false,
+            "status": "failed",
+            "passed": 3,
+            "failedCases": [
+              0,
+              4,
+              5
+            ]
+          }
+        },
+        {
+          "taskId": "reuse-config",
+          "category": "cross-session-reuse",
+          "cases": 5,
+          "promptSha256": "0c5aa999eb58dd8a52a629e7f07444655d6aceb636d81620ff5b96f357cec04f",
+          "historySha256": "2285fdb35db01893074bde883fec6a27d19909ea39c5b5864a8d7e400834bb00",
+          "snapshotSha256": "543a33d4cc60002743bd5fcdf3b833072759c3bd3c735b4a54da81dbfe33dcdd",
+          "caseCatalogSha256": "1ed5cb137d3dfb3584d554d56f9e1a4fcd8828ad14eb04a9bdd49241c7caffb7",
+          "snapshotExactHistoryOnly": true,
+          "snapshotUnchanged": true,
+          "seedReceiptMatches": true,
+          "referenceSourceSha256": "a18fd9581b26f348cec51d021859c56888dcb74819be3d5cfcc8bf1e32f675db",
+          "reference": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "reuse-config",
+            "total": 5,
+            "pass": true,
+            "status": "passed",
+            "passed": 5,
+            "failedCases": []
+          },
+          "original": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "reuse-config",
+            "total": 5,
+            "pass": false,
+            "status": "failed",
+            "passed": 1,
+            "failedCases": [
+              0,
+              2,
+              3,
+              4
+            ]
+          }
+        },
+        {
+          "taskId": "reuse-slug",
+          "category": "cross-session-reuse",
+          "cases": 6,
+          "promptSha256": "21b29e007b6af9cf0eae395b1092952df0bfdebfccf3c2c3964005d7a3475ac4",
+          "historySha256": "b13e58e8958e55f21da5b3ca536b9f83901769d652586f0410a7755fe12f78a9",
+          "snapshotSha256": "9f609bb6914e581222c1ee46f6bde9f4c8349beea984c6975a851045b9ba46b6",
+          "caseCatalogSha256": "213eb69369469f478ceb25c8e3f8ac5a91996d0f3347f2d889243184a5bd1b95",
+          "snapshotExactHistoryOnly": true,
+          "snapshotUnchanged": true,
+          "seedReceiptMatches": true,
+          "referenceSourceSha256": "f3dc0f34b40da36c43401d39a6d10f85ea7fe4d36b33765ef37934e85ebe6da3",
+          "reference": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "reuse-slug",
+            "total": 6,
+            "pass": true,
+            "status": "passed",
+            "passed": 6,
+            "failedCases": []
+          },
+          "original": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "reuse-slug",
+            "total": 6,
+            "pass": false,
+            "status": "failed",
+            "passed": 1,
+            "failedCases": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        },
+        {
+          "taskId": "stale-fee",
+          "category": "stale-experience",
+          "cases": 7,
+          "promptSha256": "c1fb0d58092b4f4b3c0a5415832072dbb45dcb35a920c15e8f3d287b776c7b33",
+          "historySha256": "70340fc8dff7d52e18de93ca031c188dab3cee64dac4b1c2f3c5d2525ea8dbd6",
+          "snapshotSha256": "d7ed87f6ed8f102b393a875625ff16dd25ccbfc29d0c4f5bdc4babd246734077",
+          "caseCatalogSha256": "60c5b5757ac5772b535cc56265904d440ecdceb2511617ed21c26ac4aa275188",
+          "snapshotExactHistoryOnly": true,
+          "snapshotUnchanged": true,
+          "seedReceiptMatches": true,
+          "referenceSourceSha256": "5a94d38c3baaf05b41edcec3ab09b53c3c7a79b655fb5707dfa8ab7a6e3c07fc",
+          "reference": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "original": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": false,
+            "status": "failed",
+            "passed": 1,
+            "failedCases": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              6
+            ]
+          }
+        },
+        {
+          "taskId": "stale-date",
+          "category": "stale-experience",
+          "cases": 12,
+          "promptSha256": "a101b7ccb2b26775e0fc9254112ac8c481c12e1c47243cd3ce4236202192ab69",
+          "historySha256": "57f850ad79260af4d9890c28fe3a88673e494a7010664b9547cb5ebb0e20ef03",
+          "snapshotSha256": "6fc560511bd2dcfc7a44c9a30a80c3b9a437ff4852fee9c68ca86baf56ddd97c",
+          "caseCatalogSha256": "ef8bf23d9517b36cff41b7017b64925ceb0ba344dbaf67330cdfad92da9a537f",
+          "snapshotExactHistoryOnly": true,
+          "snapshotUnchanged": true,
+          "seedReceiptMatches": true,
+          "referenceSourceSha256": "a2c0b14eb315b12b62c5da149f02f27b455167e81c2d4b449ecf75d5ecbf703c",
+          "reference": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-date",
+            "total": 12,
+            "pass": true,
+            "status": "passed",
+            "passed": 12,
+            "failedCases": []
+          },
+          "original": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-date",
+            "total": 12,
+            "pass": false,
+            "status": "failed",
+            "passed": 4,
+            "failedCases": [
+              0,
+              1,
+              3,
+              4,
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        }
+      ],
+      "schedule": {
+        "trials": 72,
+        "unique": true,
+        "positions": {
+          "A": [
+            5,
+            4,
+            5,
+            4
+          ],
+          "B": [
+            5,
+            5,
+            4,
+            4
+          ],
+          "C": [
+            4,
+            5,
+            4,
+            5
+          ],
+          "D": [
+            4,
+            4,
+            5,
+            5
+          ]
+        }
+      },
+      "limitation": "Reference correctness and original-defect rejection are finite test evidence, not model-performance results or complete semantic proofs.",
+      "evidenceSha256": "03b4420dfcb5a679d579e8fdba99f16ea7d26e3f97d6b4ebbaf4ebf632208fea"
+    },
+    "daily": {
+      "createdAt": "2026-09-23T20:24:47.425Z",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "records": [
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "B",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "C",
+          "requests": 8,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "D",
+          "requests": 8,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "B",
+          "requests": 7,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "D",
+          "requests": 10,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "B",
+          "requests": 6,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        },
+        {
+          "recipe": "A",
+          "requests": 4,
+          "completed": true,
+          "dailyInstruction": true
+        }
+      ],
+      "nativeTools": true,
+      "purposeForwarded": true,
+      "explicitAdoption": true,
+      "exclusiveExport": true,
+      "originalSourceUnchanged": true,
+      "projectMemoryPersistence": true,
+      "crossProjectMemoryIsolation": true,
+      "researchSnapshotUnchanged": true,
+      "cancellationAndResume": true,
+      "controllerSigkillRecovery": true,
+      "partialFilesRecovered": true,
+      "cumulativeRequestLimit": true,
+      "cumulativeDeadlineIdentity": true,
+      "graphicalAcceptance": false,
+      "limitation": "Scripted offline integration only; GUI and paid daily use remain held.",
+      "evidenceSha256": "5d96c025f887963701301ccaa0241bf040475b8d993877a00ee7e10fa6176925"
+    },
+    "management": {
+      "offlineOnly": true,
+      "paidRequests": 0,
+      "recipes": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "cancelAfterDispatch": true,
+      "explicitResume": true,
+      "recordsPreserved": true,
+      "newProcessReadback": true,
+      "budgetAcrossResume": true,
+      "completionSource": "broker",
+      "comparisonEligible": false,
+      "evidenceSha256": "122dfc695c05eae10d78bc5782b5f5c8a1e0db41763ced913ecc67e15e891fee"
+    },
+    "recovery": {
+      "createdAt": "2026-09-23T20:24:34.381Z",
+      "backend": "linux",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "controllerSigkillAfterDispatch": true,
+      "independentGuestCleanup": true,
+      "daemonAbsenceReadback": true,
+      "interruptedRecordPreserved": true,
+      "explicitResume": true,
+      "requestsAcrossResume": 5,
+      "uncertainReservationsUnchanged": true,
+      "evidenceSha256": "20c1a247f05362c94fbe908427bb6d8bc30d70dc1ef93cbb3cb20a93c954c6fb"
+    },
+    "deadline": {
+      "createdAt": "2026-09-23T20:23:34.491Z",
+      "passed": true,
+      "paidRequests": 0,
+      "comparisonEligible": false,
+      "imageId": "sha256:5eb85035410c1f5f3596dbd3e6d34872c46ccaf66efd800929ff5101c142417f",
+      "guestAbsoluteDeadline": true,
+      "independentCleanup": true,
+      "researchResumeOriginalDeadline": true,
+      "actualOfflineRequests": 4,
+      "resumedElapsedMs": 8331,
+      "deadlineAt": 1790195014123,
+      "firstStartedAt": "2026-09-23T20:13:34.123Z",
+      "limitation": "The prior interrupted attempt is synthetic; the guest deadline and resumed DSH process are real offline executions.",
+      "evidenceSha256": "3b0bd6caae99960bcd27fd134b8cd07704f5f02832259a7611502120805407f3"
+    },
+    "web": {
+      "nativeWebServer": true,
+      "clientModuleServed": true,
+      "controls": [
+        "select",
+        "paid-start-held",
+        "check",
+        "report",
+        "evidence"
+      ],
+      "realIsolatedTools": true,
+      "dailyImportDraftDemoPreviewAdoptExport": true,
+      "dailyPaidHeld": true,
+      "dailyExcludedFromResearch": true,
+      "paidRequests": 0,
+      "graphicalAcceptance": false,
+      "evidenceSha256": "7836f1e15d10824e0c2c24c0d1b7fc353051c138ffe6670eb61d987c5f454f96"
+    },
+    "containment": {
+      "createdAt": "2026-09-23T20:27:33.915Z",
+      "schemaVersion": 1,
+      "passed": true,
+      "paidRequests": 0,
+      "imageId": "sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df",
+      "imageDigests": [
+        "node@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df"
+      ],
+      "results": [
+        {
+          "name": "normal-detached",
+          "reason": null,
+          "exitCode": 0,
+          "cleanupVerified": true,
+          "passed": true
+        },
+        {
+          "name": "cancel-detached",
+          "reason": "cancelled",
+          "cleanupVerified": true,
+          "passed": true
+        },
+        {
+          "name": "deadline-detached",
+          "reason": "timeout",
+          "cleanupVerified": true,
+          "passed": true
+        },
+        {
+          "name": "heartbeat-expired",
+          "reason": "controller_lost",
+          "cleanupVerified": true,
+          "passed": true
+        },
+        {
+          "name": "host-controller-killed",
+          "reason": "controller_lost",
+          "cleanupVerified": true,
+          "passed": true
+        },
+        {
+          "name": "guest-supervisor-killed",
+          "reason": "supervisor_lost",
+          "exitCode": 143,
+          "cleanupVerified": true,
+          "passed": true
+        },
+        {
+          "name": "output-limit",
+          "reason": "output_limit",
+          "cleanupVerified": true,
+          "passed": true
+        },
+        {
+          "name": "filesystem-network-boundary",
+          "reason": null,
+          "exitCode": 0,
+          "cleanupVerified": true,
+          "passed": true
+        }
+      ],
+      "boundary": {
+        "uid": 1000,
+        "networkInterfaces": [
+          "lo"
+        ],
+        "restrictions": true
+      },
+      "limits": [
+        "Fixture containment only; DSH container integration and broker bridge are not yet accepted."
+      ],
+      "evidenceSha256": "f711d225df95ed4382517c33ac12f3fdc08dedfedbbbc240b28de66bbf88a48e"
+    },
+    "dsh": {
+      "createdAt": "2026-09-23T20:22:16.827Z",
+      "passed": true,
+      "paidRequests": 0,
+      "results": [
+        {
+          "recipe": "A",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 4,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:5eb85035410c1f5f3596dbd3e6d34872c46ccaf66efd800929ff5101c142417f",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "B",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 4,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:5eb85035410c1f5f3596dbd3e6d34872c46ccaf66efd800929ff5101c142417f",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "C",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 8,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:5eb85035410c1f5f3596dbd3e6d34872c46ccaf66efd800929ff5101c142417f",
+          "paidRequests": 0
+        },
+        {
+          "recipe": "D",
+          "status": 0,
+          "reason": null,
+          "verdict": {
+            "protocol": "architecture-lab-values-v1",
+            "taskId": "stale-fee",
+            "total": 7,
+            "pass": true,
+            "status": "passed",
+            "passed": 7,
+            "failedCases": []
+          },
+          "claimedCompletion": true,
+          "providerError": null,
+          "requests": 8,
+          "allMetered": true,
+          "cleanupVerified": true,
+          "image": "sha256:5eb85035410c1f5f3596dbd3e6d34872c46ccaf66efd800929ff5101c142417f",
+          "paidRequests": 0
+        }
+      ],
+      "limitation": "Scripted integration only; no comparative model-performance result.",
+      "evidenceSha256": "37e0448f6800e979bab1de00b39628935b5ac092347083e11e2663b546c2a76a"
+    }
+  },
+  "limits": [
+    "No eligible real-model comparison exists; scripted tools are not model-quality evidence.",
+    "This substantive method review is single-agent, not independent final review.",
+    "Graphical acceptance remains blocked by the existing browser-access restriction.",
+    "Prices are standardized peak-rate token estimates, not provider invoice totals.",
+    "Sources, prices, image and snapshots must match an accepted protocol before live execution.",
+    "Stop controllers before upgrades; sharing one ledger between mixed code versions is unsupported."
+  ],
+  "protocolReview": {
+    "protocolId": "41221828dad3ce8ce58f9dbbefa203e11acad505e0e118a2997204f45506b019",
+    "reviewId": "e7e3ef38096a125a728eed49a84c10d5a865dfb49066ea1fe04934b9ecdc8837",
+    "reviewer": {
+      "name": "Codex source-and-evidence review",
+      "kind": "single-agent"
+    },
+    "reviewedAt": "2026-09-23T20:34:31.836Z",
+    "trials": 72,
+    "sourceFiles": 128,
+    "paidHeld": true,
+    "independentReview": false
+  }
+}

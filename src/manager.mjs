@@ -1,3 +1,4 @@
+import { trialClock, remainingTrialMs } from './deadline.mjs'
 import { randomUUID } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -78,7 +79,10 @@ export async function recoverRegistry(root) {
   updateRegistry(root,state=>{
     if(state.active?.runId!==active.runId)return
     const record=state.runs.find(run=>run.runId===active.runId)
-    if(record?.status==='running')Object.assign(record,{...accounting,status:'interrupted',terminalReason:'controller_lost',finishedAt:new Date().toISOString(),evidenceValid:false,cleanupVerified:false})
+    // This controller durably maps the guest before world.run may launch it.
+    // A current Linux record with no launch/map cannot have a running child.
+    const neverLaunched=record?.schemaVersion===2&&record.backend==='linux'&&!record.launched&&!record.containerRunId
+    if(record?.status==='running')Object.assign(record,{...accounting,status:'interrupted',terminalReason:'controller_lost',finishedAt:new Date().toISOString(),evidenceValid:false,cleanupVerified:neverLaunched})
     state.active=null
   })
   await reconcileContainerCleanup(root)
@@ -117,10 +121,11 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
   const runId=randomUUID(),startedAt=new Date().toISOString()
   const controller=new AbortController()
   const abort=()=>controller.abort()
-  const control=await openControl(runId,abort)
   const ledgerRoot=ledgerRootFor(root,mode)
   const outputDir=join(root,'v2','runs',runId)
-  let provider,broker,record,priorIds=new Set(),result
+  let provider,broker,record,result,timer
+  const priorIds=new Set((await entriesAt(ledgerRoot)).filter(row=>row.trialId===trialId).map(row=>row.id))
+  const control=await openControl(runId,abort)
   try{
     record=updateRegistry(root,state=>{
       if(state.active)throw new Error('已有進行中的實驗，請查看狀態或先停止')
@@ -131,29 +136,33 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       if(!resume&&prior.length)throw new Error('此試驗已有紀錄；中斷試驗請明確使用 resume，不會覆蓋')
       if(resume&&prior.at(-1)?.status!=='interrupted')throw new Error('沒有可恢復的中斷試驗')
       if(resume&&prior.at(-1)?.backend&&prior.at(-1).backend!==backend)throw new Error('恢復試驗須使用原來的執行後端')
-      const row={schemaVersion:2,trialId,runId,attempt:prior.length+1,taskId,category:spec.category,recipe,repetition,mode,backend,status:'running',startedAt,protocolId:protocol?.id??null,evidenceValid:false,outputDir}
+      const clock=trialClock(prior,startedAt)
+      const row={...clock,schemaVersion:2,trialId,runId,attempt:prior.length+1,taskId,category:spec.category,recipe,repetition,mode,backend,status:'running',startedAt,protocolId:protocol?.id??null,evidenceValid:false,outputDir}
       state.runs.push(row)
       state.active={runId,trialId,pid:process.pid,startedAt,control:control.descriptor}
       return row
     })
+    timer=setTimeout(abort,remainingTrialMs(record.deadlineAt))
     signal?.addEventListener('abort',abort,{once:true})
     if(signal?.aborted)abort()
     await mkdir(outputDir,{recursive:true,mode:0o700})
-    priorIds=new Set((await entriesAt(ledgerRoot)).filter(row=>row.trialId===trialId).map(row=>row.id))
+    if(controller.signal.aborted)throw new Error('trial cancelled before setup')
     if(mode==='offline'){
       await mkdir(ledgerRoot,{recursive:true,mode:0o700})
       await writeFile(join(ledgerRoot,'pricing.json'),JSON.stringify(offlinePricing())+'\n',{mode:0o600})
       provider=await startOfflineProvider({recipe,responseDelayMs,onRequest:({step})=>writeFile(join(outputDir,'request-progress.json'),JSON.stringify({step,at:new Date().toISOString()})+'\n',{mode:0o600})})
-      broker=await startOfflineBroker({root:ledgerRoot,trialId,endpoint:provider.endpoint,durationMs:600000})
+      broker=await startOfflineBroker({root:ledgerRoot,trialId,endpoint:provider.endpoint,deadlineAt:record.deadlineAt})
     }else{
       if(JSON.stringify(protocol.pricing)!==JSON.stringify(await loadPricing(ledgerRoot)))throw new Error('protocol prices differ from the shared live budget')
       const apiKey=await readIsolatedCredential(join(authoritativeBudgetRoot,'dsh-home'))
-      broker=await startModelBroker({root:ledgerRoot,trialId,apiKey,durationMs:600000})
+      broker=await startModelBroker({root:ledgerRoot,trialId,apiKey,deadlineAt:record.deadlineAt})
     }
-    result=await evaluateIsolatedTrial({root:outputDir,broker,recipe,taskId,signal:controller.signal,backend,
+    result=await evaluateIsolatedTrial({root:outputDir,broker,recipe,taskId,signal:controller.signal,backend,timeoutMs:remainingTrialMs(record.deadlineAt),deadlineAt:record.deadlineAt,
       memorySnapshot:selected.memory?join(root,'snapshots',taskId,'user.db'):undefined,
       memoryCache:join(project,'state/engram/models'),
       beforeRun:async world=>{
+        if(controller.signal.aborted)throw new Error('trial cancelled before launch')
+        remainingTrialMs(record.deadlineAt)
         record.launched=true
         if(world.containerRunId)Object.assign(record,{containerRunId:world.containerRunId,containerImage:world.containerImage})
         await writeLaunchEvidence(record,reviewed)
@@ -166,14 +175,14 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       status:controller.signal.aborted?'interrupted':result.result?.status===0&&!provider?.error?'completed':'failed',
       test:result.verdict,agentCompleted:trace?.turnEnd==='completed',claimedCompletion:result.outcome.claimedCompletion,
       terminalReason:result.outcome.terminalReason,evaluatorStatus:trace?.status??'error',error:provider?.error??trace?.error??null,
-      durationMs:result.outcome.durationMs,cleanupVerified:backend==='linux'?result.result?.cleanupVerified===true:true,
+      executionDurationMs:result.outcome.durationMs,cleanupVerified:backend==='linux'?result.result?.cleanupVerified===true:true,
       evidence:{rawReport:join(outputDir,'evaluation/report.json'),outcome:join(outputDir,'outcome.json'),process:join(outputDir,'process.json')},
     })
   }catch(error){
     if(!record)throw error
     Object.assign(record,{status:controller.signal.aborted?'interrupted':'failed',terminalReason:controller.signal.aborted?'cancelled':'controller_error',error:error.message,evidenceValid:false,cleanupVerified:record.launched?false:true})
   }finally{
-    signal?.removeEventListener('abort',abort)
+    clearTimeout(timer);signal?.removeEventListener('abort',abort)
     try{
       await broker?.close()
       await provider?.close()
@@ -181,7 +190,7 @@ export async function runManagedTrial({ root, recipe='A', taskId='stale-fee', re
       const entries=(await entriesAt(ledgerRoot)).filter(row=>row.trialId===trialId&&!priorIds.has(row.id))
       const completion=await brokerCompletion(ledgerRoot,entries)
       const allMetered=entries.every(row=>row.status==='metered'&&Number.isFinite(row.actualTwd))
-      Object.assign(record,{finishedAt:new Date().toISOString(),requests:entries.length,requestIds:entries.map(row=>row.id),costTwd:allMetered?entries.reduce((n,row)=>n+row.actualTwd,0):null,reservedTwd:entries.reduce((n,row)=>n+row.reservedTwd,0),paidRequests:mode==='offline'?0:entries.length})
+      Object.assign(record,{finishedAt:new Date().toISOString(),durationMs:Date.now()-Date.parse(startedAt),requests:entries.length,requestIds:entries.map(row=>row.id),costTwd:allMetered?entries.reduce((n,row)=>n+row.actualTwd,0):null,reservedTwd:entries.reduce((n,row)=>n+row.reservedTwd,0),paidRequests:mode==='offline'?0:entries.length})
       Object.assign(record,{claimedCompletion:completion.claimedCompletion,completionEvidence:completion,completionSource:'broker-captured-provider-stream'})
       await mkdir(outputDir,{recursive:true,mode:0o700})
       if(provider)await writeFile(join(outputDir,'offline-requests.json'),JSON.stringify(provider.requests)+'\n',{mode:0o600})

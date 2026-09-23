@@ -1,5 +1,5 @@
 export const tasks = [
-  { id: 'debug-amount', category: 'general-debug', prompt: '修正 index.mjs 的 normalizeAmount。接受有限數字或十進位數字字串；字串可有正負號、小數點、首尾空白，以及合法三位一組的千分位逗號。空字串、不合法逗號分組、非有限值或其他型別回傳 null；有效值回傳數字。執行測試並說明結果。' },
+  { id: 'debug-amount', category: 'general-debug', prompt: '修正 index.mjs 的 normalizeAmount。接受有限數字或十進位數字字串；字串可有正負號、小數點、首尾空白，以及合法三位一組的千分位逗號。整數部分須有數字，若有小數點，其後須有數字；不接受科學記號。空字串、不合法逗號分組、轉換後非有限值或其他型別回傳 null；有效值回傳數字。執行測試並說明結果。' },
   { id: 'debug-ranges', category: 'general-debug', prompt: '修正 index.mjs 的 mergeRanges。閉區間只要相交或端點相接就必須合併；輸出按起點排序。執行測試並說明結果。' },
   { id: 'reuse-config', category: 'cross-session-reuse', prompt: '修正 index.mjs 的 resolveConfig。使用者設定覆蓋預設值，巢狀 flags 只覆蓋提供的鍵。請閱讀 history.md，但自行確認目前規格。' },
   { id: 'reuse-slug', category: 'cross-session-reuse', prompt: '修正 index.mjs 的 slugify。移除首尾空白並轉小寫；連續空白（含定位字元與換行）及連字號需合併成單一連字號；重音拉丁字母應保留可搜尋的 ASCII 基底；空字串回傳空字串。請閱讀 history.md，但自行驗證實作。' },

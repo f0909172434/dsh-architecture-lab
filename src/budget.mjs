@@ -1,5 +1,7 @@
-import { mkdir, open, readFile, rename, unlink, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rename, writeFile, access, chmod } from 'node:fs/promises'
 import { join } from 'node:path'
+import { randomUUID } from 'node:crypto'
+import { DatabaseSync } from 'node:sqlite'
 
 const CAP_TWD = 300
 const PRICE_MAX_AGE_MS = 24 * 60 * 60 * 1000
@@ -32,14 +34,16 @@ export function requestUpperBound(options, pricing) {
 }
 
 export async function withLedger(root, fn) {
-  await mkdir(root, { recursive: true })
-  const lockPath = join(root, 'budget.lock')
-  let lock
-  try { lock = await open(lockPath, 'wx') } catch (error) {
-    if (error.code === 'EEXIST') throw new Error('budget ledger is locked; no call dispatched')
-    throw error
-  }
+  await mkdir(root, { recursive: true, mode:0o700 })
+  // Preserve the old lock as an explicit audit stop; it could belong to an
+  // older still-running controller. New controllers use an OS-released lock.
+  try{await access(join(root,'budget.lock'));throw new Error('legacy budget ledger is locked; audit required; no call dispatched')}
+  catch(error){if(error.code!=='ENOENT')throw error}
+  const lockPath=join(root,'budget-lock.sqlite'),lock=new DatabaseSync(lockPath)
   try {
+    await chmod(lockPath,0o600)
+    try{lock.exec('PRAGMA busy_timeout=0; BEGIN IMMEDIATE')}
+    catch{throw new Error('budget ledger is locked; no call dispatched')}
     const path = join(root, 'budget.json')
     let ledger
     try { ledger = JSON.parse(await readFile(path, 'utf8')) } catch (error) {
@@ -47,13 +51,14 @@ export async function withLedger(root, fn) {
       ledger = { capTwd: CAP_TWD, entries: [] }
     }
     const result = await fn(ledger)
-    const temp = `${path}.${process.pid}.tmp`
-    await writeFile(temp, JSON.stringify(ledger, null, 2) + '\n')
+    const temp = `${path}.${randomUUID()}.tmp`
+    await writeFile(temp, JSON.stringify(ledger, null, 2) + '\n',{flag:'wx',mode:0o600})
     await rename(temp, path)
+    lock.exec('COMMIT')
     return result
   } finally {
-    await lock.close()
-    await unlink(lockPath)
+    if(lock.isTransaction)lock.exec('ROLLBACK')
+    lock.close()
   }
 }
 

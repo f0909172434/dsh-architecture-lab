@@ -113,3 +113,8 @@ lab. Retried attempts must not overwrite results or inflate single-run success.
 Before public release, scan a clean source snapshot and its metadata, retain
 upstream notices, test a fresh checkout, and read back the public GitHub state.
 Raw private evidence must not enter the public snapshot or its history.
+
+Before upgrading the lab, stop its active controllers. Do not share one budget
+ledger between mixed code versions. New writer locks release on process death;
+an existing legacy `budget.lock` remains an audit stop and is never silently
+removed. The original JSON entries and cap remain authoritative.

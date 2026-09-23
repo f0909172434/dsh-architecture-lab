@@ -4,6 +4,26 @@ import { withLedger, validatePricing } from '../budget.mjs'
 const roundUp = amount => Math.ceil(amount * 100) / 100
 export const fingerprint = value => createHash('sha256').update(JSON.stringify(value)).digest('hex')
 
+// A durable clock exists even when a controller dies before its first dispatch.
+// A restart may shorten this clock, but can never extend it.
+export async function claimTrialDeadline(root,trialId,requestedDeadline,now=Date.now()){
+  if(typeof trialId!=='string'||!trialId||!Number.isSafeInteger(requestedDeadline)||requestedDeadline>now+600000)throw new Error('invalid trial deadline')
+  return withLedger(root,ledger=>{
+    committedTwd(ledger)
+    ledger.trialDeadlines??=[]
+    if(!Array.isArray(ledger.trialDeadlines))throw new Error('invalid durable deadlines')
+    const clocks=ledger.trialDeadlines.filter(row=>row.trialId===trialId)
+    if(clocks.length>1||clocks.some(row=>!Number.isSafeInteger(row.deadlineAt)))throw new Error('invalid durable trial deadline')
+    const old=ledger.entries.filter(row=>row.trialId===trialId).map(row=>Date.parse(row.at)+600000)
+    if(old.some(value=>!Number.isFinite(value)))throw new Error('invalid original dispatch time')
+    const deadlineAt=Math.min(requestedDeadline,clocks[0]?.deadlineAt??Infinity,...old)
+    if(deadlineAt<=now)throw new Error('trial deadline reached')
+    if(clocks.length)clocks[0].deadlineAt=deadlineAt
+    else ledger.trialDeadlines.push({trialId,deadlineAt})
+    return deadlineAt
+  })
+}
+
 /** Legacy reservations stay charged unless covered by a reviewed provider
  * aggregate bound. Verified v2 dispatches settle individually; an interrupted
  * or ambiguous dispatch keeps its bound.
@@ -53,6 +73,8 @@ export async function reserveDispatch(root, trialId, body, pricing, now = Date.n
     const committed = committedTwd(ledger)
     if (ledger.entries.some(entry => entry.boundExceeded)) throw new Error('reservation bound exceeded; audit required')
     const prior = ledger.entries.filter(entry => entry.trialId === trialId)
+    const clocks=(ledger.trialDeadlines??[]).filter(row=>row.trialId===trialId)
+    if(clocks.length>1||clocks.some(row=>!Number.isSafeInteger(row.deadlineAt)||now>=row.deadlineAt))throw new Error('trial deadline reached')
     if (prior.length >= 12) throw new Error('trial request limit reached')
     if (prior.some(entry => !Number.isFinite(Date.parse(entry.at)) || now >= Date.parse(entry.at) + 600_000)) throw new Error('trial deadline reached')
     if (committed + reservedTwd > 300) throw new Error('NT$300 budget would be exceeded')
@@ -81,7 +103,9 @@ export async function settleDispatch(root, id, rawUsage, { complete = false, req
     const p = entry.pricing
     entry.usage = usage
     entry.rawUsage = rawUsage
-    entry.actualTwd = roundUp((usage.inputTokens * p.inputUsdPerMillion + usage.cacheReadTokens * p.cacheHitUsdPerMillion + usage.outputTokens * p.outputUsdPerMillion) / 1e6 * p.usdTwd)
+    entry.costPolicy = 'token-rates-unrounded-v1'
+    entry.estimatedUsd = (usage.inputTokens * p.inputUsdPerMillion + usage.cacheReadTokens * p.cacheHitUsdPerMillion + usage.outputTokens * p.outputUsdPerMillion) / 1e6
+    entry.actualTwd = entry.estimatedUsd * p.usdTwd
     entry.boundExceeded = entry.actualTwd > entry.reservedTwd
     entry.status = 'metered'
     return entry

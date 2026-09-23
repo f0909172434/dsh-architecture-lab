@@ -29,3 +29,11 @@ test('partial and ineligible results do not produce paired effects',()=>{
   renderResearch(document,target,analyzeResearch(rows('a',[true,true,true,true]).map(row=>({...row,mode:'offline'}))))
   assert.match(target.text,/尚無符合研究條件/);assert.match(target.text,/離線 4/);assert.doesNotMatch(target.text,/協定 a/)
 })
+
+test('small known costs and paired differences do not appear as zero',()=>{
+  const target=new Element('div'),data=rows('a',[true,true,true,true]).map((row,i)=>({...row,costTwd:(i+1)*.00001}))
+  renderResearch(document,target,analyzeResearch(data))
+  assert.match(target.text,/NT\$0\.00002000/)
+  assert.match(target.text,/\+0\.00001000 NT\$/)
+  assert.doesNotMatch(target.text,/\+0\.00 NT\$/)
+})

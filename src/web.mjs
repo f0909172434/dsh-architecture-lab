@@ -122,7 +122,7 @@ export function createLabWebHandler({root,budgetRoot=root,port,launch,token=rand
       if(req.method==='GET'&&url.pathname===prefix+'/state'){
         const state=await recoverRegistry(root),report=await managedReport(root)
         if(!availability||Date.now()-checkedAt>30000){availability=await recipeAvailability(root);checkedAt=Date.now()}
-        return json(res,200,{...report,executionBackend:executionBackend(),attention:state.attention??null,budget:await budgetView(budgetRoot),tasks,availability,liveReady:liveBlockers.length===0})
+        return json(res,200,{...report,executionBackend:executionBackend(),attention:state.attention??null,budget:await budgetView(budgetRoot),tasks,availability,liveReady:liveBlockers.length===0&&report.protocolReview?.status==='accepted'})
       }
       if(req.method==='GET'&&url.pathname===prefix+'/report')return json(res,200,await managedReport(root))
       if(req.method==='GET'&&url.pathname===prefix+'/evidence')return json(res,200,await evidence(root,url.searchParams.get('runId'),url.searchParams.get('kind')))

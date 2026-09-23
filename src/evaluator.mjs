@@ -1,3 +1,4 @@
+import { remainingTrialMs } from './deadline.mjs'
 import { copyFile, mkdir, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { harness, project } from './runtime.mjs'
@@ -20,7 +21,7 @@ async function collectLogs(source,destination){
  * broker owns the request limit, deadline, credentials and durable ledger.
  * Live broker creation remains held until protocol and billing reconciliation.
  */
-export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memorySnapshot, memoryCache, signal, timeoutMs = 600_000, prompt, seedDir, beforeRun, backend='native', allowUnacceptedImage=false }) {
+export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memorySnapshot, memoryCache, signal, timeoutMs = 600_000, deadlineAt, prompt, seedDir, beforeRun, backend='native', allowUnacceptedImage=false }) {
   if(!['native','linux'].includes(backend))throw new Error('unsupported trial backend')
   const spec=task(taskId),runtime=await harness()
   const {runEval}=await import('../upstream/dsh-eval-harness/lib/runner.js')
@@ -38,7 +39,7 @@ export async function evaluateIsolatedTrial({ root, broker, recipe, taskId, memo
       const prepare=backend==='linux'?prepareLinuxDshWorld:prepareDshWorld
       world=await prepare(worldRoot,broker,{recipe,memorySnapshot,memoryCache,workspace:input.workspace,allowUnacceptedImage})
       await beforeRun?.(world)
-      result=await world.run(input.prompt,{timeoutMs:input.timeoutMs,signal:input.signal})
+      result=await world.run(input.prompt,{timeoutMs:deadlineAt===undefined?input.timeoutMs:remainingTrialMs(deadlineAt),signal:input.signal})
       await writeFile(join(root,'process.json'),JSON.stringify(result,null,2)+'\n',{mode:0o600})
       // Keep the evaluator's report/session parents outside the jail. Only the
       // trusted parent copies logs, rejecting links before the collector reads.

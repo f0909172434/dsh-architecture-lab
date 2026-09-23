@@ -1,11 +1,11 @@
 import { mountDaily } from './daily.mjs'
-import { renderResearch } from './research.mjs'
+import { renderResearch, formatCost } from './research.mjs'
 const $=id=>document.getElementById(id)
 const token=document.querySelector('meta[name="lab-token"]').content
 let state=null,busy=false,refreshing=false,evidenceRun=null,connected=false
 const names={A:['原生 DSH','不加記憶與規劃'],B:['加入記憶','Engram'],C:['加入規劃','Plan-and-Execute'],D:['記憶＋規劃','Engram ＋ Plan-and-Execute']}
 const labels={running:'執行中',completed:'已完成',interrupted:'已中斷',failed:'失敗'}
-const money=value=>value==null?'待核對':`NT$${value.toFixed(2)}`
+const money=value=>value==null?'待核對':`NT$${formatCost(value)}`
 const node=(tag,text,className)=>{const el=document.createElement(tag);if(text!=null)el.textContent=text;if(className)el.className=className;return el}
 function notice(text,error=false){$('notice').textContent=text;$('notice').className=error?'error':''}
 async function api(path,options={}){

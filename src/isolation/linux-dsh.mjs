@@ -1,3 +1,4 @@
+import { remainingTrialMs } from '../deadline.mjs'
 import { createHash, randomUUID } from 'node:crypto'
 import { mkdir, readFile, readdir, lstat, writeFile } from 'node:fs/promises'
 import { join, dirname, posix } from 'node:path'
@@ -32,6 +33,14 @@ export async function verifyLinuxImage({allowUnaccepted=false}={}){
     if(createHash('sha256').update(await readFile(source)).digest('hex')!==file.sha256)throw new Error(`Linux image source changed: ${name}; rebuild required`)
   }
   const runtime=await linuxRuntime()
+  // The supervisor is outside the image. Verify the installed trusted code as
+  // well, so a source manifest cannot silently refer to an older guest runtime.
+  const supervisorFiles=['supervisor.py','receipt.py','cleanup.py','launch.py','bridge-lease.py','files.py']
+  const installed=runtime.guest(['sudo','sha256sum',...supervisorFiles.map(file=>`/opt/dsh-architecture-lab/${file}`)]).trim().split('\n')
+  for(const [index,file] of supervisorFiles.entries()){
+    const expected=createHash('sha256').update(await readFile(join(project,'containers',file))).digest('hex')
+    if(installed[index]?.split(/\s+/)[0]!==expected)throw new Error('Linux supervisor source changed; reinstall required')
+  }
   const image=JSON.parse(runtime.guest(['sudo','docker','image','inspect',record.imageId]))[0]
   if(image.Id!==record.imageId)throw new Error('Linux image identity mismatch')
   return record
@@ -87,7 +96,8 @@ export async function prepareLinuxDshWorld(root,broker,{recipe='A',memorySnapsho
       try{
         bridge=await openLinuxBridge({runId,port:broker.port})
         const port=32222
-        const result=await runLinuxProcess({runId,image:image.imageId,brokerBridge:true,timeoutMs,
+        const result=await runLinuxProcess({runId,image:image.imageId,brokerBridge:true,timeoutMs:broker.deadlineAt?Math.min(timeoutMs,remainingTrialMs(broker.deadlineAt)):timeoutMs,
+          ...(broker.deadlineAt?{deadlineAt:broker.deadlineAt}:{}),
           command:['node','/opt/lab/relay.mjs',String(port),'node','/opt/lab/entrypoint.mjs',recipe,prompt],
           env:{DSH_HOME:'/home/lab',DSH_PERMISSION_MODE:'danger-full-access',DEEPSEEK_BASE_URL:`http://127.0.0.1:${port}`,DEEPSEEK_API_KEY:broker.token}}, {signal})
         try {

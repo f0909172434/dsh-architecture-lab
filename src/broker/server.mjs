@@ -4,7 +4,7 @@ import { appendFile, mkdir, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { loadPricing } from '../budget.mjs'
 import { assertLiveReady, assertDailyReady } from '../readiness.mjs'
-import { reserveDispatch, settleDispatch } from './accounting.mjs'
+import { reserveDispatch, settleDispatch, claimTrialDeadline } from './accounting.mjs'
 import { authoritativeBudgetRoot } from './location.mjs'
 
 const MAX_BODY = 1024 * 1024
@@ -51,12 +51,13 @@ export function streamUsage(text) {
   return { usage, complete: done && !malformed && count === 1 }
 }
 
-async function start({ root, trialId, apiKey, endpoint, durationMs = 600_000 }) {
+async function start({ root, trialId, apiKey, endpoint, durationMs = 600_000, deadlineAt }) {
   if (!Number.isInteger(durationMs) || durationMs < 1 || durationMs > 600_000) throw new Error('invalid trial duration')
   if (typeof apiKey !== 'string' || !apiKey || /[\r\n]/.test(apiKey)) throw new Error('invalid provider credential')
   await loadPricing(root)
   const token = randomBytes(32).toString('hex')
-  const deadline = Date.now() + durationMs
+  if(deadlineAt!==undefined&&!Number.isSafeInteger(deadlineAt))throw new Error('invalid trial deadline')
+  const deadline=await claimTrialDeadline(root,trialId,Math.min(Date.now()+durationMs,deadlineAt??Infinity))
   const controllers = new Set(), jobs = new Set()
   let closing = false, busy = false
   const errorReply = (res, code, message) => {
@@ -107,6 +108,7 @@ async function start({ root, trialId, apiKey, endpoint, durationMs = 600_000 }) 
       reservation = await reserveDispatch(root, trialId, body, pricing)
       const evidence = join(root, 'broker-evidence'); await mkdir(evidence, { recursive: true })
       await writeFile(join(evidence, `${reservation.id}.request.json`), JSON.stringify(body) + '\n', { flag: 'wx', mode: 0o600 })
+      if(controller.signal.aborted||Date.now()>=deadline)throw new Error('trial deadline reached before dispatch')
       // Fetch does not retry HTTP requests. Redirects are errors so one recorded
       // dispatch can never silently become two requests or change destinations.
       const upstream = await fetch(endpoint, { method: 'POST', redirect: 'error', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: controller.signal })
@@ -148,7 +150,7 @@ async function start({ root, trialId, apiKey, endpoint, durationMs = 600_000 }) 
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve) })
   const port = server.address().port
   return {
-    baseURL: `http://127.0.0.1:${port}`, port, token,
+    baseURL: `http://127.0.0.1:${port}`, port, token, deadlineAt:deadline,
     async close() {
       closing = true
       for (const controller of controllers) controller.abort()
@@ -173,8 +175,8 @@ export async function startDailyModelBroker(options){
 }
 
 /** No real key accepted and no public endpoint reachable through this helper. */
-export async function startOfflineBroker({ root, trialId, endpoint, durationMs }) {
+export async function startOfflineBroker({ root, trialId, endpoint, durationMs, deadlineAt }) {
   const url = new URL(endpoint)
   if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || url.username || url.password || url.search || url.hash) throw new Error('offline provider must be loopback')
-  return start({ root, trialId, endpoint: url.href, durationMs, apiKey: 'offline-dummy-credential' })
+  return start({ root, trialId, endpoint: url.href, durationMs, deadlineAt, apiKey: 'offline-dummy-credential' })
 }

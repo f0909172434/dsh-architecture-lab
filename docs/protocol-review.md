@@ -1,8 +1,10 @@
 # Protocol review and evidence qualification
 
-Review recording and evidence qualification are implemented; the actual research
-method has not yet been accepted. Graphical acceptance and daily-use mode are
-still incomplete. No new paid model calls are authorized by recording a review.
+Review recording and evidence qualification are implemented. The dev.9
+[single-agent method review](method-review.md) documents substantive findings and
+repairs; an exact study still needs its own matching receipt. Graphical acceptance,
+paid daily use and independent final review are incomplete. No paid model call is
+authorized merely by recording a review.
 
 ## Freeze, review, then execute
 

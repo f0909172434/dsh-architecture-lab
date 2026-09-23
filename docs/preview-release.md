@@ -1,4 +1,21 @@
-# 0.1.0-dev.8 development preview
+# 0.1.0-dev.9 development preview
+
+A substantive single-agent method review found and repaired resumed deadline
+extension, per-call cost rounding bias, stranded budget locks and unchecked guest
+supervisor versions. Deadline probes exercise actual containers and resumed DSH;
+SIGKILL writer tests retain reservations. Tiny known costs remain visible in the
+panel. The six task contracts now have 54 external cases: every reference passes,
+every original defect fails, and all memory snapshots match only their histories.
+
+The reviewed local candidate has 72 planned trials and a separate immutable
+research-purpose receipt. This does not constitute independent final review,
+GUI acceptance or real-model results. All new probes are offline; the original
+NT$300 cap and historical records are preserved. Paid entry points remain held.
+
+[Method review](method-review.md) · [Validation](dev9-validation.json) ·
+[GUI acceptance checklist](gui-acceptance.md)
+
+# Historical dev.8 development preview
 
 Daily mode adds separate project copies and task drafts, all four recipes,
 per-project adopted memory, output review, explicit adoption and exclusive export.

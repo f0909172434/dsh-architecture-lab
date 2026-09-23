@@ -4,11 +4,12 @@ import { createServer } from 'node:http'
 import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { committedTwd, reserveDispatch, settleDispatch, dispatchBound } from '../src/broker/accounting.mjs'
+import { committedTwd, reserveDispatch, settleDispatch, dispatchBound, claimTrialDeadline } from '../src/broker/accounting.mjs'
 import { startOfflineBroker, startModelBroker, streamUsage } from '../src/broker/server.mjs'
 
 const pricing = () => ({ provider: 'deepseek-official', model: 'deepseek-flash', source: 'https://api-docs.deepseek.com/quick_start/pricing/', fxSource: 'https://open.er-api.com/v6/latest/USD', checkedAt: new Date().toISOString(), inputUsdPerMillion: .3, cacheHitUsdPerMillion: .006, outputUsdPerMillion: 1.2, usdTwd: 31.7 })
 const body = () => ({ model: 'deepseek-flash', reasoning_effort: 'high', thinking: { type: 'enabled' }, max_tokens: 4096, stream: true, stream_options: { include_usage: true }, messages: [{ role: 'user', content: '修正程式' }] })
+const expectedCost=(20*.3+80*.006+10*1.2)/1e6*31.7
 const usage = { prompt_tokens: 100, prompt_cache_hit_tokens: 80, prompt_cache_miss_tokens: 20, completion_tokens: 10, total_tokens: 110 }
 const sse = raw => `data: ${JSON.stringify({ choices: [{ delta: { content: 'offline result' } }], usage: raw })}\n\ndata: [DONE]\n\n`
 async function ledger(root) { return JSON.parse(await readFile(join(root, 'budget.json'), 'utf8')) }
@@ -51,9 +52,9 @@ test('v2 settles verified dispatches without releasing historical or uncertain r
   await settleDispatch(root, unknown.id, usage, { complete: false })
   const result = await ledger(root)
   assert.deepEqual(result.entries[0], historical)
-  assert.equal(result.entries[1].actualTwd, .01)
+  assert.equal(result.entries[1].actualTwd, expectedCost)
   assert.equal(result.entries[2].status, 'unmetered')
-  assert.equal(committedTwd(result), 235.29 + .01 + unknown.reservedTwd)
+  assert.equal(committedTwd(result), 235.29 + expectedCost + unknown.reservedTwd)
   assert.ok(known.reservedTwd < 1)
   assert.equal(result.entries[1].usage.inputTokens, 20)
   assert.equal(result.entries[1].usage.cacheReadTokens, 80)
@@ -80,7 +81,7 @@ test('actual dispatch counts persist across broker restart and stop the thirteen
   }
   const result = await ledger(root)
   assert.equal(result.entries.length, 12)
-  assert.ok(result.entries.every(row => row.status === 'metered' && row.actualTwd === .01))
+  assert.ok(result.entries.every(row => row.status === 'metered' && row.actualTwd === expectedCost))
 }))
 
 test('authentication, routes, unpriced payloads and stale prices dispatch nothing', async () => temporary(async root => {
@@ -98,7 +99,7 @@ test('authentication, routes, unpriced payloads and stale prices dispatch nothin
     await writeFile(join(root, 'pricing.json'), JSON.stringify({ ...pricing(), checkedAt: '2020-01-01' }))
     const stale = await state.call(); assert.equal(stale.status, 502); await stale.text()
     assert.equal(state.received.length, 0)
-    await assert.rejects(readFile(join(root, 'budget.json')), { code: 'ENOENT' })
+    assert.equal((await ledger(root)).entries.length,0)
   } finally { await state.close() }
 }))
 
@@ -143,6 +144,41 @@ test('closing a broker aborts pending calls while retaining unknown cost', async
     assert.equal(result.entries.length, 1)
     assert.equal(result.entries[0].status, 'unmetered')
   } finally { await state.close() }
+}))
+
+test('a broker restart without any dispatch preserves the original deadline and aborts an in-flight response',()=>temporary(async root=>{
+  const first=await setup(root,()=>{},2000)
+  const deadline=first.broker.deadlineAt
+  await first.close()
+  const second=await setup(root,()=>{})
+  try{
+    assert.equal(second.broker.deadlineAt,deadline)
+    const response=await second.call().then(r=>r.text(),()=>null)
+    assert.equal(response,null)
+    assert.ok(Date.now()<=deadline+1000,'pending request must not get a fresh ten minutes')
+    assert.equal(second.received.length,1)
+    await second.broker.close()
+    assert.equal((await ledger(root)).entries[0].status,'unmetered')
+    await assert.rejects(claimTrialDeadline(root,'offline-trial',Date.now()+600000),/deadline reached/)
+  }finally{await second.close()}
+}))
+
+test('durable deadlines include original dispatches and controller staging time',()=>temporary(async root=>{
+  const now=Date.now()
+  const old=await reserveDispatch(root,'old',body(),pricing(),now-599000)
+  assert.equal(await claimTrialDeadline(root,'old',now+600000,now),now+1000)
+  assert.equal(await claimTrialDeadline(root,'new',now+1000,now),now+1000)
+  assert.equal(await claimTrialDeadline(root,'new',now+600000,now),now+1000)
+  await assert.rejects(reserveDispatch(root,'new',body(),pricing(),now+1001),/deadline/)
+  assert.deepEqual((await ledger(root)).entries,[old])
+}))
+
+test('metered costs keep sub-cent differences; only reservations are rounded up',()=>temporary(async root=>{
+  const p=pricing(),reservation=await reserveDispatch(root,'small',body(),p)
+  const result=await settleDispatch(root,reservation.id,usage,{complete:true})
+  assert.equal(result.actualTwd,expectedCost);assert.ok(result.actualTwd>0&&result.actualTwd<.01)
+  assert.equal(result.costPolicy,'token-rates-unrounded-v1')
+  assert.ok(result.reservedTwd>=result.actualTwd)
 }))
 
 test('live broker remains held and offline broker rejects public endpoints', async () => {
