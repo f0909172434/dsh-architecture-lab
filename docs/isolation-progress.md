@@ -110,10 +110,11 @@ allowed. Dedicated cross-run mutation/retrieval acceptance subsequently passed; 
 
 Planner 0.5.0 is pinned to its npm git revision. The patch uses `startSeq/endSeq`,
 preserves the host's system head, and reads current event snapshots. A regression
-test exercises the real rc.3 Session API. The 88 selected adapter/orchestrator
-checks pass. The full suite has 201 passing tests and one suite that cannot load
-an unpublished host browser primitive. The runtime client bundle and its wrapper
-check pass; browser declarations and real rendering are **not** accepted.
+test exercises the real rc.3 Session API. The patched development dependencies
+pin the published rc.3 browser store/slots/primitives types, so `tsc --noEmit`,
+server/client declaration generation and the 88 selected adapter/orchestrator
+checks pass. The runtime client bundle and its wrapper check pass. Real browser
+rendering is still **not** accepted.
 
 Build records bind the host version, patch, lockfile and host bundle hashes;
 a changed dependency requires rebuilding before use. The dev.2 source-only suite reported 33 pass and one platform-specific skip;

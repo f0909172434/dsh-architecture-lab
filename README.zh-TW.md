@@ -89,7 +89,8 @@ npm run check:linux-dsh
 
 Engram 修補了人類訊息來源辨識，並對齊本機嵌入依賴。規劃插件修補了 rc.3
 會話替換介面、系統訊息保留與會話快照更新；建置腳本會驗證固定來源與測試。
-瀏覽器型別檢查及真實圖形介面驗收仍未完成，詳見[修補證據](docs/isolation-progress.md)。
+瀏覽器型別檢查與 declaration 產生已通過；真實圖形介面驗收仍未完成，詳見
+[修補證據](docs/isolation-progress.md)。
 
 DSH `/architecture-lab` 提供 `status`、`select`、`check`、`resume-check`、
 `report`、`export`、`start`、`resume`、`batch`、`stop`。離線 `check` 使用模擬回應，

@@ -1,16 +1,56 @@
+diff --git a/package.json b/package.json
+index bc65586..4de9f89 100644
+--- a/package.json
++++ b/package.json
+@@ -82,0 +83,3 @@
++    "@deepseek-ai/dsh-client-store": "0.1.5-rc.3",
++    "@deepseek-ai/dsh-client-ui-primitives": "0.1.5-rc.3",
++    "@deepseek-ai/dsh-client-ui-slots": "0.1.5-rc.3",
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index ab02bef..2fc9d27 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -14,0 +15,9 @@ importers:
++      '@deepseek-ai/dsh-client-store':
++        specifier: 0.1.5-rc.3
++        version: 0.1.5-rc.3
++      '@deepseek-ai/dsh-client-ui-primitives':
++        specifier: 0.1.5-rc.3
++        version: 0.1.5-rc.3
++      '@deepseek-ai/dsh-client-ui-slots':
++        specifier: 0.1.5-rc.3
++        version: 0.1.5-rc.3
+@@ -114,0 +124,15 @@ packages:
++  '@deepseek-ai/dsh-client-store@0.1.5-rc.3':
++    resolution: {integrity: sha512-tSLn0JSWhDtnXEjp+FPDMjadekyJFMSlaGtR1Fdjpd7EgVcDd4Hsw6gP/nG6Mo/4yOTEfLUSDNFp5AEzK2qs1Q==}
++    peerDependencies:
++      '@deepseek-ai/cordis': 4.0.2
++
++  '@deepseek-ai/dsh-client-ui-primitives@0.1.5-rc.3':
++    resolution: {integrity: sha512-PnPSAppguOfDdtGRVLOtVynoZml3676GO/tveRuaA+tKhXog/35+JIpPewe7QQ+jwbxl+S/p66R6P19az3Cglw==}
++    peerDependencies:
++      '@deepseek-ai/cordis': 4.0.2
++
++  '@deepseek-ai/dsh-client-ui-slots@0.1.5-rc.3':
++    resolution: {integrity: sha512-6mYci9acjKVuu7ZoEfakMKOdrMmRZvlohSRKI/Eu3xQCl1Z2HCpIKR9tUdNwA/3gliKtu1cxmnUi2Jqmm1Mmxg==}
++    peerDependencies:
++      '@deepseek-ai/cordis': 4.0.2
++
+@@ -1703,0 +1728,6 @@ snapshots:
++  '@deepseek-ai/dsh-client-store@0.1.5-rc.3': {}
++
++  '@deepseek-ai/dsh-client-ui-primitives@0.1.5-rc.3': {}
++
++  '@deepseek-ai/dsh-client-ui-slots@0.1.5-rc.3': {}
++
 diff --git a/src/index.ts b/src/index.ts
 index 7178f19..1b65b5c 100644
 --- a/src/index.ts
 +++ b/src/index.ts
-@@ -63,12 +63,17 @@ export const Config: Schema<Config> = Schema.object({
- })
- 
- /** 真 Agent → 窄结构接口的唯一适配点（todo/write 与 surface replace 均为宿主公开 API）。 */
+@@ -66 +66 @@ export const Config: Schema<Config> = Schema.object({
 -function toDriveAgent(agent: Agent): DriveAgent {
 +export function toDriveAgent(agent: Agent): DriveAgent {
-   const session = agent.session
-   const drive: DriveSession = {
-     // 宿主 Session 无 .events 属性，以 snapshotEvents() 提供全量日志只读快照。
+@@ -70,2 +70,7 @@ function toDriveAgent(agent: Agent): DriveAgent {
 -    events: session.snapshotEvents(),
 -    surface: session.surface,
 +    get events() { return session.snapshotEvents() },
@@ -20,52 +60,25 @@ index 7178f19..1b65b5c 100644
 +      const systemSeqs = new Set(events.filter(event => event.type === 'system/message').map(event => event.seq))
 +      return { nodes: session.surface.nodes.filter(seq => !systemSeqs.has(seq)), replaceGeneration: session.surface.replaceGeneration }
 +    },
-     writeTodos: (todos) => {
-       session.append('todo/write', { todos: [...todos] })
-     },
-@@ -79,7 +84,7 @@ function toDriveAgent(agent: Agent): DriveAgent {
-       // 必须以方法形式调用宿主 Session.append（保留 this 绑定）：Session.append
-       // 内部读 this.log，抽出为裸函数调用会丢 this 抛 “Cannot read properties of undefined”。
-       const event = session.append('user/message', message, {
+@@ -82 +87 @@ function toDriveAgent(agent: Agent): DriveAgent {
 -        surfaceOp: { op: 'replace', start: SessionSeq(start), end: SessionSeq(end) },
 +        surfaceOp: { op: 'replace', startSeq: SessionSeq(start), endSeq: SessionSeq(end) },
-         sourceEventSeqs: [...sourceEventSeqs].map((seq) => SessionSeq(seq)),
-       })
-       return event.seq
-@@ -341,8 +346,9 @@ export function apply(ctx: Context, config: Config): void {
-     commandCtx.commands.register({
-       name: 'plan-and-execute',
-       description: 'Plan-and-Execute：规划 → 审批 → 逐步执行（支持确认点与失败暂停）',
+@@ -344,2 +349,3 @@ export function apply(ctx: Context, config: Config): void {
 -      input: { hint: '<任务描述>', images: true },
 -      handler: async ({ agent, rawInput, attachments }) => {
 +      input: { hint: '<任务描述>', attachments: true },
 +      handler: async ({ agent, rawInput, attachments = [] }) => {
 +        if (attachments.some((block) => block.type !== 'image')) return { kind: 'error', text: '此版本规划插件仅支持图片附件。' }
-         const task = rawInput.trim()
-         if (task === '') {
-           return { kind: 'error', text: '请提供任务描述：/plan-and-execute <任务>' }
-@@ -380,7 +386,7 @@ export function apply(ctx: Context, config: Config): void {
-             ctx.logger.warn(`dsh-plan-and-execute: 会话标题写入失败：${String(error)}`)
-           }
-         }
+@@ -383 +389 @@ export function apply(ctx: Context, config: Config): void {
 -        await orchestrator.begin(task, attachments)
 +        await orchestrator.begin(task, attachments.filter((block) => block.type === 'image'))
-         return {
-           kind: 'success',
-           text: 'Plan-and-Execute 已启动：进入规划阶段，等待模型提交计划。',
 diff --git a/src/orchestrator.ts b/src/orchestrator.ts
 index 668613e..eea4c1a 100644
 --- a/src/orchestrator.ts
 +++ b/src/orchestrator.ts
-@@ -320,7 +320,7 @@ export class Orchestrator {
-         this.state.phase = 'aborted'
-         await this.save().catch(() => {})
-       }
+@@ -323 +323 @@ export class Orchestrator {
 -      void error
 +      console.error("[dsh-plan-and-execute] orchestration failed", error)
-     }
-   }
- 
 diff --git a/test/host-adapter.spec.ts b/test/host-adapter.spec.ts
 new file mode 100644
 index 0000000..6ebd7ac
@@ -98,36 +111,24 @@ index 0000000..6ebd7ac
 +  })
 +})
 diff --git a/test/index.spec.ts b/test/index.spec.ts
-index d4fa4a0..21d05a9 100644
+index d4fa4a0..a29237c 100644
 --- a/test/index.spec.ts
 +++ b/test/index.spec.ts
-@@ -245,12 +245,12 @@ describe('apply 装配', () => {
-     expect(agent.steer).toHaveBeenCalledTimes(2)
-   })
- 
+@@ -222 +222 @@ describe('apply 装配', () => {
+-      { seq: 1, type: 'plan/mode', data: { active: true } } as SessionEvent,
++      { seq: 1, time: 0, type: 'plan/mode', data: { active: true } } as unknown as SessionEvent,
+@@ -248 +248 @@ describe('apply 装配', () => {
 -  it('命令声明 input.images: true；带图启动 → 锚定消息图块在前 + 落盘 taskImages', async () => {
 +  it('命令声明 input.attachments: true；带图启动 → 锚定消息图块在前 + 落盘 taskImages', async () => {
-     const { apply } = await import('../src/index.ts')
-     const ctx = fakeCtx()
-     apply(ctx as never, { onStepFailure: 'pause', maxAutoRecoveries: 2, planDir: '.pae' })
-     const definition = ctx.registered.commands[0]!
+@@ -253 +253 @@ describe('apply 装配', () => {
 -    expect(definition.input).toEqual({ hint: '<任务描述>', images: true })
 +    expect(definition.input).toEqual({ hint: '<任务描述>', attachments: true })
-     const handler = definition.handler as (invocation: Record<string, unknown>) => Promise<unknown>
-     const agent = fakeAgent('none')
-     const img = fakeImageBlock('att-entry')
-diff --git a/tsup.config.ts b/tsup.config.ts
-index e3bd8fa..e34c2d0 100644
---- a/tsup.config.ts
-+++ b/tsup.config.ts
-@@ -35,7 +35,9 @@ export default defineConfig([
-     target: 'es2024',
-     platform: 'browser',
-     outDir: 'lib/client',
--    dts: true,
-+    // npm host distributions omit unpublished browser-only declarations.
-+    // Runtime builds still build and validate the real client bundle.
-+    dts: process.env.DSH_LAB_RUNTIME_BUILD !== '1',
-     sourcemap: true,
-     clean: false,
-     external: CLIENT_EXTERNALS,
+diff --git a/test/state.spec.ts b/test/state.spec.ts
+index 3a1ea75..be2e4af 100644
+--- a/test/state.spec.ts
++++ b/test/state.spec.ts
+@@ -36,2 +36,2 @@ describe('isPlanModeActive', () => {
+-      { seq: 1, type: 'plan/mode', data: { active: true } } as SessionEvent,
+-      { seq: 2, type: 'plan/mode', data: { active: false } } as SessionEvent,
++      { seq: 1, time: 0, type: 'plan/mode', data: { active: true } } as unknown as SessionEvent,
++      { seq: 2, time: 0, type: 'plan/mode', data: { active: false } } as unknown as SessionEvent,

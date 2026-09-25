@@ -20,7 +20,7 @@ try{await stat(checkout)}catch(error){
   run('git',['checkout','--detach',revision])
 }
 if(run('git',['rev-parse','HEAD'])!==revision)throw new Error('planner source is not the pinned revision')
-if(spawnSync('git',['apply','--reverse','--check',patch],{cwd:checkout}).status!==0)run('git',['apply',patch])
+if(spawnSync('git',['apply','--unidiff-zero','--reverse','--check',patch],{cwd:checkout}).status!==0)run('git',['apply','--unidiff-zero',patch])
 run('pnpm',['install','--frozen-lockfile','--ignore-scripts','--config.auto-install-peers=false'])
 const scope=join(checkout,'node_modules/@deepseek-ai')
 await mkdir(scope,{recursive:true})
@@ -35,12 +35,13 @@ for(const name of await readdir(hostScope)){
   }catch(error){if(error.code!=='ENOENT')throw error}
   await symlink(target,link)
 }
-// npm does not ship the host's browser-only type packages. Build the runtime
-// client bundle and server declarations; do not claim full browser typecheck.
-run(join(checkout,'node_modules/.bin/tsup'),[],checkout,{DSH_LAB_RUNTIME_BUILD:'1'})
+// The plugin's browser peer types are pinned in its patched devDependencies.
+// Validate the whole TypeScript program before producing server/client declarations.
+console.log(run(join(checkout,'node_modules/.bin/tsc'),['--noEmit']))
+run(join(checkout,'node_modules/.bin/tsup'),[])
 console.log(run(process.execPath,['scripts/assert-client-wrapper.mjs']))
 console.log(run(join(checkout,'node_modules/.bin/vitest'),['run','test/host-adapter.spec.ts','test/index.spec.ts','test/orchestrator.spec.ts']))
 const sha=async path=>createHash('sha256').update(await readFile(path)).digest('hex')
 await mkdir(join(project,'state/patches'),{recursive:true})
-await writeFile(join(project,'state/patches/planner-build.json'),JSON.stringify({revision,version:'0.5.0',harness:runtime.version,patchSha256:await sha(patch),bundleSha256:await sha(join(checkout,'lib/index.js')),clientSha256:await sha(join(checkout,'lib/client/client.js')),lockSha256:await sha(join(checkout,'pnpm-lock.yaml')),browserTypesValidated:false,testedAt:new Date().toISOString()},null,2)+'\n')
+await writeFile(join(project,'state/patches/planner-build.json'),JSON.stringify({revision,version:'0.5.0',harness:runtime.version,patchSha256:await sha(patch),bundleSha256:await sha(join(checkout,'lib/index.js')),serverTypesSha256:await sha(join(checkout,'lib/index.d.ts')),clientSha256:await sha(join(checkout,'lib/client/client.js')),clientTypesSha256:await sha(join(checkout,'lib/client/client.d.cts')),lockSha256:await sha(join(checkout,'pnpm-lock.yaml')),browserTypesValidated:true,testedAt:new Date().toISOString()},null,2)+'\n')
 console.log('Planner rc.3 adapter built and verified in the independent upstream copy.')

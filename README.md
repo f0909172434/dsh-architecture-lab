@@ -101,8 +101,9 @@ release checksum and installed locally on 2026-09-24.
 The Engram patch corrects human-message attribution and aligns its local
 embedding dependencies. The planner patch supports rc.3 session replacement,
 preserves the system head and reads fresh events. Both build scripts verify
-their pinned sources and tests. Browser declaration checking and real GUI
-acceptance are incomplete; see [repair evidence](docs/isolation-progress.md).
+their pinned sources and tests. Planner browser typechecking and declaration
+generation now pass; real GUI acceptance remains incomplete. See
+[repair evidence](docs/isolation-progress.md).
 
 The DSH `/architecture-lab` command provides `status`, `select`, `check`,
 `resume-check`, `report`, `export`, `start`, `resume`, `batch`, and `stop`.

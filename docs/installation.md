@@ -29,8 +29,9 @@ npm run profiles
 - `evaluator` clones the pinned upstream Git revision under `upstream/`, applies
   the tracked patch, installs its lockfile and builds it.
 - `engram` and `planner` reproduce the pinned source patches, build and run
-  their focused regressions. Planner browser-only declaration checking is
-  unavailable with the published host packages.
+  their focused regressions. Planner also pins the published rc.3 browser type
+  packages, runs a full TypeScript check and emits both server and client
+  declarations.
 - `profiles` renders portable templates, installs four trial and five management
   or daily profiles under `state/dsh-home`, and checks configuration composition.
   It neither invokes models nor establishes a verified read boundary.
