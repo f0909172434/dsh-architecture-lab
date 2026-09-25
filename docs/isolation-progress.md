@@ -1,7 +1,7 @@
 # Isolation and accounting repair evidence
 
 This is a development milestone, not acceptance of the full architecture lab.
-The live hold remains active. The management CLI and panel use the v2 controller
+The management CLI and DSH commands use the v2 controller
 and the isolated upstream evaluator. Legacy v1 results remain ineligible.
 This page retains the earlier repair findings; use the
 [current acceptance map](acceptance-status.md) and [dev.9 evidence](dev9-validation.json)

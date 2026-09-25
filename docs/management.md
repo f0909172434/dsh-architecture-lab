@@ -96,10 +96,10 @@ a root-owned terminal receipt and a fresh Docker absence check. A confirmed
 dead controller is marked interrupted; missing cleanup proof blocks both resume
 and new trials. An unreachable control endpoint with a live PID is not proof of
 death. Recovered usage comes from the durable ledger; uncertain reservations
-stay unchanged. The evidence panel can read the recovered registry record even
-when abrupt death prevented writing the final artifact. Graphical acceptance,
-real-model comparison, paid daily use and independent final review remain
-outstanding. A substantive single-agent method review and one exact dev.9
+stay unchanged. The CLI `status` and `report` commands can read the recovered registry record even
+when abrupt death prevented writing the final artifact. Full protocol execution,
+paid daily use smoke acceptance and independent final review remain
+in progress. A substantive single-agent method review and one exact
 protocol receipt are recorded; these do not remove the live gate or accept other
 protocols. See [method review](method-review.md),
 [review and qualification](protocol-review.md) and the

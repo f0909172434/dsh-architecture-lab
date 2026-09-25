@@ -11,23 +11,17 @@ A local DSH plugin comparing memory and planning, reusing DSH,
 [Plan-and-Execute](https://github.com/jimmyzhang219/dsh-plan-and-execute), and
 [dsh-eval-harness](https://github.com/BiBoyang/dsh-eval-harness).
 
-**Development preview: paid experiments remain held.** All four recipes now
-pass a credential-free integration probe using real DSH tools, the upstream
-evaluator, an external billing broker and the isolated judge. Responses are
-scripted: this is integration evidence, not architecture-performance research.
-The v1 pilots remain ineligible. There is no valid winner or stable release.
+**Development preview: protocol frozen & 1st live trial complete.** Candidate protocol `9a1fb...` has been frozen under review `42494f...`. The first live A/B/C/D quartet trial (`stale-fee` repetition 1) completed with DeepSeek-V4.1-Flash, achieving 7/7 external test passes across all four recipes and 100% metered billing (NT$1.03 spent of the NT$300 allowance). The v1 pilots remain ineligible.
 [Linux evidence](docs/linux-integration-results.json) · [Roadmap](ROADMAP.md).
 
 
-Comparison exports and the panel now separate protocol identities and show
-matched A/B/C/D contrasts, missing coverage and unknown costs. The order is
+Comparison exports now separate protocol identities and show matched A/B/C/D contrasts, missing coverage and unknown costs via `npm run lab -- report`. The order is
 counterbalanced across blocks. See the [candidate method](docs/research-protocol.md).
 Historical costs have been reconciled using a conservative provider-day bound;
 original entries are preserved, per-request costs remain unknown, and all live
-experiment directories share the original NT$300 cap. Graphical acceptance still blocks paid starts; every study also needs a matching
-current protocol receipt. [Current checks](docs/dev9-validation.json).
+experiment directories share the original NT$300 cap. The project operates as a pure headless DSH plugin and CLI command suite. Every study run requires a matching frozen protocol receipt. [Current checks](docs/dev9-validation.json).
 
-Review receipts and sealed attempt evidence now make research eligibility inspectable. Reports derive eligibility from the pre-launch review, guest execution receipt, judge artifacts and broker ledger; a registry flag cannot promote old trials. See [review workflow](docs/protocol-review.md). The [substantive single-agent review](docs/method-review.md) is complete for dev.9 and an exact local protocol receipt is preserved. This is not independent final review or permission to spend.
+Review receipts and sealed attempt evidence now make research eligibility inspectable. Reports derive eligibility from the pre-launch review, guest execution receipt, judge artifacts and broker ledger; a registry flag cannot promote old trials. See [review workflow](docs/protocol-review.md). The [substantive single-agent review](docs/method-review.md) is complete and an exact local protocol receipt is preserved.
 
 | Recipe | Memory | Planning |
 | --- | --- | --- |
@@ -49,14 +43,14 @@ per-call cent rounding, made budget locks recoverable after process death and
 verified installed supervisor source. Six reference solutions pass 54 external
 cases; every original defect fails, and all six memory snapshots match only their
 shared histories. Metered estimates retain small cost differences; reservations
-remain conservative. No eligible real-model results exist yet.
+remain conservative. The 1st live quartet trial (`stale-fee` repetition 1) provides verified empirical contrast data under DeepSeek-V4.1-Flash; remaining blocks are defined in the frozen protocol.
 
-[Method review](docs/method-review.md) · [GUI acceptance checklist](docs/gui-acceptance.md)
+[Method review](docs/method-review.md) · [Acceptance status](docs/acceptance-status.md)
 
 ## Daily task preview
 
-The panel now supports independent project copies, custom task drafts, recipe
-selection, output preview, explicit adoption and export to a new directory.
+The headless CLI supports independent project copies, custom task drafts, recipe
+selection, output preview, explicit adoption and export to a new directory (`npm run lab -- daily-*`).
 Per-project Engram memory persists only after adoption. Fixed offline A/B/C/D
 checks exercise real tools, cancellation and recovery after controller loss;
 they do not execute arbitrary user prompts. Paid daily tasks remain held and

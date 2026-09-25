@@ -147,7 +147,7 @@ test('closing a broker aborts pending calls while retaining unknown cost', async
 }))
 
 test('a broker restart without any dispatch preserves the original deadline and aborts an in-flight response',()=>temporary(async root=>{
-  const first=await setup(root,()=>{},2000)
+  const first=await setup(root,()=>{},250)
   const deadline=first.broker.deadlineAt
   await first.close()
   const second=await setup(root,()=>{})

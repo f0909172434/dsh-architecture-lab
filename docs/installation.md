@@ -32,8 +32,8 @@ npm run profiles
   their focused regressions. Planner also pins the published rc.3 browser type
   packages, runs a full TypeScript check and emits both server and client
   declarations.
-- `profiles` renders portable templates, installs four trial and five management
-  or daily profiles under `state/dsh-home`, and checks configuration composition.
+- `profiles` renders portable templates, installs four trial profiles (`lab-a`, `lab-b`, `lab-c`, `lab-d`)
+  under `state/dsh-home`, and checks configuration composition.
   It neither invokes models nor establishes a verified read boundary.
 
 Use a fresh credential-free compatibility directory to check updates:
@@ -56,7 +56,7 @@ The management commands now use the isolated v2 evaluator. `prepare` creates an
 immutable candidate manifest with review pending; it does not enable paid runs.
 Native offline A/B/C/D, memory separation, cancellation/resume and restart
 readback have passed. The default Linux backend also passes abrupt controller-death cleanup and
-explicit recovery. Graphical acceptance remains incomplete. See [management usage and evidence](management.md).
+explicit recovery. See [management usage and evidence](management.md).
 
 Keep `state/`, credentials, raw sessions and personal memory private. The broker
 retains the provider key in a trusted parent and gives the jailed DSH only a
@@ -78,7 +78,7 @@ bundled with the plugin; the latest recommended Harness remains 0.1.5-rc.3.
 
 After runtime/evaluator/patch setup, run `npm run seed`, then follow
 [Linux setup and image acceptance](linux-runtime.md). The commands below include
-legacy native diagnostics; managed, memory and web checks use Linux by default.
+legacy native diagnostics; managed and memory checks use Linux by default.
 
 ```sh
 npm run check:isolation
@@ -90,7 +90,6 @@ npm run check:integration -- D
 npm run check:management
 npm run check:commands
 npm run check:memory
-npm run check:web
 npm run check:linux-recovery
 ```
 

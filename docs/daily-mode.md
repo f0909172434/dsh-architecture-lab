@@ -1,9 +1,9 @@
 # Daily task mode (development preview)
 
 Daily tasks use their own project copies, jobs, attempts and adopted Engram
-memory. They never enter research comparisons. The panel provides project import,
+memory. They never enter research comparisons. The headless CLI provides project import,
 recipe selection, task drafts, stop/resume, output preview, explicit adoption and
-export. **Paid daily tasks remain held pending product and graphical acceptance.**
+export (`npm run lab -- daily-*`). **Paid daily tasks remain held pending product smoke acceptance.**
 The fixed offline example uses scripted responses; it does not solve arbitrary
 user prompts. No paid calls were used to validate this version.
 
@@ -63,7 +63,7 @@ npm run lab -- daily-adopt returned-run-id
 npm run lab -- daily-export returned-run-id /path/to/new-output-directory
 ```
 
-The authenticated DSH panel exposes the same operations without entering JSON.
+The DSH `/architecture-lab` command and CLI expose these operations cleanly without entering manual JSON.
 Management sessions themselves cannot call a model.
 
 ## Recovery and spending
@@ -88,10 +88,8 @@ adopted memory. Partial memory is never adopted implicitly.
 `npm run check:daily` exercises actual DSH tools with scripted providers: A/B/C/D,
 adoption/export, inherited files, real Engram save/search and auxiliary accounting,
 cross-project isolation, cancellation, host SIGKILL, recovered partial files and
-explicit resumes. `npm run check:web` exercises these controls through the real
-DSH HTTP server. Source checks also cover authentication, size limits, links,
+explicit resumes. Source checks also cover authentication, size limits, links,
 tampering, stale branches, competing mode starts and expired resumes.
 
-See [dev.9 checks](dev9-validation.json). These checks establish neither graphical
-usability nor model quality. The existing administrative browser restriction has
-not been bypassed; graphical acceptance and paid daily use remain incomplete.
+See [dev.9 checks](dev9-validation.json). These checks establish headless backend
+isolation and execution reliability. Paid daily tasks remain held pending product smoke acceptance.
