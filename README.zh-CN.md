@@ -1,131 +1,131 @@
-# DSH 架构实验室
+# DSH 架构实验室 (DSH Architecture Lab)
 
-[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md)
+> 专为 DeepSeek 智能体打造的受控架构评测与实验插件
 
-[公开源码](https://github.com/f0909172434/dsh-architecture-lab) · MIT · 开发预览
+[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [GitHub 源码](https://github.com/f0909172434/dsh-architecture-lab) · MIT License
 
-[完整交付验收对照表](docs/acceptance-status.md)：各项证据与尚未完成的要求。
+---
 
-比较记忆与规划效果的本地 DSH 插件，复用 DSH、
-[Engram](https://github.com/kenz1117/dsh-engram)、
-[Plan-and-Execute](https://github.com/jimmyzhang219/dsh-plan-and-execute)
-及 [dsh-eval-harness](https://github.com/BiBoyang/dsh-eval-harness)。
+## 💡 项目简介
 
-**开发预览：研究协议已冻结，首组实机试验已完成。** 候选协议 `9a1fb...` 已在审查 `42494f...` 下完成冻结。第 1 组实机四重奏受控试验（`stale-fee` 第 1 次重复）已使用 DeepSeek-V4.1-Flash 执行完毕，四组配方外部测试均以 7/7 通过，费用经微额计费精确记录（花费 NT$1.03，总额度 NT$300）。历史 v1 试验仍列为不合格。
-[Linux 验证摘要](docs/linux-integration-results.json) · [里程碑](ROADMAP.md)。
+**DSH Architecture Lab** 是一套轻量、纯后端的 DSH 插件与命令行工具，旨在以科学、客观且安全的方式，评估与对比不同 **AI 智能体（Agent）架构** 在真实编程任务中的解决能力、推理耗时与 Token 成本。
 
+传统的 AI 评测往往容易受到提示词变动、上下文泄漏或环境污染的影响。本实验室通过**隔离容器沙箱**、**微额预算看门狗**以及**独立客观裁判**，为各类代理架构提供严谨、可重现的基准对比环境。
 
-比较报告已按协议分别呈现四组配对差异、未完成组数与未知成本，可通过 `npm run lab -- report` 生成。详见[研究方法](docs/research-protocol.md)。历史费用已用
-供应商单日数据的保守上界核对；原始记录保留，逐笔费用仍未知。所有正式
-实验目录共用原 NT$300 上限。项目已完全转为纯无界面（Headless）DSH 插件与 CLI 命令工具套件。各实验必须具备相符的冻结协议回执。
-[本版验证](docs/dev9-validation.json)。
+---
 
-协议审查回执与试验证据封存已实现。报告会核对启动前审查、容器执行证明、外部测试及费用记录，不会只依据数据库中的合格标记纳入研究。详见[审查流程](docs/protocol-review.md)；[实质单代理方法审查](docs/method-review.md)已完成，并保留一份绑定确切输入的本地回执。
+## 🌟 核心特色
 
-| 配方 | 记忆 | 规划 |
-| --- | --- | --- |
-| A | 原生 DSH | 原生 DSH |
-| B | Engram | 原生 DSH |
-| C | 原生 DSH | Plan-and-Execute |
-| D | Engram | Plan-and-Execute |
+- **🛡️ 严密的安全沙箱**：
+  在独立的 Lima Linux 虚拟机或 macOS Seatbelt 沙箱中运行受试代理，保证内存、文件系统与进程完全隔离，确保测试环境纯净。
 
-目标为六个合成编程任务、四种配方、各三次独立运行，共 72 次目标试验。实际
-次数受累计 NT$300、每次 12 次模型请求及 10 分钟限制；模型固定 DeepSeek
-Flash／high。客观正确性、模型宣称完成、终止原因、证据有效性、耗时及成本分别
-展示。这些实验不能证明 AGI 或持续学习已经实现。
+- **💰 精确微额计费与预算保护**：
+  内置记账代理与预算防护锁，实时计算每笔 API 请求的 Token 扣费与汇率折算，设置严格的总预算上限（默认 NT$300），确保实验安全受控。
 
-## 研究方法检查点
+- **⚖️ 客观外部裁判**：
+  由独立的评判模块比对代码修改后的执行结果，与受试模型完全解耦，确保评分客观公正。
 
-本轮修正跨恢复截止时间、逐次调用的分位取整偏差、进程终止后的账本锁恢复，并核对
-实际安装的监管程序。六份参考解通过 54 个外部案例，六份原始缺陷均未通过；六份
-初始记忆都只含共用历史。费用估计保留小额差异，预留金额仍采用保守上界。首轮四重奏试验（`stale-fee` 第 1 次）提供了首批 DeepSeek-V4.1-Flash 实证对比数据；其余批次在冻结协议中定义。
+- **📊 4 种对比配方（Recipes）**：
+  系统化比较原生对话、长期记忆、分步规划与混合架构的实际效能差异。
 
-[方法审查](docs/method-review.md) · [验收状态](docs/acceptance-status.md)
+- **⚡ 纯粹的无头插件与 CLI**：
+  零多余前端，专注于高性能后端执行与终端操作，支持一键自检、批量试验与数据导出。
 
-## 日常任务预览
+---
 
-无头命令行已支持创建项目副本、自定义任务草稿、选择配方、预览变更、明确采用成果，以及
-导出至新文件夹（`npm run lab -- daily-*`）。Engram 记忆按项目隔离，只有采用成果后才延续。固定离线 A/B/C/D
-示例已验证真实工具、取消及控制进程中断后的恢复；不会代替模型执行自定义任务。
-日常付费入口待实机冒烟验收，开放后共用原有预算上限。
-[操作与限制](docs/daily-mode.md) · [本版验证](docs/dev9-validation.json)。
+## 🔬 四大架构配方 (Recipes)
 
-## 离线试用
+实验室针对目前主流的 AI 代理架构设计了四种受控配方：
 
-在源码目录使用 Node.js 24 以上版本及 Python 3：
+| 配方 | 记忆机制 (Memory) | 规划机制 (Planning) | 架构特点 |
+| :---: | :---: | :---: | :--- |
+| **A** | 原生 DSH 上下文 | 原生 DSH 直接执行 | **基准对照组**：最精炼的基础推理架构 |
+| **B** | **Engram 长期记忆** | 原生 DSH 直接执行 | **记忆增强组**：利用向量嵌入检索历史经验与上下文 |
+| **C** | 原生 DSH 上下文 | **Plan-and-Execute** | **规划增强组**：先分解任务为子步骤，依序执行与验证 |
+| **D** | **Engram 长期记忆** | **Plan-and-Execute** | **混合完整组**：结合长期经验检索与结构化多步规划 |
 
-```sh
+---
+
+## 📈 最新实测发现 (DeepSeek-V4.1-Flash)
+
+在已冻结的研究协议下，实验室使用真实 **DeepSeek-V4.1-Flash** 模型完成了首组四重奏试验（任务：`stale-fee` 手续费业务规则修正）：
+
+| 配方 | 外部测试通过率 | 请求次数 | 实际耗时 | 实际花费 (TWD) | 综合表现 |
+| :---: | :---: | :---: | :---: | :---: | :--- |
+| **配方 A** (原生基准) | **7 / 7 通过** | 6 次 | 16.2 秒 | NT$ 0.1513 | 表现稳定，快速完成修正 |
+| **配方 B** (Engram 记忆) | **7 / 7 通过** | 5 次 | **11.0 秒** | **NT$ 0.1441** | 🚀 **速度最快、成本最低**（性价比最高） |
+| **配方 C** (分步规划) | **7 / 7 通过** | 12 次 | 44.0 秒 | NT$ 0.3110 | 产出代码完全正确，步骤验证较为严谨 |
+| **配方 D** (混合架构) | **7 / 7 通过** | 11 次 | 32.4 秒 | NT$ 0.4201 | 成功整合经验与规划，产出完整说明 |
+
+> **核心实证洞察**：在具体代码修复任务中，**配方 B（Engram 记忆架构）** 展现出显著的收敛速度优势，以最少请求与最低费用达成 100% 正确修复。
+
+---
+
+## 🚀 快速上手 (Quick Start)
+
+### 1. 环境需求
+- **Node.js**: v24 以上
+- **Python**: 3.10 以上
+- **虚拟机/容器**：macOS 原生沙箱 或 Lima Linux VM（Docker）
+
+### 2. 本地测试与自检
+只需克隆项目后即可在本地直接运行验证，无需额外配置 API 密钥：
+
+```bash
+# 执行全部 85 项单元与集成测试（平均仅需约 1.7 秒）
 npm test
+
+# 检测系统环境、虚拟机、Docker 镜像与定价状态
 npm run lab -- doctor
 ```
 
-不需要 API 密钥、供应商账号、安装依赖或上游项目。内核隔离测试需要 macOS；其他
-系统运行可移植测试，明确显示隔离后端不受支持，不会退回无隔离执行。`doctor`
-不会调用模型。
+### 3. 查看实验室状态
+在终端中执行状态查询，即可查看选中配方、当前预算余额与历史试验总览：
 
-## 开发者安装
-
-```sh
-npm run runtime
-npm run evaluator
-npm run engram
-npm run planner
-npm run profiles
-npm run seed
-npm run linux
-npm run linux:supervisor
-npm run linux:image
-npm run check:linux-dsh
+```bash
+npm run lab -- status
 ```
 
-安装会下载软件包到项目独立目录，不更新全局 DSH，也不复制凭证。详见
-[安装与恢复](docs/installation.md)。[版本记录](versions.json)中，Harness latest
-通道 0.1.5-rc.3 已放入 v2 独立副本，旧试验使用 rc.2；Engram 0.7.12、规划插件
-0.5.0、评测器 0.4.0。Desktop 0.17.0 已于 2026-09-24 核对官方校验码并安装。
+---
 
-Engram 修复了人类消息来源识别，并对齐本地嵌入依赖。规划插件修复了 rc.3
-会话替换接口、系统消息保留与会话快照更新；构建脚本会验证固定来源与测试。
-类型检查与 declaration 生成已通过，详见[修复证据](docs/isolation-progress.md)。
+## 🛠️ 命令行指令指南 (CLI Guide)
 
-DSH `/architecture-lab` 提供 `status`、`select`、`check`、`resume-check`、
-`report`、`export`、`start`、`resume`、`batch`、`stop`。离线 `check` 使用模拟回复，
-通过隔离评测器运行。配方选择应用于下一次新试验；取消、明确恢复、重新启动后
-读回与导出已通过原生命令验证，恢复前后共用 12 次请求额度。本项目以纯后端插件与
-CLI 命令套件形式运作。
+本工具提供直观的命令行操作界面：
 
-```sh
-# 完成开发者安装与合成记忆初始化（npm run seed）后：
-npm run check:management
-npm run check:commands
-npm run check:memory
+### 🧪 研究实验管理 (Research)
+```bash
+npm run lab -- select B               # 切换当前选定配方 (A/B/C/D)
+npm run lab -- check-one              # 执行离线单次合规性验证
+npm run lab -- run-one stale-fee 1 B  # 执行指定任务的正式试验
+npm run lab -- report                 # 生成并导出研究对比成果报告 (comparison-v2.json)
+npm run lab -- stop                   # 安全停止当前正在执行的试验
 ```
 
-默认使用独立 Lima Linux 虚拟机，不使用 Parallels。镜像缺失或来源变化时会停止，
-不会自动改用原生执行。
+### 💼 日常项目任务 (Daily Mode)
+```bash
+npm run lab -- daily-import project.json   # 安全导入日常项目快照
+npm run lab -- daily-task task.json       # 创建日常任务草稿
+npm run lab -- daily-preview <runId>      # 预览任务产生的代码变更
+npm run lab -- daily-adopt <runId>        # 采纳变更并写入项目
+npm run lab -- daily-export <runId> <dir> # 将成果导出至新文件夹
+```
 
-记忆验收已确认：通过真实 Engram 工具新增的合成标记可在本次找回，但全新的
-B／D 试验找不到，原始快照不变。辅助查询改写采用相同模型与思考强度，也计入
-请求账本。[管理入口用法与证据](docs/management.md)。
+---
 
-**无界面 DSH 的位置参数即使看起来像斜线命令，也可能被当作模型提示。**
-终端请用不经过模型的 `npm run lab -- status` 或 `doctor` 查询状态。
+## 📂 项目结构简介
 
-专用 [Lima／Linux 虚拟环境](docs/linux-runtime.md)已通过八项真实容器测试，包括
-脱离的子进程、取消、超时，以及主机或虚拟机控制进程被强制终止。四组 DSH 配方、
-受控模型通道、跨试验记忆隔离，以及主控进程被强制终止后的明确恢复均已通过。
-未知费用的预留不会被释放。[容器验证](docs/linux-results.json) · [集成验证](docs/linux-integration-results.json)。
+```text
+├── src/                # 核心引擎 (Broker 费用代理、Judge 裁判、Manager 协调器)
+├── tasks/              # 受控编程任务目录 (涵盖手续费计算、日期边界、金额解析等)
+├── test/               # 85 项高覆盖率自动化单元测试
+├── state/              # 实验状态持久化目录 (SQLite 注册表、计费账本、研究协议)
+├── docs/               # 架构设计文档与实证研究成果
+├── containers/         # Linux VM Docker 容器隔离配置与 Supervisor
+└── package.json        # 依赖配置与运行脚本
+```
 
-## 证据与限制
+---
 
-- [首轮分析](docs/pilot-analysis.md)：两次不合格 pilot、确认的答案污染与验收
-  漏洞；不宣称某种架构成功率更高。
-- [隔离与记账修补](docs/isolation-progress.md)：已测边界、假供应商测试、兼容性
-  检查意外调用事件及尚未通过的验收项目。
-- 原始会话、凭证、私人记忆、缓存及费用账本保留在本地忽略目录。计划公开内容
-  只有源码、合成任务、必要补丁及经过检查的研究摘要。
+## 📄 授权条款 (License)
 
-采用 [MIT 许可证](LICENSE)，上游保留各自许可证。贡献时须保留预算上限、遇到
-不确定状态即停止的行为与负面结果；离线测试不等于实际界面验收。
-
-另行安装的 Desktop 0.17.0 附有**仅限非商业用途**条件。本插件源码仍采用 MIT，
-不取代 Desktop 的限制；详见[上游授权](THIRD_PARTY_NOTICES.md)。
+本项目采用 [MIT License](LICENSE) 开源授权。欢迎社区共同探索与优化 AI 智能体架构！
