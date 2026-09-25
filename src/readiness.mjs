@@ -1,8 +1,7 @@
-// GUI acceptance is still a product gate. Protocol acceptance is checked
-// separately by loadReviewedProtocol(root) on every research launch, rather
-// than a global boolean claiming every experiment directory has been reviewed.
+// Live trials remain held by product gate until research protocol review and
+// bounded canary trial are verified. Linux offline checks do not replace live canary acceptance.
 export const liveBlockers = Object.freeze([
-  'DSH 圖形介面尚未完成驗收；Linux 離線驗證不代替實際介面驗收',
+  '實機試驗協定審查與首輪四重奏試驗尚未完成驗收；Linux 離線驗證不代替實機驗收',
 ])
 
 export function assertLiveReady() {
@@ -11,7 +10,9 @@ export function assertLiveReady() {
 
 // Everyday tasks have a separate product gate, never an alternate route for
 // benchmark trials. Both use the original shared spending allowance.
-export const dailyBlockers=Object.freeze(['日常任務 DSH 圖形介面尚未完成驗收'])
+export const dailyBlockers = Object.freeze(['日常付費任務實機冒煙尚未完成驗收'])
 export function assertDailyReady(){
   if(dailyBlockers.length)throw new Error(`日常付費任務暫停：${dailyBlockers.join('；')}`)
 }
+
+

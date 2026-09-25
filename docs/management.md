@@ -32,9 +32,8 @@ There is no automatic retry and no best-of scoring.
 held before credentials or paid evidence are touched. Management-session model
 streams are independently disabled even if the trial hold is later removed.
 Daily project copies, drafts, offline examples, adoption and export are available
-in the panel and CLI; [paid daily use](daily-mode.md) remains held. The dedicated
-panel has native HTTP/module integration acceptance; graphical acceptance is
-still pending. See [panel details](web-panel.md).
+in the CLI; [paid daily use](daily-mode.md) remains held. The project operates
+as a pure headless plugin and CLI command suite.
 
 Never pass slash-looking command text as a positional argument to headless DSH:
 that is a model prompt, not command dispatch.

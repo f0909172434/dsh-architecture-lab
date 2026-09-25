@@ -8,7 +8,6 @@ import { chooseRecipe, recoverRegistry, stopManagedRun } from './manager.mjs'
 import { managedReport, exportManagedReport } from './managed-report.mjs'
 import { assertLiveReady, liveBlockers } from './readiness.mjs'
 import { task } from '../tasks/catalog.mjs'
-import { registerLabWeb } from './web.mjs'
 import { executionBackend } from './linux-runtime.mjs'
 import { protocolReviewStatus } from './protocol-review.mjs'
 
@@ -28,7 +27,6 @@ async function launch(args){
 }
 
 export function apply(ctx){
-  ctx.inject(['webServer'],webCtx=>registerLabWeb(webCtx,{root:labRoot,launch}))
   // Management sessions never route through the trial broker. Keep every model
   // invocation held; headless slash-looking positional text is also a prompt.
   ctx.on('llm/stream',()=>{throw new Error('實機試驗暫停：管理會話不允許直接呼叫模型；請由實驗室入口啟動受預算保護的獨立試驗。')},{global:true})

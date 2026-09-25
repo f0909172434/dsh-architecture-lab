@@ -89,22 +89,19 @@ npm run check:linux-dsh
 
 Engram 修補了人類訊息來源辨識，並對齊本機嵌入依賴。規劃插件修補了 rc.3
 會話替換介面、系統訊息保留與會話快照更新；建置腳本會驗證固定來源與測試。
-瀏覽器型別檢查與 declaration 產生已通過；真實圖形介面驗收仍未完成，詳見
-[修補證據](docs/isolation-progress.md)。
+型別檢查與 declaration 產生已通過，詳見[修補證據](docs/isolation-progress.md)。
 
 DSH `/architecture-lab` 提供 `status`、`select`、`check`、`resume-check`、
 `report`、`export`、`start`、`resume`、`batch`、`stop`。離線 `check` 使用模擬回應，
 透過隔離評測器執行。配方選擇套用於下一次新試驗；取消、明確恢復、重新啟動後
-讀回與匯出已通過原生指令驗證，恢復前後共用 12 次請求額度。日常模型會話與
-付費開始仍暫停。專用側邊欄面板已通過原生 HTTP／模組接線測試，
-畫面顯示與操作仍待驗收，詳見[面板說明](docs/web-panel.md)。
+讀回與匯出已通過原生指令驗證，恢復前後共用 12 次請求額度。本專案以純後端外掛與
+CLI 指令套件形式運作。
 
 ```sh
 # 完成開發者安裝與合成記憶初始化（npm run seed）後：
 npm run check:management
 npm run check:commands
 npm run check:memory
-npm run check:web
 ```
 
 預設使用獨立 Lima Linux 虛擬機，不使用 Parallels。映像缺少或來源變動時會停止，

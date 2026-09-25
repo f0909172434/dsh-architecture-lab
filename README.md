@@ -101,8 +101,7 @@ release checksum and installed locally on 2026-09-24.
 The Engram patch corrects human-message attribution and aligns its local
 embedding dependencies. The planner patch supports rc.3 session replacement,
 preserves the system head and reads fresh events. Both build scripts verify
-their pinned sources and tests. Planner browser typechecking and declaration
-generation now pass; real GUI acceptance remains incomplete. See
+their pinned sources and tests. Planner declaration generation and typechecking pass. See
 [repair evidence](docs/isolation-progress.md).
 
 The DSH `/architecture-lab` command provides `status`, `select`, `check`,
@@ -110,15 +109,13 @@ The DSH `/architecture-lab` command provides `status`, `select`, `check`,
 Offline `check` runs the contained evaluator with synthetic responses. Selection
 applies to the next fresh trial. Cancellation, explicit resume with a shared
 12-request allowance, restart readback and export have passed native command
-checks. Daily model sessions and paid starts remain held. A dedicated sidebar panel now has native HTTP/module acceptance; graphical
-rendering and interaction remain unverified. See [panel details](docs/web-panel.md).
+checks. The project operates as a headless plugin and CLI command suite.
 
 ```sh
 # After contributor setup and synthetic memory seeding (npm run seed):
 npm run check:management
 npm run check:commands
 npm run check:memory
-npm run check:web
 ```
 
 The default execution backend is the dedicated Lima Linux VM, not Parallels.

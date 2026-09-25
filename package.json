@@ -10,19 +10,11 @@
     "./budget": "./src/budget.mjs",
     "./planner-runner": "./src/planner-runner.mjs",
     "./memory-seeder": "./src/memory-seeder.mjs",
-    "./cordis.patch.yml": "./cordis.patch.yml",
-    "./client": "./client/index.js"
+    "./cordis.patch.yml": "./cordis.patch.yml"
   },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
-    },
-    "client": {
-      "inject": [
-        "@deepseek-ai/dsh-client-ui-layout",
-        "@deepseek-ai/dsh-client-ui-sidebar"
-      ],
-      "platform": "web"
     }
   },
   "scripts": {
@@ -35,7 +27,7 @@
     "pricing": "node scripts/refresh-pricing.mjs",
     "profiles": "node scripts/setup-profiles.mjs",
     "evaluator": "node scripts/bootstrap-evaluator.mjs",
-    "web": "node scripts/open-selected.mjs",
+    "dsh": "node scripts/open-selected.mjs",
     "engram": "node scripts/bootstrap-engram.mjs",
     "planner": "node scripts/bootstrap-planner.mjs",
     "check:integration": "node scripts/check-brokered-dsh.mjs",
@@ -45,7 +37,6 @@
     "linux": "node scripts/bootstrap-linux.mjs",
     "linux:supervisor": "node scripts/install-linux-supervisor.mjs",
     "check:linux": "node scripts/check-linux-containment.mjs",
-    "check:web": "node scripts/check-web.mjs",
     "linux:image": "node scripts/build-linux-image.mjs",
     "check:linux-bridge": "node scripts/check-linux-bridge.mjs",
     "check:linux-dsh": "node scripts/check-linux-dsh.mjs",

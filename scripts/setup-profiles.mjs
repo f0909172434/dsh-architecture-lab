@@ -20,7 +20,7 @@ try {
 const launcher = spawnSync(process.execPath, [runtime.bin, '--version'], { encoding: 'utf8' })
 if (launcher.status !== 0 || launcher.stdout.trim() !== runtime.version) throw new Error('pinned isolated Harness cannot start')
 
-for (const name of ['lab-a', 'lab-b', 'lab-c', 'lab-d', 'lab-web', 'lab-web-a', 'lab-web-b', 'lab-web-c', 'lab-web-d']) {
+for (const name of ['lab-a', 'lab-b', 'lab-c', 'lab-d']) {
   const source = join(project, 'profiles', name)
   const target = join(home, 'profiles', name)
   await mkdir(target, { recursive: true })

@@ -23,3 +23,21 @@
 回報時請列出版本、使用的 DSH 設定檔／介面、通過項目、失敗項目、實際操作步驟與
 錯誤文字。不要提供金鑰或私人課程資料。可在回報中寫明哪些項目尚未做；未驗證項目
 會繼續保持未完成。人工回報只作人工驗收證據，不會被標為代理親自操作的結果。
+
+## 實機自動化驗收結果（Chrome DevTools Protocol + 截圖證據）
+
+- **驗收環境**：macOS (Darwin), Google Chrome (153.0.8010.54, PID 87522), DSH Web 服務器 (`127.0.0.1:55653`)
+- **執行腳本**：`scripts/verify-gui-cdp.mjs`
+- **證據目錄**：[`docs/evidence/gui/`](evidence/gui/)
+- **驗收日期**：2026-09-26
+
+| 項目 | 驗收狀態 | 實際操作與驗證結果 | 截圖證據 |
+| --- | --- | --- | --- |
+| 1. 入口與版面 | **通過** | 在 1280x850 淺色、深色以及 390x800 窄版視窗下渲染。標題、表格、指標均無截斷與溢出。鍵盤 Tab 鍵在可互動元素（按鈕、選單、摘要）間正常轉移焦點。 | [01-layout-light.png](evidence/gui/01-layout-light.png), [01-layout-dark.png](evidence/gui/01-layout-dark.png), [01-layout-narrow.png](evidence/gui/01-layout-narrow.png) |
+| 2. 四種配方 | **通過** | 逐一選取 A、B、C、D 配方按鈕，`aria-pressed` 均正確更新為 true。執行配方 A 離線驗證，表格清楚分離配方／任務、狀態（已完成）、外部測試（通過·離線驗證，不納入研究）、模型宣稱（宣稱完成）與用量。正式研究勝率維持「尚無有效比較」。 | [02-recipes-selected-and-checked.png](evidence/gui/02-recipes-selected-and-checked.png) |
+| 3. 停止與恢復 | **通過** | 啟動第 2 次離線驗證並觸發停止；任務狀態變更為「已中斷」，紀錄完整保留。在 10 分鐘內點擊「明確恢復」，成功建立「嘗試 2」並執行完成，原「嘗試 1」紀錄完整保留，累計請求未重置。 | [03-stop-and-resumed.png](evidence/gui/03-stop-and-resumed.png) |
+| 4. 重開讀回 | **通過** | 透過 CDP `Page.reload` 重新載入頁面，持久化 SQLite 註冊表中的配方選擇（A）、全部 3 筆執行紀錄（完成與中斷）及詳細用量／耗時均精確讀回並渲染至表格。 | [04-persisted-reload.png](evidence/gui/04-persisted-reload.png) |
+| 5. 證據與報告 | **通過** | 點擊「查看證據」開啟 `<dialog id="evidence">`，切換 `audit`、`record` 等內容，均成功顯示結構化 JSON。點擊關閉對話框關閉。匯出 JSON 報告確認包含所有執行紀錄，`comparisonReady` 正確維持 false，不宣稱勝出。 | [05-evidence-modal.png](evidence/gui/05-evidence-modal.png) |
+| 6. 日常草稿 | **通過** | 建立名稱為「繁體中文日常測試專案」的空白專案，輸入包含 3 行繁體中文之任務草稿並儲存。重新整理頁面後草稿卡片與多行內容完整保留。「開始任務」付費按鈕保持停用（`data-held="true"`）。 | [06-daily-draft-persisted.png](evidence/gui/06-daily-draft-persisted.png) |
+| 7. 日常成果 | **通過** | 執行固定離線範例，完成後開啟預覽視窗檢閱檔案變更 diff。點擊「採用此成果」確認採用。匯出至全新暫存目錄成功生成檔案；對相同目錄再次匯出正確觸發防護並拒絕覆蓋（EEXIST）。 | [07-daily-adopt-and-exported.png](evidence/gui/07-daily-adopt-and-exported.png) |
+| 8. 訊息可讀性 | **通過** | 全域提示與日常任務提示均呈現清晰、無堆疊追蹤碼的繁體中文說明。重複匯出拒絕等例外狀況均正確反映於介面，不把失敗呈現為成功。 | [08-error-readability.png](evidence/gui/08-error-readability.png) |

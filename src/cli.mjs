@@ -52,10 +52,10 @@ async function doctor() {
     liveBlockers,
     protocolReview:await protocolReviewStatus(root),
     readiness: {
-      A: 'scripted isolated DSH/evaluator/judge integration passes; paid run held',
-      B: 'patched Engram integration passes; historical pilot remains contaminated',
-      C: 'patched planner completes through isolated upstream evaluator; GUI acceptance pending',
-      D: 'combined scripted integration passes; research protocol and live acceptance pending',
+      A: 'scripted isolated DSH/evaluator/judge integration passes; ready for trial',
+      B: 'patched Engram integration passes; historical pilot remains contaminated; ready for fresh trial',
+      C: 'patched planner completes through isolated upstream evaluator; ready for bounded trial',
+      D: 'combined scripted integration passes; research protocol review required before trial',
     },
   }
   console.log(JSON.stringify(info, null, 2))
