@@ -56,7 +56,7 @@ export async function prepareProtocol(root){
   refs.push({scope:'project',path:'state/linux-vm/runtime-dependency-locks.json'})
   refs.push({scope:'project',path:'docs/research-protocol.md'})
   refs.push({scope:'project',path:'docs/protocol-review.md'})
-  for(const dir of ['src','tasks','patches','containers','scripts','client'])for(const path of await sourceFiles(join(project,dir)))if(!path.includes('__pycache__'))refs.push({scope:'project',path:join(dir,path)})
+  for(const dir of ['src','tasks','patches','containers','scripts'])for(const path of await sourceFiles(join(project,dir)))if(!path.includes('__pycache__'))refs.push({scope:'project',path:join(dir,path)})
   for(const item of tasks)refs.push({scope:'experiment',path:`snapshots/${item.id}/user.db`})
   for(const ref of refs)ref.sha256=hashBytes(await readFile(join(ref.scope==='project'?project:root,ref.path)))
   const contents={schemaVersion:2,reviewStatus:'pending',execution:{backend:'linux',imageId:image.imageId,baseImage:image.baseImage,architecture:image.architecture,sourceManifest:image.manifest,dependencyLocksSha256:image.dependencyLocksSha256},model:'deepseek-official/deepseek-flash',reasoningEffort:'high',maxRequestsPerTrial:12,maxDurationMs:600000,capTwd:300,plugins:pins,builds,pricing,files:refs,trials:trialOrder(tasks.map(t=>t.id)),
