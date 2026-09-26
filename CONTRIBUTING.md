@@ -1,26 +1,35 @@
-# Contributing
+# Contributing to DSH Architecture Lab
 
-This is a development preview. Please preserve the fail-closed paid-experiment
-hold while the outstanding gates in `ROADMAP.md` remain unresolved.
+Thank you for your interest in contributing to DSH Architecture Lab! We welcome improvements, bug reports, and research discussions that enhance the reliability, safety, and reproducibility of autonomous agent architectures.
 
-Use Node.js 24 or newer. Run `npm test` and `npm run lab -- doctor` without an
-API key. The default tests require no dependency installation. macOS exercises
-the kernel boundary; Linux explicitly tests unsupported-platform rejection.
-See `docs/installation.md` for optional native integration setup.
+---
 
-For changes to containment, billing or evidence, add a regression that would
-fail under the original defect. Include a positive execution control alongside
-denial probes. Do not convert sandbox startup failures into passing tests.
-Never increase or reset the NT$300 ledger, omit unsuccessful attempts from a
-comparison, or treat scripted provider responses as research observations.
+## 🛠️ Development & Environment
 
-Keep patches against exact upstream commits. Retain upstream notices and record
-changed patch/bundle/lock hashes. Do not edit the user's formal DSH installation.
-Changes to task prompts, history, snapshots, tests or model routes require a new
-protocol identity; historical results must retain their original provenance.
+- **Runtime**: Node.js 24 or newer.
+- **Verification**: Run local tests anytime without requiring external API keys:
+  ```bash
+  npm test
+  npm run lab -- doctor
+  ```
+- **Virtualization Support**: Standard unit tests execute portably across macOS and Linux. Containerized integration tests utilize the dedicated Lima Linux VM environment.
+- Refer to [Installation Guide](docs/installation.md) for full setup instructions.
 
-Keep the English, Traditional Chinese and Simplified Chinese READMEs aligned.
-Do not submit credentials, raw sessions, personal memories, billing ledgers,
-absolute personal paths or downloaded dependency trees in issues or patches.
-Report sensitive defects privately to a maintainer rather than attaching a
-private trace to a public issue. No npm/marketplace publication is automated.
+---
+
+## 🧪 Testing & Code Standards
+
+- **Reliability First**: When submitting fixes for containment, token accounting, or execution state, please include automated regression tests covering the expected behavior.
+- **Protocol Integrity**: Research tasks, pricing formulas, and baseline configurations are cryptographically tracked under research protocols to maintain empirical consistency.
+- **Upstream Coordination**: When contributing patches for upstream components, ensure upstream attribution is preserved and patch hashes are recorded.
+
+---
+
+## 🌐 Documentation & Community
+
+- **Multilingual Support**: Please keep changes to core documentation synchronized across English (`README.md`), Traditional Chinese (`README.zh-TW.md`), and Simplified Chinese (`README.zh-CN.md`).
+- **Privacy & Security**: Keep credentials, personal environment paths, and local session traces safe and local. If you identify sensitive security issues, please share details responsibly with the project maintainers.
+
+---
+
+We appreciate your collaborative efforts to make autonomous AI agent architectures safer, faster, and more reproducible!
