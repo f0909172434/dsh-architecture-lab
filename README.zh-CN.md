@@ -2,7 +2,7 @@
 
 > 一个 DSH 插件与命令行工具，让不同的 DeepSeek 智能体架构在同一批编程任务上接受受控比较。
 
-[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [GitHub 源码](https://github.com/f0909172434/dsh-architecture-lab) · MIT License
+[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [GitHub 源码](https://github.com/Chih-Kai-Wang/dsh-architecture-lab) · MIT License
 
 ## 项目简介
 

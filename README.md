@@ -2,7 +2,7 @@
 
 > A DSH plugin and CLI for running controlled comparisons of DeepSeek agent architectures on the same coding tasks.
 
-[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [GitHub Source](https://github.com/f0909172434/dsh-architecture-lab) · MIT License
+[English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [GitHub Source](https://github.com/Chih-Kai-Wang/dsh-architecture-lab) · MIT License
 
 ## About the project
 

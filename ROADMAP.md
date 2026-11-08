@@ -36,7 +36,7 @@
 - 匯出包含真實耗時、花費與 Token 數據的研究報告（`comparison-v2.json`）。
 
 ### 階段四：開源發布與文件完善（已完成 ✅）
-- 開放 GitHub 公開儲存庫：[f0909172434/dsh-architecture-lab](https://github.com/f0909172434/dsh-architecture-lab)。
+- 開放 GitHub 公開儲存庫：[Chih-Kai-Wang/dsh-architecture-lab](https://github.com/Chih-Kai-Wang/dsh-architecture-lab)。
 - 建立繁體中文、簡體中文與英文三語完整說明文件。
 - 85 項單元與整合測試全數通過，GitHub Actions CI 構建綠燈。
 - 採用標準 MIT 授權條款，完整保留各上游開源模組之宣告。

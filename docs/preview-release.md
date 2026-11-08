@@ -154,5 +154,5 @@ A macOS CI run exposed a repeated SIGKILL on an already terminated process
 group. The exit cleanup now avoids signalling the same group after a successful
 stop. A deterministic regression reproduces the EPERM with the old source and
 passes with the fix. The failed dev.1 run remains available:
-https://github.com/f0909172434/dsh-architecture-lab/actions/runs/35885507674
+https://github.com/Chih-Kai-Wang/dsh-architecture-lab/actions/runs/35885507674
 This does not expand the cancellation claim to detached process groups.
